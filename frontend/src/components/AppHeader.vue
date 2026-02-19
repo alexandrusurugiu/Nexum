@@ -52,7 +52,7 @@
                     <v-tab value="/laptopuri" to="/laptopuri">Laptopuri</v-tab>
                     
                     <v-tab value="/configurator" to="/configurator" class="cyan-text font-weight-black electric-glow-bg rounded-t-lg">
-                        Configurator 3D
+                        Configurator
                     </v-tab>
                 </v-tabs>
             </div>

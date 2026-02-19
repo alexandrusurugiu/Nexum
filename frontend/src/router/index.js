@@ -31,6 +31,11 @@ const router = createRouter({
       path: '/periferice',
       name: 'periferice',
       component: () => import('../pages/PeripheralsPage.vue')
+    },
+    {
+      path: '/configurator',
+      name: 'configurator',
+      component: () => import('../pages/ConfigPage.vue')
     }
   ],
 })
