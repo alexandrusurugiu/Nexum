@@ -3,6 +3,13 @@
         <AppHeader :cartCount="cartCount" />
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
+            <div class="mb-8">
+                <h1 class="text-h3 font-weight-black cloud-text">Laptopuri</h1>
+                <p class="text-body-1 cloud-text opacity-80 mt-2">
+                    Stații de lucru mobile, ultrabook-uri premium și laptopuri de gaming de top.
+                </p>
+            </div>
+
             <v-row>
                 <v-col cols="12" md="3" lg="2">
                     <v-card class="filter-panel pa-5 rounded-xl" elevation="10">
