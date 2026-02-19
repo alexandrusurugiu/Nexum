@@ -13,14 +13,24 @@ const router = createRouter({
       component: () => import('../pages/HomePage.vue')
     },
     {
-      path: '/components',
-      name: 'components',
+      path: '/componente',
+      name: 'componente',
       component: () => import('../pages/ComponentsPage.vue')
     },
     {
-      path: '/monitors',
-      name: 'monitors',
+      path: '/monitoare',
+      name: 'monitoare',
       component: () => import('../pages/MonitorsPage.vue')
+    },
+    {
+      path: '/laptopuri',
+      name: 'laptopuri',
+      component: () => import('../pages/LaptopsPage.vue')
+    },
+    {
+      path: '/periferice',
+      name: 'periferice',
+      component: () => import('../pages/PeripheralsPage.vue')
     }
   ],
 })
