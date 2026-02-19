@@ -236,56 +236,56 @@
         {
             id: 1, category: 'procesoare', brand: 'AMD', price: 1950, oldPrice: null, discount: null,
             name: 'Procesor AMD Ryzen 7 7800X3D, 4.2GHz/5.0GHz',
-            image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://5.grgs.ro/images/products/1/9561/2594135/normal/ryzen-7-7800x3d-42ghz-box-c828e4f5427046cab3fef92871454224.jpg',
             specs: ['Socket: AM5', 'Nuclee: 8 / 16 Threads', 'Tehnologie: 3D V-Cache'],
             socket: 'AM5'
         },
         {
             id: 2, category: 'procesoare', brand: 'INTEL', price: 2850, oldPrice: 3100, discount: 8,
             name: 'Procesor Intel Core i9-14900K, pana la 6.0 GHz',
-            image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://5.grgs.ro/images/products/1/4468/2694483/thumbnails/raptor-lake-refresh-core-i9-14900k-32ghz-box-c903e9c8261c4be45b8f8033bb6ff6e6.jpg',
             specs: ['Socket: LGA 1700', 'Nuclee: 24 (8P+16E)', 'Putere bază: 125W'],
             socket: 'LGA 1700'
         },
         {
             id: 3, category: 'placi_video', brand: 'NVIDIA', price: 5299, oldPrice: 5899, discount: 10,
             name: 'Placă Video GIGABYTE GeForce RTX 4080 SUPER WINDFORCE',
-            image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://1.grgs.ro/images/products/1/2428/2894111/thumbnails/geforce-rtx-4080-super-windforce-16g-16gb-gddr6x-hdmi-3x-dp-6d0497eb48f49a86cc59aea95bfef9cc.jpg',
             specs: ['Memorie: 16GB GDDR6X', 'Răcire: 3 Ventilatoare', 'Interfață: PCIe 4.0'],
             memory: '16GB'
         },
         {
             id: 4, category: 'placi_video', brand: 'AMD', price: 4999, oldPrice: null, discount: null,
             name: 'Placă video Sapphire Radeon RX 7900 XTX PULSE',
-            image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://2.grgs.ro/images/products/1/2998/2520967/normal/radeon-rx-7900-xtx-24gb-93f7f50e99d1d7c3302a87a332adff2c.jpg',
             specs: ['Memorie: 24GB GDDR6', 'Lățime de bandă: 384-bit', 'Răcire: 3 Ventilatoare'],
             memory: '24GB'
         },
         {
             id: 5, category: 'placi_de_baza', brand: 'ASUS', price: 1420, oldPrice: 1550, discount: 8,
             name: 'Placă de bază ASUS ROG STRIX B650E-F GAMING WIFI',
-            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://2.grgs.ro/images/products/1/8994/2631087/normal/mb-as-rog-strix-b650e-f-am5-ddr5-wifi-527ebcce12f9562922523309318b1883.jpg',
             specs: ['Socket: AM5', 'Chipset: B650E', 'Format: ATX'],
             socket: 'AM5', type: 'ATX'
         },
         {
             id: 6, category: 'placi_de_baza', brand: 'MSI', price: 950, oldPrice: null, discount: null,
             name: 'Placă de bază MSI PRO B760M-P DDR4',
-            image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', // Imagine repetată pt demo
+            image: 'https://1.grgs.ro/images/products/1/5691/2570031/thumbnails/mb-msi-pro-b760m-p-ddr4-lga1700-137228f202a6ab33f806e61077db56fc.jpg',
             specs: ['Socket: LGA 1700', 'Chipset: B760', 'Format: mATX'],
             socket: 'LGA 1700', type: 'mATX'
         },
         {
             id: 7, category: 'memorie_ram', brand: 'CORSAIR', price: 850, oldPrice: null, discount: null,
             name: 'Memorie Corsair Dominator Platinum RGB 32GB DDR5 6000MHz',
-            image: 'https://images.unsplash.com/photo-1562976540-1502f75a6109?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://1.grgs.ro/images/products/1/3002/2625447/thumbnails/cr-dram-dominator-32gb2x16-ddr5-cl30-fb364a3f3292db5750e2909b181299de.jpg',
             specs: ['Tip: DDR5', 'Capacitate: 2x 16GB', 'Iluminare: A-RGB'],
             memory: '32GB', type: 'DDR5'
         },
         {
             id: 8, category: 'stocare', brand: 'SAMSUNG', price: 450, oldPrice: 500, discount: 10,
             name: 'Solid State Drive (SSD) Samsung 980 PRO 1TB',
-            image: 'https://images.unsplash.com/photo-1628557044797-f21a177c37ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: 'https://1.grgs.ro/images/products/1/4659/2161506/thumbnails/980-1tb-pci-express-30-x4-m2-2280-8fb6e0b9f191ea9116ac880c4af981ce.jpg',
             specs: ['Capacitate: 1TB', 'Interfață: NVMe M.2 PCIe Gen 4', 'Viteză: 7000 MB/s'],
             memory: '1TB', type: 'SSD NVMe'
         }
