@@ -97,7 +97,7 @@
                 <v-col cols="12" md="9" lg="10">
                     <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between mb-6 pa-4 sort-bar rounded-xl">
                         <div class="cloud-text font-weight-medium mb-4 mb-sm-0">
-                        Afișare <span class="cyan-text font-weight-bold">{{ filteredProducts.length }}</span> produse
+                        Afișare <span class="cyan-text font-weight-bold">{{ filteredPeripherals.length }}</span> produse
                         </div>
                         
                         <div class="d-flex align-center" style="width: 250px;">
@@ -110,47 +110,52 @@
                         </div>
                     </div>
 
-                    <div v-if="filteredProducts.length === 0" class="text-center py-16">
+                    <div v-if="filteredPeripherals.length === 0" class="text-center py-16">
                         <v-icon size="100" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-mouse-off</v-icon>
                         <h2 class="cloud-text opacity-80">Niciun periferic nu corespunde filtrelor</h2>
                         <p class="cyan-text mt-2" style="cursor: pointer;" @click="resetFilters">Resetează toate filtrele</p>
                     </div>
 
                     <v-row v-else>
-                        <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="6" lg="4" xl="3">
+                        <v-col v-for="peripheral in filteredPeripherals" :key="peripheral.id" cols="12" sm="6" md="6" lg="4" xl="3">
                             <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
-                                <v-chip v-if="product.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
-                                -{{ product.discount }}%
+                                <v-chip v-if="peripheral.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
+                                -{{ peripheral.discount }}%
                                 </v-chip>
 
                                 <div class="img-container pa-4 text-center">
-                                    <v-img :src="product.image" height="200" contain class="product-img mx-auto"></v-img>
+                                    <v-img :src="peripheral.specs.image" height="200" contain class="product-img mx-auto"></v-img>
                                 </div>
                                 
                                 <v-card-text class="flex-grow-1 pt-4">
                                     <span class="text-caption text-uppercase font-weight-bold" style="color: #00CEC9; letter-spacing: 1px;">
-                                        {{ product.brand }}
+                                        {{ peripheral.brand }}
                                     </span>
 
                                     <h3 class="text-h6 font-weight-bold cloud-text mt-1 mb-3 line-clamp-2" style="line-height: 1.3;">
-                                        {{ product.name }}
+                                        {{ peripheral.name }}
                                     </h3>
                                     
                                     <div class="quick-specs">
-                                        <div v-for="(spec, index) in product.specs" :key="index" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2">{{ spec }}</span>
-                                        </div>
+                                        <template v-for="(value, key) in peripheral.specs" :key="key">
+                                            <div v-if="key !== 'image'" class="d-flex align-center mb-1">
+                                                <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
+                                                <span class="cloud-text opacity-80 text-body-2 text-truncate">
+                                                    <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
+                                                </span>
+                                            </div>
+
+                                        </template>
                                     </div>
                                 </v-card-text>
 
                                 <v-card-actions class="pa-4 pt-0 d-flex justify-space-between align-end">
                                     <div>
-                                        <div v-if="product.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
-                                        {{ product.oldPrice }} Lei
+                                        <div v-if="peripheral.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
+                                        {{ peripheral.oldPrice }} Lei
                                         </div>
                                         <div class="text-h5 font-weight-black cloud-text">
-                                        {{ product.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
+                                        {{ peripheral.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                         </div>
                                     </div>
 
@@ -168,12 +173,15 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { ref, computed, watch, onMounted } from 'vue';
+    import { usePeripheralsStore } from '../stores/peripheralsStore';
+    import { storeToRefs } from 'pinia';
     import AppHeader from '../components/AppHeader.vue';
 
     const cartCount = ref(0);
     const addToCart = () => cartCount.value++;
-
+    const peripheralsStore = usePeripheralsStore();
+    const { allPeripherals, isLoading } = storeToRefs(peripheralsStore);
     const activeCategory = ref('mousi');
     const sortOption = ref('popular');
     const priceRange = ref([0, 2000]);
@@ -183,10 +191,26 @@
         techTypes: [],
         lighting: []
     });
+    const specLabels = {
+        connectivity: 'Conectivitate',
+        techType: 'Tehnologie',
+        lighting: 'Iluminare',
+        dpi: 'Rezoluție (DPI)',
+        weight: 'Greutate',
+        format: 'Format Tastatură',
+        switches: 'Tip Switch',
+        microphone: 'Microfon',
+        size: 'Dimensiuni',
+        thickness: 'Grosime'
+    };
 
     watch(activeCategory, () => {
         resetFilters();
     });
+
+    const formatSpecLabel = (key) => {
+            return specLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+        };
 
     const resetFilters = () => {
         priceRange.value = [0, 2000];
@@ -206,78 +230,22 @@
         { title: 'Preț: Descrescător', value: 'price_desc' }
     ];
 
-    //Produse MOCK pentru testate UI
-    const allProducts = ref([
-        {
-            id: 1, category: 'mousi', brand: 'LOGITECH', price: 549, oldPrice: 650, discount: 15,
-            name: 'Mouse Gaming Wireless Logitech G PRO X SUPERLIGHT',
-            image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Senzor: HERO 25K', 'Greutate: < 63 grame', 'Autonomie: 70 ore'],
-            connectivity: 'Wireless', techType: 'Senzor Optic', lighting: 'Fără Iluminare'
-        },
-        {
-            id: 2, category: 'mousi', brand: 'RAZER', price: 799, oldPrice: null, discount: null,
-            name: 'Mouse Gaming Razer DeathAdder V3 Pro',
-            image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c3c9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Senzor: Focus Pro 30K', 'Greutate: 63 grame', 'Switches: Optical Gen-3'],
-            connectivity: 'Wireless', techType: 'Senzor Optic', lighting: 'Fără Iluminare'
-        },
-        {
-            id: 3, category: 'mousi', brand: 'RAZER', price: 250, oldPrice: 300, discount: 16,
-            name: 'Mouse Gaming Razer Basilisk V3',
-            image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Senzor: 26K DPI Optic', 'Rotiță Tilt HyperScroll', '11 Butoane programabile'],
-            connectivity: 'Cu Fir', techType: 'Senzor Optic', lighting: 'RGB Chroma'
-        },
-        {
-            id: 4, category: 'tastaturi', brand: 'LOGITECH', price: 950, oldPrice: 1100, discount: 13,
-            name: 'Tastatură Gaming Wireless Logitech G915 TKL Lightspeed',
-            image: 'https://images.unsplash.com/photo-1595044426077-d36d9236d54a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Switch: GL Tactile (Low Profile)', 'Format: Tenkeyless (TKL)', 'Material: Aluminiu'],
-            connectivity: 'Wireless', techType: 'Mecanică', lighting: 'RGB Lightsync'
-        },
-        {
-            id: 5, category: 'tastaturi', brand: 'CORSAIR', price: 899, oldPrice: null, discount: null,
-            name: 'Tastatură Gaming Corsair K70 MAX RGB Magnetic-Mechanical',
-            image: 'https://images.unsplash.com/photo-1511467687858-23d3ce1486d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Switch: Corsair MGX (Magnetic)', 'Actuare ajustabilă: 0.4 - 3.6mm', 'Polling rate: 8000Hz'],
-            connectivity: 'Cu Fir', techType: 'Mecanică-Magnetică', lighting: 'RGB Per-Key'
-        },
-        {
-            id: 6, category: 'casti', brand: 'HYPERX', price: 420, oldPrice: 500, discount: 16,
-            name: 'Căști Gaming HyperX Cloud III',
-            image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Drivere: 53mm', 'Sunet: DTS Headphone:X Spatial Audio', 'Microfon ultra-clar'],
-            connectivity: 'Cu Fir', techType: 'Stereo / Spatial', lighting: 'Fără Iluminare'
-        },
-        {
-            id: 7, category: 'casti', brand: 'STEELSERIES', price: 1699, oldPrice: 1850, discount: 8,
-            name: 'Căști Gaming Wireless SteelSeries Arctis Nova Pro',
-            image: 'https://images.unsplash.com/photo-1599669500515-b3e1dd5652cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            specs: ['Baterii Hot-Swap (Infinte power)', 'Active Noise Cancellation (ANC)', 'Hi-Res Audio'],
-            connectivity: 'Wireless', techType: 'Sistem Dual-Audio', lighting: 'Fără Iluminare'
-        },
-        {
-            id: 8, category: 'mousepad', brand: 'STEELSERIES', price: 120, oldPrice: null, discount: null,
-            name: 'Mousepad Gaming SteelSeries QcK Heavy XXL',
-            image: 'https://images.unsplash.com/photo-1628102491629-778571d893a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', // Imagine pad generic
-            specs: ['Dimensiuni: 900 x 400 mm', 'Grosime: 4mm (Heavy)', 'Material: Micro-woven cloth'],
-            connectivity: 'N/A', techType: 'Textil', lighting: 'Fără Iluminare'
-        }
-    ]);
-
     const availableFilters = computed(() => {
-        const currentProducts = allProducts.value.filter(p => p.category === activeCategory.value);
+        const currentPeripherals = allPeripherals.value.filter(p => p.category === activeCategory.value);
         return {
-            brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            connectivity: [...new Set(currentProducts.map(p => p.connectivity).filter(c => c && c !== 'N/A'))],
-            techTypes: [...new Set(currentProducts.map(p => p.techType).filter(Boolean))],
-            lighting: [...new Set(currentProducts.map(p => p.lighting).filter(Boolean))]
+            brands: [...new Set(currentPeripherals.map(p => p.brand).filter(Boolean))],
+            connectivity: [...new Set(currentPeripherals.map(p => p.connectivity).filter(c => c && c !== 'N/A'))],
+            techTypes: [...new Set(currentPeripherals.map(p => p.techType).filter(Boolean))],
+            lighting: [...new Set(currentPeripherals.map(p => p.lighting).filter(Boolean))]
         };
     });
 
-    const filteredProducts = computed(() => {
-        let result = allProducts.value.filter(p => p.category === activeCategory.value);
+    onMounted(() => {
+        peripheralsStore.fetchPeripherals();
+    });
+
+    const filteredPeripherals = computed(() => {
+        let result = allPeripherals.value.filter(p => p.category === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
         if (selectedFilters.value.brands.length > 0) {

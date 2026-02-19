@@ -115,7 +115,7 @@
                 <v-col cols="12" md="9" lg="10">
                     <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between mb-6 pa-4 sort-bar rounded-xl">
                         <div class="cloud-text font-weight-medium mb-4 mb-sm-0">
-                            Afișare <span class="cyan-text font-weight-bold">{{ filteredProducts.length }}</span> produse pentru 
+                            Afișare <span class="cyan-text font-weight-bold">{{ filteredComponents.length }}</span> produse pentru 
                             <v-chip color="#0984E3" variant="flat" size="small" class="ml-2 font-weight-bold text-uppercase">
                                 {{ activeCategoryName }}
                             </v-chip>
@@ -137,46 +137,51 @@
                         </div>
                     </div>
 
-                    <div v-if="filteredProducts.length === 0" class="text-center py-16">
+                    <div v-if="filteredComponents.length === 0" class="text-center py-16">
                         <v-icon size="100" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-package-variant-closed</v-icon>
                         <h2 class="cloud-text opacity-80">Niciun produs corespunde filtrelor</h2>
                         <p class="cyan-text mt-2" style="cursor: pointer;" @click="resetFilters">Resetează toate filtrele</p>
                     </div>
 
                     <v-row v-else>
-                        <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="6" lg="4" xl="3">
+                        <v-col v-for="component in filteredComponents" :key="component.id" cols="12" sm="6" md="6" lg="4" xl="3">
                             <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
-                                <v-chip v-if="product.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
-                                -{{ product.discount }}%
+                                <v-chip v-if="component.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
+                                -{{ component.discount }}%
                                 </v-chip>
 
                                 <div class="img-container pa-4 text-center">
-                                    <v-img :src="product.image" height="200" contain class="product-img mx-auto"></v-img>
+                                    <v-img :src="component.specs.image" height="200" contain class="product-img mx-auto"></v-img>
                                 </div>
                                 
                                 <v-card-text class="flex-grow-1 pt-4">
                                     <span class="text-caption text-uppercase font-weight-bold" style="color: #00CEC9; letter-spacing: 1px;">
-                                        {{ product.brand }}
+                                        {{ component.brand }}
                                     </span>
                                     <h3 class="text-h6 font-weight-bold cloud-text mt-1 mb-3 line-clamp-2" style="line-height: 1.3;">
-                                        {{ product.name }}
+                                        {{ component.name }}
                                     </h3>
                                     
                                     <div class="quick-specs">
-                                        <div v-for="(spec, index) in product.specs" :key="index" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2">{{ spec }}</span>
-                                        </div>
+                                        <template v-for="(value, key) in component.specs" :key="key">
+                                            <div v-if="key !== 'image'" class="d-flex align-center mb-1">
+                                                <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
+                                                <span class="cloud-text opacity-80 text-body-2 text-truncate">
+                                                    <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
+                                                </span>
+                                            </div>
+
+                                        </template>
                                     </div>
                                 </v-card-text>
 
                                 <v-card-actions class="pa-4 pt-0 d-flex justify-space-between align-end">
                                     <div>
-                                        <div v-if="product.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
-                                        {{ product.oldPrice }} Lei
+                                        <div v-if="component.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
+                                        {{ component.oldPrice }} Lei
                                         </div>
                                         <div class="text-h5 font-weight-black cloud-text">
-                                        {{ product.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
+                                        {{ component.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                         </div>
                                     </div>
                                     <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="addToCart" title="Adaugă în coș">
@@ -193,27 +198,48 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { ref, computed, watch, onMounted } from 'vue';
     import { useRouter } from 'vue-router';
     import AppHeader from '../components/AppHeader.vue';
+    import { useComponentsStore } from '../stores/componentsStore';
+    import { storeToRefs } from 'pinia';
 
     const cartCount = ref(0);
     const addToCart = () => cartCount.value++;
-
+    const componentsStore = useComponentsStore();
+    const { allComponents, isLoading } = storeToRefs(componentsStore);
     const activeCategory = ref('procesoare');
     const sortOption = ref('popular');
     const priceRange = ref([0, 10000]);
-
     const selectedFilters = ref({
         brands: [],
         sockets: [],
         memory: [],
         types: []
     });
+    const specLabels = {
+        socket: 'Socket',
+        memory: 'Capacitate memorie',
+        memory_type: 'Tip Memorie',
+        max_memory: 'Memorie maximă suportată',
+        memory_frequency: 'Frecvență memorie suportată',
+        type: 'Tip / Format',
+        cores: 'Număr nuclee',
+        threads: 'Număr fire de execuție',
+        frequency: 'Frecvență',
+        boost_frequency: 'Frecvență maximă',
+        tdp: 'Consum (TDP)',
+        refreshRate: 'Rată de refresh',
+        panel: 'Tip panou'
+    };
 
     watch(activeCategory, () => {
         resetFilters();
     });
+
+    const formatSpecLabel = (key) => {
+        return specLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    };
 
     const resetFilters = () => {
         priceRange.value = [0, 10000];
@@ -238,68 +264,12 @@
         { title: 'Preț: Descrescător', value: 'price_desc' }
     ];
 
-    //Produse MOCK pentru testate UI
-    const allProducts = ref([
-        {
-            id: 1, category: 'procesoare', brand: 'AMD', price: 1950, oldPrice: null, discount: null,
-            name: 'Procesor AMD Ryzen 7 7800X3D, 4.2GHz/5.0GHz',
-            image: 'https://5.grgs.ro/images/products/1/9561/2594135/normal/ryzen-7-7800x3d-42ghz-box-c828e4f5427046cab3fef92871454224.jpg',
-            specs: ['Socket: AM5', 'Nuclee: 8 / 16 Threads', 'Tehnologie: 3D V-Cache'],
-            socket: 'AM5'
-        },
-        {
-            id: 2, category: 'procesoare', brand: 'INTEL', price: 2850, oldPrice: 3100, discount: 8,
-            name: 'Procesor Intel Core i9-14900K, pana la 6.0 GHz',
-            image: 'https://5.grgs.ro/images/products/1/4468/2694483/thumbnails/raptor-lake-refresh-core-i9-14900k-32ghz-box-c903e9c8261c4be45b8f8033bb6ff6e6.jpg',
-            specs: ['Socket: LGA 1700', 'Nuclee: 24 (8P+16E)', 'Putere bază: 125W'],
-            socket: 'LGA 1700'
-        },
-        {
-            id: 3, category: 'placi_video', brand: 'NVIDIA', price: 5299, oldPrice: 5899, discount: 10,
-            name: 'Placă Video GIGABYTE GeForce RTX 4080 SUPER WINDFORCE',
-            image: 'https://1.grgs.ro/images/products/1/2428/2894111/thumbnails/geforce-rtx-4080-super-windforce-16g-16gb-gddr6x-hdmi-3x-dp-6d0497eb48f49a86cc59aea95bfef9cc.jpg',
-            specs: ['Memorie: 16GB GDDR6X', 'Răcire: 3 Ventilatoare', 'Interfață: PCIe 4.0'],
-            memory: '16GB'
-        },
-        {
-            id: 4, category: 'placi_video', brand: 'AMD', price: 4999, oldPrice: null, discount: null,
-            name: 'Placă video Sapphire Radeon RX 7900 XTX PULSE',
-            image: 'https://2.grgs.ro/images/products/1/2998/2520967/normal/radeon-rx-7900-xtx-24gb-93f7f50e99d1d7c3302a87a332adff2c.jpg',
-            specs: ['Memorie: 24GB GDDR6', 'Lățime de bandă: 384-bit', 'Răcire: 3 Ventilatoare'],
-            memory: '24GB'
-        },
-        {
-            id: 5, category: 'placi_de_baza', brand: 'ASUS', price: 1420, oldPrice: 1550, discount: 8,
-            name: 'Placă de bază ASUS ROG STRIX B650E-F GAMING WIFI',
-            image: 'https://2.grgs.ro/images/products/1/8994/2631087/normal/mb-as-rog-strix-b650e-f-am5-ddr5-wifi-527ebcce12f9562922523309318b1883.jpg',
-            specs: ['Socket: AM5', 'Chipset: B650E', 'Format: ATX'],
-            socket: 'AM5', type: 'ATX'
-        },
-        {
-            id: 6, category: 'placi_de_baza', brand: 'MSI', price: 950, oldPrice: null, discount: null,
-            name: 'Placă de bază MSI PRO B760M-P DDR4',
-            image: 'https://1.grgs.ro/images/products/1/5691/2570031/thumbnails/mb-msi-pro-b760m-p-ddr4-lga1700-137228f202a6ab33f806e61077db56fc.jpg',
-            specs: ['Socket: LGA 1700', 'Chipset: B760', 'Format: mATX'],
-            socket: 'LGA 1700', type: 'mATX'
-        },
-        {
-            id: 7, category: 'memorie_ram', brand: 'CORSAIR', price: 850, oldPrice: null, discount: null,
-            name: 'Memorie Corsair Dominator Platinum RGB 32GB DDR5 6000MHz',
-            image: 'https://1.grgs.ro/images/products/1/3002/2625447/thumbnails/cr-dram-dominator-32gb2x16-ddr5-cl30-fb364a3f3292db5750e2909b181299de.jpg',
-            specs: ['Tip: DDR5', 'Capacitate: 2x 16GB', 'Iluminare: A-RGB'],
-            memory: '32GB', type: 'DDR5'
-        },
-        {
-            id: 8, category: 'stocare', brand: 'SAMSUNG', price: 450, oldPrice: 500, discount: 10,
-            name: 'Solid State Drive (SSD) Samsung 980 PRO 1TB',
-            image: 'https://1.grgs.ro/images/products/1/4659/2161506/thumbnails/980-1tb-pci-express-30-x4-m2-2280-8fb6e0b9f191ea9116ac880c4af981ce.jpg',
-            specs: ['Capacitate: 1TB', 'Interfață: NVMe M.2 PCIe Gen 4', 'Viteză: 7000 MB/s'],
-            memory: '1TB', type: 'SSD NVMe'
-        }
-    ]);
+    onMounted(() => {
+        componentsStore.fetchComponents();
+    });
 
     const availableFilters = computed(() => {
-        const currentProducts = allProducts.value.filter(p => p.category === activeCategory.value);
+        const currentProducts = allComponents.value.filter(p => p.category === activeCategory.value);
         
         return {
             brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
@@ -309,8 +279,8 @@
         };
     });
 
-    const filteredProducts = computed(() => {
-        let result = allProducts.value.filter(p => p.category === activeCategory.value);
+    const filteredComponents = computed(() => {
+        let result = allComponents.value.filter(p => p.category === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
         if (selectedFilters.value.brands.length > 0) {
