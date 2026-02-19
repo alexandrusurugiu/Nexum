@@ -46,9 +46,9 @@
         <template v-slot:extension>
             <div class="w-100 h-100 d-flex align-end category-wrapper">
                 <v-tabs :model-value="route.path" :mandatory="false" color="#00CEC9" align-tabs="center" class="w-100 cloud-text font-weight-medium">
-                    <v-tab value="/components" to="/components">Componente PC</v-tab>
+                    <v-tab value="/componente" to="/componente">Componente PC</v-tab>
                     <v-tab value="/periferice" to="/periferice">Periferice</v-tab>
-                    <v-tab value="/monitors" to="/monitors">Monitoare</v-tab>
+                    <v-tab value="/monitoare" to="/monitoare">Monitoare</v-tab>
                     <v-tab value="/laptopuri" to="/laptopuri">Laptopuri</v-tab>
                     
                     <v-tab value="/configurator" to="/configurator" class="cyan-text font-weight-black electric-glow-bg rounded-t-lg">
