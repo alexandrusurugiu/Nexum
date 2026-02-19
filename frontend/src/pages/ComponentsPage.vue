@@ -1,8 +1,8 @@
 <template>
     <v-app class="nexum-bg">
-        <AppHeader :cartCount="cartCount" />
+        <AppHeader :cartCount="cartCount"></AppHeader>
 
-        <v-main class="pt-8 pb-16 px-4 px-md-10">
+        <v-main class="pb-16 px-4 px-md-10 mt-16">
             <v-row>
                 <v-col cols="12" md="3" lg="2">
                     <v-card class="filter-panel pa-5 rounded-xl" elevation="10">
