@@ -27,16 +27,16 @@
 
             <div class="d-flex align-center mr-2">
                 <v-btn icon="mdi-information-outline" class="cloud-text opacity-80 hover-cyan" title="Despre Nexum"></v-btn>
-                <v-btn icon="mdi-cog-outline" class="cloud-text opacity-80 hover-cyan" title="Setări (Temă/Limbă)"></v-btn>
+                <v-btn icon="mdi-cog-outline" class="cloud-text opacity-80 hover-cyan" title="Setări" @click="goToSettings"></v-btn>
                 
                 <v-divider vertical class="mx-3 border-opacity-50" color="#F5F6FA" style="height: 50px;"></v-divider>
 
-                <v-btn icon class="cloud-text hover-cyan" title="Contul Meu">
+                <v-btn icon class="cloud-text hover-cyan" @click="goToProfile" title="Contul Meu">
                     <v-icon size="large">mdi-account-circle-outline</v-icon>
                 </v-btn>
                 
-                <v-btn icon class="cloud-text ml-2" title="Cosul tău">
-                    <v-badge :content="cartCount" color="#0984E3" text-color="#F5F6FA" floating>
+                <v-btn icon class="cloud-text ml-2" @click="goToCart" title="Cosul tău">
+                    <v-badge :content="cartStore.cartCount" :model-value="cartStore.cartCount > 0" color="#0984E3" text-color="#F5F6FA" floating>
                         <v-icon size="large">mdi-cart-outline</v-icon>
                     </v-badge>
                 </v-btn>
@@ -62,12 +62,18 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { useRouter, useRoute } from 'vue-router';
+    import { useCartStore } from '../stores/cartStore';
 
     const router = useRouter();
     const route = useRoute();
     const searchQuery = ref('');
+    const cartStore = useCartStore();
+
+    onMounted(() => {
+        cartStore.fetchCart();
+    });
 
     defineProps({
         cartCount: {
@@ -78,6 +84,18 @@
 
     function navigateToHome() {
         router.push('/home'); 
+    }
+
+    function goToCart() {
+        router.push('/cart');
+    }
+
+    function goToProfile() {
+        router.push('/profil');
+    }
+
+    function goToSettings() {
+        router.push('/setari');
     }
 </script>
 

@@ -36,6 +36,21 @@ const router = createRouter({
       path: '/configurator',
       name: 'configurator',
       component: () => import('../pages/ConfigPage.vue')
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../pages/CartPage.vue')
+    },
+    {
+      path: '/profil',
+      name: 'profil',
+      component: () => import('../pages/ProfilePage.vue')
+    },
+    {
+      path: '/setari',
+      name: 'setari',
+      component: () => import('../pages/SettingsPage.vue')
     }
   ],
 })
