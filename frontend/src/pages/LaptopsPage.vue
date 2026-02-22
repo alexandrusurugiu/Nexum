@@ -39,14 +39,12 @@
                         <v-range-slider
                             v-model="priceRange"
                             :min="1000"
-                            :max="20000"
-                            :step="100"
+                            :max="30000"  :step="100"
                             color="#00CEC9"
                             track-color="rgba(245, 246, 250, 0.1)"
                             track-fill-color="#00CEC9"
                             thumb-size="18"
-                            class="neon-slider mt-2 mb-6"
-                            >
+                            class="neon-slider mt-2 mb-6">
                             <template v-slot:thumb="{ modelValue }">
                                 <div class="neon-thumb elevation-5"></div>
                             </template>
@@ -54,60 +52,79 @@
 
                         <v-divider class="border-opacity-25 mb-6" color="#00CEC9"></v-divider>
 
-                        <h3 class="text-h6 font-weight-bold cloud-text mb-4">Specificații</h3>
+                        <h3 class="text-h6 font-weight-bold cloud-text mb-4">Filtre</h3>
 
-                        <div class="mb-5" v-if="availableFilters.brands.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Producător</div>
-                            <v-checkbox
-                                v-for="brand in availableFilters.brands" :key="brand"
-                                v-model="selectedFilters.brands" :label="brand" :value="brand"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                        <v-expansion-panels variant="accordion" multiple class="custom-expansion-panels" bg-color="transparent">
+                            <v-expansion-panel v-if="availableFilters.brands.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Producător
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="brand in availableFilters.brands" :key="brand" v-model="selectedFilters.brands" :label="brand" :value="brand" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.cpus.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Procesor</div>
-                            <v-checkbox
-                                v-for="cpu in availableFilters.cpus" :key="cpu"
-                                v-model="selectedFilters.cpus" :label="cpu" :value="cpu"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.cpuSeries.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Serie Procesor
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="serie in availableFilters.cpuSeries" :key="serie" v-model="selectedFilters.cpuSeries" :label="serie" :value="serie" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.gpus.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Placă Video</div>
-                            <v-checkbox
-                                v-for="gpu in availableFilters.gpus" :key="gpu"
-                                v-model="selectedFilters.gpus" :label="gpu" :value="gpu"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.cpuModels.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Model Procesor
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="model in availableFilters.cpuModels" :key="model" v-model="selectedFilters.cpuModels" :label="model" :value="model" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.rams.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Memorie RAM</div>
-                            <v-checkbox
-                                v-for="ram in availableFilters.rams" :key="ram"
-                                v-model="selectedFilters.rams" :label="ram" :value="ram"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.gpuSeries.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Serie Placă Video
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="serie in availableFilters.gpuSeries" :key="serie" v-model="selectedFilters.gpuSeries" :label="serie" :value="serie" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.storages.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Capacitate Stocare</div>
-                            <v-checkbox
-                                v-for="storage in availableFilters.storages" :key="storage"
-                                v-model="selectedFilters.storages" :label="storage" :value="storage"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.gpuModels.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Model Placă Video
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="model in availableFilters.gpuModels" :key="model" v-model="selectedFilters.gpuModels" :label="model" :value="model" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
+                            <v-expansion-panel v-if="availableFilters.rams.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Memorie RAM
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="ram in availableFilters.rams" :key="ram" v-model="selectedFilters.rams" :label="ram" :value="ram" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.storages.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Capacitate Stocare
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="storage in availableFilters.storages" :key="storage" v-model="selectedFilters.storages" :label="storage" :value="storage" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
                     </v-card>
                 </v-col>
 
                 <v-col cols="12" md="9" lg="10">
                     <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between mb-6 pa-4 sort-bar rounded-xl">
                         <div class="cloud-text font-weight-medium mb-4 mb-sm-0">
-                            Afișare <span class="cyan-text font-weight-bold">{{ filteredProducts.length }}</span> laptopuri
+                            Afișare <span class="cyan-text font-weight-bold">{{ filteredLaptops.length }}</span> laptopuri
                         </div>
                         
                         <div class="d-flex align-center" style="width: 250px;">
@@ -120,57 +137,56 @@
                         </div>
                     </div>
 
-                    <div v-if="filteredProducts.length === 0" class="text-center py-16">
+                    <div v-if="filteredLaptops.length === 0" class="text-center py-16">
                         <v-icon size="100" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-laptop-off</v-icon>
                         <h2 class="cloud-text opacity-80">Niciun laptop nu corespunde filtrelor</h2>
                         <p class="cyan-text mt-2" style="cursor: pointer;" @click="resetFilters">Resetează toate filtrele</p>
                     </div>
 
                     <v-row v-else>
-                        <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="6" lg="4" xl="3">
+                        <v-col v-for="laptop in filteredLaptops" :key="laptop.id" cols="12" sm="6" md="6" lg="4" xl="3">
                             <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
-                                <v-chip v-if="product.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
-                                -{{ product.discount }}%
+                                <v-chip v-if="laptop.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
+                                -{{ laptop.discount }}%
                                 </v-chip>
 
                                 <div class="img-container pa-4 text-center">
-                                    <v-img :src="product.specs.image" height="200" contain class="product-img mx-auto"></v-img>
+                                    <v-img :src="laptop.specs.image" height="200" contain class="product-img mx-auto"></v-img>
                                 </div>
                                 
                                 <v-card-text class="flex-grow-1 pt-4">
                                     <span class="text-caption text-uppercase font-weight-bold" style="color: #00CEC9; letter-spacing: 1px;">
-                                        {{ product.brand }}
+                                        {{ laptop.brand }}
                                     </span>
 
                                     <h3 class="text-h6 font-weight-bold cloud-text mt-1 mb-3 line-clamp-2" style="line-height: 1.3;">
-                                        {{ product.name }}
+                                        {{ laptop.name }}
                                     </h3>
                                     
                                     <div class="quick-specs">
-                                        <template v-for="(value, key) in component.specs" :key="key">
+                                        <template v-for="(value, key) in laptop.specs" :key="key">
                                             <div v-if="key !== 'image'" class="d-flex align-center mb-1">
                                                 <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
                                                 <span class="cloud-text opacity-80 text-body-2 text-truncate">
                                                     <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
                                                 </span>
                                             </div>
-
                                         </template>
                                     </div>
                                 </v-card-text>
 
                                 <v-card-actions class="pa-4 pt-0 d-flex justify-space-between align-end">
                                     <div>
-                                        <div v-if="product.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
-                                        {{ product.oldPrice }} Lei
+                                        <div v-if="laptop.oldPrice" class="text-decoration-line-through text-caption cloud-text opacity-50 mb-n1">
+                                        {{ laptop.oldPrice }} Lei
                                         </div>
 
                                         <div class="text-h5 font-weight-black cloud-text">
-                                        {{ product.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
+                                        {{ laptop.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(product)" title="Adaugă în coș">
+                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(laptop)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -195,11 +211,13 @@
     const { allLaptops, isLoading } = storeToRefs(laptopsStore);
     const activeCategory = ref('gaming');
     const sortOption = ref('popular');
-    const priceRange = ref([1000, 20000]);
+    const priceRange = ref([1000, 30000]);
     const selectedFilters = ref({
         brands: [],
-        cpus: [],
-        gpus: [],
+        cpuSeries: [],
+        cpuModels: [],
+        gpuSeries: [],
+        gpuModels: [],
         rams: [],
         storages: []
     });
@@ -209,11 +227,13 @@
     });
 
     const resetFilters = () => {
-        priceRange.value = [1000, 20000];
+        priceRange.value = [1000, 30000];
         selectedFilters.value = { 
             brands: [], 
-            cpus: [], 
-            gpus: [], 
+            cpuSeries: [], 
+            cpuModels: [], 
+            gpuSeries: [], 
+            gpuModels: [], 
             rams: [], 
             storages: [] 
         };
@@ -248,119 +268,91 @@
         display: 'Ecran'
     };
 
+    const getCpuSeries = (cpu) => {
+        if (!cpu) return null;
+        if (cpu.includes('Core i9')) return 'Intel Core i9';
+        if (cpu.includes('Core i7')) return 'Intel Core i7';
+        if (cpu.includes('Core i5')) return 'Intel Core i5';
+        if (cpu.includes('Core i3')) return 'Intel Core i3';
+        if (cpu.includes('Core Ultra 9')) return 'Intel Core Ultra 9';
+        if (cpu.includes('Core Ultra 7')) return 'Intel Core Ultra 7';
+        if (cpu.includes('Ryzen 9')) return 'AMD Ryzen 9';
+        if (cpu.includes('Ryzen 7')) return 'AMD Ryzen 7';
+        if (cpu.includes('Ryzen 5')) return 'AMD Ryzen 5';
+        if (cpu.includes('Apple M3')) return 'Apple M3';
+        if (cpu.includes('Apple M2')) return 'Apple M2';
+        if (cpu.includes('Apple M1')) return 'Apple M1';
+        return cpu.split(' ').slice(0, 2).join(' '); 
+    };
+
+    const getCpuModel = (cpu) => {
+        if (!cpu) {
+            return null;
+        }
+
+        return cpu.replace('Intel ', '').replace('AMD ', '');
+    };
+
+    const getGpuSeries = (gpu) => {
+        if (!gpu) return null;
+        if (gpu.includes('RTX 40')) return 'GeForce RTX 40 Series';
+        if (gpu.includes('RTX 30')) return 'GeForce RTX 30 Series';
+        if (gpu.includes('RX 7')) return 'Radeon RX 7000 Series';
+        if (gpu.includes('RX 6')) return 'Radeon RX 6000 Series';
+        if (gpu.includes('Arc')) return 'Intel Arc Series';
+        if (gpu.includes('Iris Xe')) return 'Intel Iris Xe';
+        if (gpu.includes('Apple')) return 'Apple Silicon GPU';
+        if (gpu.includes('Radeon Graphics')) return 'AMD Radeon Graphics';
+        if (gpu.includes('UHD Graphics')) return 'Intel UHD Graphics';
+        return gpu; 
+    };
+
+    const getGpuModel = (gpu) => {
+        if (!gpu) {
+            return null;
+        }
+
+        return gpu.replace('NVIDIA GeForce ', '').replace('AMD ', '').replace('Intel ', '');
+    };
+
+    const getSubCategory = (name) => {
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes('gaming')) return 'gaming';
+        if (lowerName.includes('macbook pro') || lowerName.includes('xps') || lowerName.includes('zenbook') || lowerName.includes('spectre')) return 'creator';
+        if (lowerName.includes('macbook air') || lowerName.includes('slim') || lowerName.includes('thin')) return 'ultrabook';
+        return 'office'; 
+    };
+
     const availableFilters = computed(() => {
-        const currentProducts = allLaptops.value.filter(p => p.category === activeCategory.value);
+        const currentProducts = allLaptops.value.filter(p => p.category === 'laptopuri' && getSubCategory(p.name) === activeCategory.value);
         
-        const getCpuFamily = (cpuStr) => {
-            if(!cpuStr) {
-                return null;
-            }
-
-            if(cpuStr.includes('Core i9')) {
-                return 'Intel Core i9';
-            }
-
-            if(cpuStr.includes('Core i7')) {
-                return 'Intel Core i7';
-            }
-            
-            if(cpuStr.includes('Core Ultra 7')) {
-                return 'Intel Core Ultra 7';
-            }
-            
-            if(cpuStr.includes('Ryzen 9')) {
-                return 'AMD Ryzen 9';
-            }
-            
-            if(cpuStr.includes('Ryzen 7')) {
-                return 'AMD Ryzen 7';
-            }
-
-            if(cpuStr.includes('Ryzen 5')) {
-                return 'AMD Ryzen 5';
-            }
-
-            if(cpuStr.includes('M3 Max')) {
-                return 'Apple M3 Max';
-            }
-
-            if(cpuStr.includes('M3')) {
-                return 'Apple M3';
-            }
-
-            return cpuStr.split(' ')[0] + ' ' + cpuStr.split(' ')[1];
-        };
-
-        const getGpuSeries = (gpuStr) => {
-            if(!gpuStr) {
-                return null;
-            }
-
-            if(gpuStr.includes('RTX 4080')) {
-                return 'RTX 4080';
-            }
-
-            if(gpuStr.includes('RTX 4070')) {
-                return 'RTX 4070';
-            }
-
-            if(gpuStr.includes('RTX 4060')) {
-                return 'RTX 4060';
-            }
-
-            if(gpuStr.includes('Arc')) {
-                return 'Intel Arc Graphics';
-            }
-
-            if(gpuStr.includes('Radeon')) {
-                return 'AMD Radeon Graphics';
-            }
-
-            if(gpuStr.includes('Apple')) {
-                return 'Apple Silicon GPU';
-            }
-
-            return gpuStr;
-        };
-
         return {
             brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            cpus: [...new Set(currentProducts.map(p => getCpuFamily(p.cpu)).filter(Boolean))],
-            gpus: [...new Set(currentProducts.map(p => getGpuSeries(p.gpu)).filter(Boolean))],
-            rams: [...new Set(currentProducts.map(p => p.ram.split(' ')[0]).filter(Boolean))], 
-            storages: [...new Set(currentProducts.map(p => p.storage).filter(Boolean))]
+            cpuSeries: [...new Set(currentProducts.map(p => getCpuSeries(p.specs?.cpu)).filter(Boolean))].sort(),
+            cpuModels: [...new Set(currentProducts.map(p => getCpuModel(p.specs?.cpu)).filter(Boolean))].sort(),
+            gpuSeries: [...new Set(currentProducts.map(p => getGpuSeries(p.specs?.gpu)).filter(Boolean))].sort(),
+            gpuModels: [...new Set(currentProducts.map(p => getGpuModel(p.specs?.gpu)).filter(Boolean))].sort(),
+            rams: [...new Set(currentProducts.map(p => p.specs?.ram?.split(' ')[0]).filter(Boolean))], 
+            storages: [...new Set(currentProducts.map(p => p.specs?.storage).filter(Boolean))]
         };
     });
 
-    const filteredProducts = computed(() => {
-        let result = allLaptops.value.filter(p => p.category === activeCategory.value);
+    const filteredLaptops = computed(() => {
+        let result = allLaptops.value.filter(p => p.category === 'laptopuri' && getSubCategory(p.name) === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
-        if (selectedFilters.value.brands.length > 0) {
-            result = result.filter(p => selectedFilters.value.brands.includes(p.brand));
-        }
+        const f = selectedFilters.value;
+
+        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
         
-        if (selectedFilters.value.cpus.length > 0) {
-            result = result.filter(p => selectedFilters.value.cpus.some(cpuFilter => p.cpu.includes(cpuFilter)));
-        }
+        if (f.cpuSeries.length > 0) result = result.filter(p => f.cpuSeries.includes(getCpuSeries(p.specs?.cpu)));
+        if (f.cpuModels.length > 0) result = result.filter(p => f.cpuModels.includes(getCpuModel(p.specs?.cpu)));
         
-        if (selectedFilters.value.gpus.length > 0) {
-            result = result.filter(p => selectedFilters.value.gpus.some(gpuFilter => {
-                if(gpuFilter === 'Apple Silicon GPU') {
-                    return p.gpu.includes('Apple');
-                }
+        if (f.gpuSeries.length > 0) result = result.filter(p => f.gpuSeries.includes(getGpuSeries(p.specs?.gpu)));
+        if (f.gpuModels.length > 0) result = result.filter(p => f.gpuModels.includes(getGpuModel(p.specs?.gpu)));
 
-                return p.gpu.includes(gpuFilter);
-            }));
-        }
-
-        if (selectedFilters.value.rams.length > 0) {
-            result = result.filter(p => selectedFilters.value.rams.some(ramFilter => p.ram.includes(ramFilter)));
-        }
-
-        if (selectedFilters.value.storages.length > 0) {
-            result = result.filter(p => selectedFilters.value.storages.includes(p.storage));
-        }
+        if (f.rams.length > 0) result = result.filter(p => f.rams.some(ramFilter => p.specs?.ram?.includes(ramFilter)));
+        if (f.storages.length > 0) result = result.filter(p => f.storages.includes(p.specs?.storage));
         
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);

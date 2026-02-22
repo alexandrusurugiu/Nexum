@@ -10,7 +10,7 @@ const getLaptops = async (req, res) => {
             sort
         } = req.query;
 
-        let laptopsRef = db.collection('products');
+        let laptopsRef = db.collection('laptops');
         let query = laptopsRef;
 
         if (category) {
