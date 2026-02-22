@@ -1,6 +1,6 @@
 <template>
   <v-app class="nexum-bg">
-    <AppHeader :cartCount="cartCount" />
+    <AppHeader></AppHeader>
 
     <v-main class="pb-16 px-4 px-md-10 mt-16">
       

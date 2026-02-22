@@ -1,7 +1,7 @@
 <template>
   <v-app class="nexum-bg">
     
-    <AppHeader :cartCount="cartCount"></AppHeader>
+    <AppHeader></AppHeader>
 
     <v-main>
       <v-container fluid class="pa-0">

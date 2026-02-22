@@ -1,6 +1,6 @@
 <template>
     <v-app class="nexum-bg">
-        <AppHeader :cartCount="cartCount" />
+        <AppHeader></AppHeader>
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
             <div class="mb-8">
@@ -159,7 +159,7 @@
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="addToCart" title="Adaugă în coș">
+                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(peripheral)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -177,7 +177,9 @@
     import { usePeripheralsStore } from '../stores/peripheralsStore';
     import { storeToRefs } from 'pinia';
     import AppHeader from '../components/AppHeader.vue';
+    import { useCartStore } from '../stores/cartStore';
 
+    const cartStore = useCartStore();
     const cartCount = ref(0);
     const addToCart = () => cartCount.value++;
     const peripheralsStore = usePeripheralsStore();
@@ -206,6 +208,10 @@
 
     watch(activeCategory, () => {
         resetFilters();
+    });
+    
+    onMounted(() => {
+        peripheralsStore.fetchPeripherals();
     });
 
     const formatSpecLabel = (key) => {
@@ -276,19 +282,19 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #1E272E !important; 
+        background-color: #1E272E !important;
     }
 
     .cloud-text { 
-        color: #F5F6FA !important; 
+        color: #F5F6FA !important;
     }
 
     .cyan-text { 
-        color: #00CEC9 !important; 
+        color: #00CEC9 !important;
     }
 
     .opacity-80 { 
-        opacity: 0.8; 
+        opacity: 0.8;
     }
 
     .filter-panel {
@@ -315,112 +321,125 @@
     }
 
     .neon-slider :deep(.v-slider-track__fill) {
-        background: linear-gradient(90deg, #0984E3, #00CEC9) !important; 
-        box-shadow: 0 0 10px rgba(0, 206, 201, 0.4); 
+        background: linear-gradient(90deg, #0984E3, #00CEC9) !important;
+        box-shadow: 0 0 10px rgba(0, 206, 201, 0.4);
     }
 
     .neon-slider :deep(.v-slider-track__background) { 
-        opacity: 0.2 !important; 
+        opacity: 0.2 !important;
     }
 
     .neon-thumb {
-        width: 18px; 
-        height: 18px; 
-        border-radius: 50%; 
-        background-color: #1E272E; 
-        border: 3px solid #00CEC9; 
-        box-shadow: 0 0 12px rgba(0, 206, 201, 0.8); 
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: #1E272E;
+        border: 3px solid #00CEC9;
+        box-shadow: 0 0 12px rgba(0, 206, 201, 0.8);
         transition: all 0.3s ease;
     }
 
     .neon-slider :deep(.v-slider-thumb--pressed) .neon-thumb {
-        box-shadow: 0 0 20px rgba(0, 206, 201, 1); 
+        box-shadow: 0 0 20px rgba(0, 206, 201, 1);
         transform: scale(1.2);
     }
 
     .custom-checkbox :deep(.v-label) {
-        color: #F5F6FA !important; 
-        opacity: 0.85; 
+        color: #F5F6FA !important;
+        opacity: 0.85;
         font-size: 0.9rem;
     }
 
     .custom-checkbox :deep(.v-selection-control__input > .v-icon) { 
-        opacity: 0.7; 
+        opacity: 0.7;
     }
 
     .custom-checkbox :deep(.v-selection-control--dirty .v-selection-control__input > .v-icon) {
-        opacity: 1; 
+        opacity: 1;
         filter: drop-shadow(0 0 5px rgba(0, 206, 201, 0.5));
     }
 
     .sort-bar {
-        background-color: #253038; 
+        background-color: #253038;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
 
     .custom-select :deep(.v-field) { 
-        border-radius: 10px; 
+        border-radius: 10px;
     }
 
     .custom-select :deep(.v-field__input) { 
-        color: #F5F6FA !important; 
+        color: #F5F6FA !important;
     }
 
     .product-card {
-        background-color: #253038 !important; 
+        background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
-        transition: all 0.3s ease; 
-        position: relative; 
+        border-radius: 24px !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
         overflow: hidden;
     }
     
     .product-card:hover {
-        transform: translateY(-8px); 
-        border-color: rgba(0, 206, 201, 0.5);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 206, 201, 0.1) !important;
+        transform: translateY(-10px);
+        border-color: rgba(0, 206, 201, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 206, 201, 0.15) !important;
     }
 
     .img-container {
-        background-color: rgba(30, 39, 46, 0.5); 
-        border-bottom: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: #F5F6FA;
+        margin: 12px 12px 0 12px;
+        padding: 20px;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
     }
 
-    .product-img { 
-        transition: transform 0.5s ease; 
+    .product-img {
+        transition: all 0.5s ease;
+        mix-blend-mode: multiply;
+        filter: contrast(1.05);
     }
 
-    .product-card:hover .product-img { 
-        transform: scale(1.08); 
+    .product-card:hover .product-img {
+        transform: scale(1.15) translateY(-5px);
+    }
+
+    .product-card .v-card-text {
+        padding-top: 24px !important;
     }
     
     .discount-badge {
-        position: absolute; 
-        top: 16px; 
-        right: 16px; 
+        position: absolute;
+        top: 16px;
+        right: 16px;
         z-index: 2;
         box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4);
     }
 
     .line-clamp-2 {
-        display: -webkit-box; 
-        -webkit-line-clamp: 2; 
-        -webkit-box-orient: vertical;  
-        overflow: hidden; 
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
         min-height: 3rem;
     }
 
     .quick-specs { 
-        border-top: 1px solid rgba(245, 246, 250, 0.1); 
-        padding-top: 12px; 
+        border-top: 1px solid rgba(245, 246, 250, 0.1);
+        padding-top: 12px;
     }
 
-    .cart-btn { 
-        transition: all 0.3s ease; 
+    .cart-btn {
+        background-color: rgba(9, 132, 227, 0.1) !important;
+        transition: all 0.3s ease;
     }
 
-    .cart-btn:hover { 
-        background-color: #0984E3 !important; 
-        color: #F5F6FA !important; 
-        transform: scale(1.1); 
+    .cart-btn:hover {
+        background-color: #0984E3 !important;
+        color: #F5F6FA !important;
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
     }
 </style>

@@ -397,30 +397,36 @@
     }
 
     .product-card {
-        background-color: #253038 !important; 
+        background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
-        transition: all 0.3s ease; 
-        position: relative; 
+        border-radius: 24px !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
     }
 
     .product-card:hover {
-        transform: translateY(-8px); 
-        border-color: rgba(0, 206, 201, 0.5);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 206, 201, 0.1) !important;
+        transform: translateY(-10px);
+        border-color: rgba(0, 206, 201, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 206, 201, 0.15) !important;
     }
 
     .img-container {
-        background-color: rgba(30, 39, 46, 0.5); 
-        border-bottom: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: #F5F6FA; 
+        margin: 12px 12px 0 12px;
+        padding: 20px;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
     }
 
-    .product-img { 
-        transition: transform 0.5s ease; 
+    .product-img {
+        transition: all 0.5s ease;
+        mix-blend-mode: multiply; 
+        filter: contrast(1.05);
     }
 
-    .product-card:hover .product-img { 
-        transform: scale(1.08); 
+    .product-card:hover .product-img {
+        transform: scale(1.15) translateY(-5px);
     }
     
     .discount-badge {
@@ -444,13 +450,19 @@
         padding-top: 12px; 
     }
 
-    .cart-btn { 
-        transition: all 0.3s ease; 
+    .product-card .v-card-text {
+        padding-top: 24px !important;
     }
 
-    .cart-btn:hover { 
-        background-color: #0984E3 !important; 
-        color: #F5F6FA !important; 
-        transform: scale(1.1); 
+    .cart-btn {
+        background-color: rgba(9, 132, 227, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+
+    .cart-btn:hover {
+        background-color: #0984E3 !important;
+        color: #F5F6FA !important;
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
     }
 </style>

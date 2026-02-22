@@ -1,6 +1,6 @@
 <template>
     <v-app class="nexum-bg">
-        <AppHeader :cartCount="cartCount" />
+        <AppHeader></AppHeader>
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
             <div class="mb-8">
@@ -134,7 +134,7 @@
                                 </v-chip>
 
                                 <div class="img-container pa-4 text-center">
-                                    <v-img :src="product.image" height="200" contain class="product-img mx-auto"></v-img>
+                                    <v-img :src="product.specs.image" height="200" contain class="product-img mx-auto"></v-img>
                                 </div>
                                 
                                 <v-card-text class="flex-grow-1 pt-4">
@@ -147,25 +147,15 @@
                                     </h3>
                                     
                                     <div class="quick-specs">
-                                        <div v-if="product.cpu" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-cpu-64-bit</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2 text-truncate">{{ product.cpu }}</span>
-                                        </div>
+                                        <template v-for="(value, key) in component.specs" :key="key">
+                                            <div v-if="key !== 'image'" class="d-flex align-center mb-1">
+                                                <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
+                                                <span class="cloud-text opacity-80 text-body-2 text-truncate">
+                                                    <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
+                                                </span>
+                                            </div>
 
-                                        <div v-if="product.gpu" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-expansion-card-variant</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2 text-truncate">{{ product.gpu }}</span>
-                                        </div>
-
-                                        <div v-if="product.ram && product.storage" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-memory</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2 text-truncate">{{ product.ram }} | {{ product.storage }}</span>
-                                        </div>
-
-                                        <div v-if="product.screen" class="d-flex align-center mb-1">
-                                            <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-monitor</v-icon>
-                                            <span class="cloud-text opacity-80 text-body-2 text-truncate">{{ product.screen }}</span>
-                                        </div>
+                                        </template>
                                     </div>
                                 </v-card-text>
 
@@ -180,7 +170,7 @@
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="addToCart" title="Adaugă în coș">
+                                    <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(product)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -194,16 +184,18 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { ref, computed, watch, onMounted } from 'vue';
     import AppHeader from '../components/AppHeader.vue';
+    import { useLaptopsStore } from '../stores/laptopsStore';
+    import { storeToRefs } from 'pinia';
+    import { useCartStore } from '../stores/cartStore';
 
-    const cartCount = ref(0);
-    const addToCart = () => cartCount.value++;
-
+    const cartStore = useCartStore();
+    const laptopsStore = useLaptopsStore();
+    const { allLaptops, isLoading } = storeToRefs(laptopsStore);
     const activeCategory = ref('gaming');
     const sortOption = ref('popular');
     const priceRange = ref([1000, 20000]);
-
     const selectedFilters = ref({
         brands: [],
         cpus: [],
@@ -227,6 +219,14 @@
         };
     };
 
+    const formatSpecLabel = (key) => {
+        return specLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    };
+
+    onMounted(() => {
+        laptopsStore.fetchLaptops();
+    });
+
     const categories = [
         { id: 'gaming', name: 'Gaming', icon: 'mdi-controller' },
         { id: 'ultrabook', name: 'Ultrabook', icon: 'mdi-laptop' },
@@ -240,59 +240,16 @@
         { title: 'Preț: Descrescător', value: 'price_desc' }
     ];
 
-    const allProducts = ref([
-        {
-            id: 1, category: 'gaming', brand: 'ASUS', price: 9299, oldPrice: 9999, discount: 7,
-            name: 'Laptop Gaming ASUS ROG Strix SCAR 16',
-            image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Intel Core i9-14900HX', gpu: 'NVIDIA GeForce RTX 4080 12GB', ram: '32GB DDR5', storage: '1TB SSD', screen: '16" Mini LED 240Hz'
-        },
-        {
-            id: 2, category: 'gaming', brand: 'LENOVO', price: 6499, oldPrice: 7100, discount: 8,
-            name: 'Laptop Gaming Lenovo Legion Pro 5',
-            image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'AMD Ryzen 7 7745HX', gpu: 'NVIDIA GeForce RTX 4070 8GB', ram: '16GB DDR5', storage: '1TB SSD', screen: '16" WQXGA 165Hz'
-        },
-        {
-            id: 3, category: 'gaming', brand: 'MSI', price: 4299, oldPrice: null, discount: null,
-            name: 'Laptop Gaming MSI Cyborg 15',
-            image: 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Intel Core i7-12650H', gpu: 'NVIDIA GeForce RTX 4060 8GB', ram: '16GB DDR4', storage: '512GB SSD', screen: '15.6" FHD 144Hz'
-        },
-        {
-            id: 4, category: 'ultrabook', brand: 'APPLE', price: 6899, oldPrice: null, discount: null,
-            name: 'Apple MacBook Air 15" (M3, 2024)',
-            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Apple M3 (8-core)', gpu: 'Apple M3 GPU (10-core)', ram: '16GB Unified', storage: '512GB SSD', screen: '15.3" Liquid Retina'
-        },
-        {
-            id: 5, category: 'ultrabook', brand: 'ASUS', price: 5499, oldPrice: 6200, discount: 11,
-            name: 'Laptop ASUS Zenbook 14 OLED',
-            image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Intel Core Ultra 7 155H', gpu: 'Intel Arc Graphics', ram: '16GB LPDDR5x', storage: '1TB SSD', screen: '14" 3K OLED 120Hz'
-        },
-        {
-            id: 6, category: 'creator', brand: 'APPLE', price: 15499, oldPrice: 16299, discount: 5,
-            name: 'Apple MacBook Pro 16" (M3 Max)',
-            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Apple M3 Max (14-core)', gpu: 'Apple M3 Max GPU (30-core)', ram: '36GB Unified', storage: '1TB SSD', screen: '16.2" Liquid Retina XDR'
-        },
-        {
-            id: 7, category: 'creator', brand: 'DELL', price: 11200, oldPrice: null, discount: null,
-            name: 'Laptop Dell XPS 15',
-            image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'Intel Core i9-13900H', gpu: 'NVIDIA GeForce RTX 4070 8GB', ram: '32GB DDR5', storage: '1TB SSD', screen: '15.6" 3.5K OLED Touch'
-        },
-        {
-            id: 8, category: 'office', brand: 'LENOVO', price: 2999, oldPrice: 3400, discount: 12,
-            name: 'Laptop Lenovo ThinkPad E14 Gen 5',
-            image: 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-            cpu: 'AMD Ryzen 5 7530U', gpu: 'AMD Radeon Graphics', ram: '16GB DDR4', storage: '512GB SSD', screen: '14" WUXGA IPS'
-        }
-    ]);
+    const specLabels = {
+        cpu: 'Procesor',
+        ram: 'Memorie RAM',
+        storage: 'Stocare',
+        gpu: 'Placă Video',
+        display: 'Ecran'
+    };
 
     const availableFilters = computed(() => {
-        const currentProducts = allProducts.value.filter(p => p.category === activeCategory.value);
+        const currentProducts = allLaptops.value.filter(p => p.category === activeCategory.value);
         
         const getCpuFamily = (cpuStr) => {
             if(!cpuStr) {
@@ -376,7 +333,7 @@
     });
 
     const filteredProducts = computed(() => {
-        let result = allProducts.value.filter(p => p.category === activeCategory.value);
+        let result = allLaptops.value.filter(p => p.category === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
         if (selectedFilters.value.brands.length > 0) {
@@ -508,30 +465,40 @@
     }
 
     .product-card {
-        background-color: #253038 !important; 
+        background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
-        transition: all 0.3s ease; 
-        position: relative; 
+        border-radius: 24px !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
     }
 
     .product-card:hover {
-        transform: translateY(-8px); 
-        border-color: rgba(0, 206, 201, 0.5);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 206, 201, 0.1) !important;
+        transform: translateY(-10px);
+        border-color: rgba(0, 206, 201, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 206, 201, 0.15) !important;
     }
 
     .img-container {
-        background-color: rgba(30, 39, 46, 0.5); 
-        border-bottom: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: #F5F6FA; 
+        margin: 12px 12px 0 12px; 
+        padding: 20px;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
     }
 
-    .product-img { 
-        transition: transform 0.5s ease; 
+    .product-img {
+        transition: all 0.5s ease;
+        mix-blend-mode: multiply; 
+        filter: contrast(1.05);
     }
 
-    .product-card:hover .product-img { 
-        transform: scale(1.08); 
+    .product-card:hover .product-img {
+        transform: scale(1.15) translateY(-5px);
+    }
+
+    .product-card .v-card-text {
+        padding-top: 24px !important;
     }
     
     .discount-badge {
@@ -555,13 +522,15 @@
         padding-top: 12px; 
     }
 
-    .cart-btn { 
-        transition: all 0.3s ease; 
+    .cart-btn {
+        background-color: rgba(9, 132, 227, 0.1) !important;
+        transition: all 0.3s ease;
     }
 
-    .cart-btn:hover { 
-        background-color: #0984E3 !important; 
-        color: #F5F6FA !important; 
-        transform: scale(1.1); 
+    .cart-btn:hover {
+        background-color: #0984E3 !important;
+        color: #F5F6FA !important;
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
     }
 </style>
