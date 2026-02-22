@@ -54,43 +54,86 @@
 
                         <v-divider class="border-opacity-25 mb-6" color="#00CEC9"></v-divider>
 
-                        <h3 class="text-h6 font-weight-bold cloud-text mb-4">Specificații</h3>
+                        <h3 class="text-h6 font-weight-bold cloud-text mb-4">Filtre</h3>
 
-                        <div class="mb-5" v-if="availableFilters.brands.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Producător</div>
-                            <v-checkbox
-                                v-for="brand in availableFilters.brands" :key="brand"
-                                v-model="selectedFilters.brands" :label="brand" :value="brand"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                        <v-expansion-panels variant="accordion" multiple class="custom-expansion-panels" bg-color="transparent">
+                            <v-expansion-panel v-if="availableFilters.brands.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Producător</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="brand in availableFilters.brands" :key="brand" v-model="selectedFilters.brands" :label="brand" :value="brand" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.connectivity.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Conectivitate</div>
-                            <v-checkbox
-                                v-for="conn in availableFilters.connectivity" :key="conn"
-                                v-model="selectedFilters.connectivity" :label="conn" :value="conn"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.connectivity.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Conectivitate</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="conn in availableFilters.connectivity" :key="conn" v-model="selectedFilters.connectivity" :label="conn" :value="conn" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.techTypes.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Tehnologie</div>
-                            <v-checkbox
-                                v-for="tech in availableFilters.techTypes" :key="tech"
-                                v-model="selectedFilters.techTypes" :label="tech" :value="tech"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.techTypes.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Tehnologie</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="tech in availableFilters.techTypes" :key="tech" v-model="selectedFilters.techTypes" :label="tech" :value="tech" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.lighting.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Iluminare</div>
-                            <v-checkbox
-                                v-for="light in availableFilters.lighting" :key="light"
-                                v-model="selectedFilters.lighting" :label="light" :value="light"
-                                color="#00CEC9" density="compact" hide-details class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.dpis.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Rezoluție (DPI)</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="dpi in availableFilters.dpis" :key="dpi" v-model="selectedFilters.dpis" :label="dpi" :value="dpi" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.weights.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Greutate</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="weight in availableFilters.weights" :key="weight" v-model="selectedFilters.weights" :label="weight" :value="weight" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.switches.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Tip Switch</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="sw in availableFilters.switches" :key="sw" v-model="selectedFilters.switches" :label="sw" :value="sw" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.formats.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Format</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="format in availableFilters.formats" :key="format" v-model="selectedFilters.formats" :label="format" :value="format" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.microphones.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Microfon</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="mic in availableFilters.microphones" :key="mic" v-model="selectedFilters.microphones" :label="mic" :value="mic" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.sizes.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Dimensiuni</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="size in availableFilters.sizes" :key="size" v-model="selectedFilters.sizes" :label="size" :value="size" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.thicknesses.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Grosime</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="thick in availableFilters.thicknesses" :key="thick" v-model="selectedFilters.thicknesses" :label="thick" :value="thick" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.lighting.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Iluminare</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="light in availableFilters.lighting" :key="light" v-model="selectedFilters.lighting" :label="light" :value="light" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
                     </v-card>
                 </v-col>
 
@@ -188,10 +231,17 @@
     const sortOption = ref('popular');
     const priceRange = ref([0, 2000]);
     const selectedFilters = ref({
-        brands: [],
-        connectivity: [],
-        techTypes: [],
-        lighting: []
+        brands: [], 
+        connectivity: [], 
+        techTypes: [], 
+        lighting: [],
+        dpis: [], 
+        weights: [], 
+        formats: [], 
+        switches: [], 
+        microphones: [], 
+        sizes: [], 
+        thicknesses: []
     });
     const specLabels = {
         connectivity: 'Conectivitate',
@@ -220,7 +270,19 @@
 
     const resetFilters = () => {
         priceRange.value = [0, 2000];
-        selectedFilters.value = { brands: [], connectivity: [], techTypes: [], lighting: [] };
+        selectedFilters.value = { 
+            brands: [], 
+            connectivity: [], 
+            techTypes: [], 
+            lighting: [],
+            dpis: [], 
+            weights: [], 
+            formats: [], 
+            switches: [], 
+            microphones: [], 
+            sizes: [], 
+            thicknesses: []
+        };
     };
 
     const categories = [
@@ -240,9 +302,16 @@
         const currentPeripherals = allPeripherals.value.filter(p => p.category === activeCategory.value);
         return {
             brands: [...new Set(currentPeripherals.map(p => p.brand).filter(Boolean))],
-            connectivity: [...new Set(currentPeripherals.map(p => p.connectivity).filter(c => c && c !== 'N/A'))],
-            techTypes: [...new Set(currentPeripherals.map(p => p.techType).filter(Boolean))],
-            lighting: [...new Set(currentPeripherals.map(p => p.lighting).filter(Boolean))]
+            connectivity: [...new Set(currentPeripherals.map(p => p.specs?.connectivity).filter(c => c && c !== 'N/A'))],
+            techTypes: [...new Set(currentPeripherals.map(p => p.specs?.techType).filter(Boolean))],
+            lighting: [...new Set(currentPeripherals.map(p => p.specs?.lighting).filter(l => l && l !== 'Fără iluminare' && l !== 'N/A'))],
+            dpis: [...new Set(currentPeripherals.map(p => p.specs?.dpi).filter(Boolean))],
+            weights: [...new Set(currentPeripherals.map(p => p.specs?.weight).filter(Boolean))],
+            formats: [...new Set(currentPeripherals.map(p => p.specs?.format).filter(Boolean))],
+            switches: [...new Set(currentPeripherals.map(p => p.specs?.switches).filter(Boolean))],
+            microphones: [...new Set(currentPeripherals.map(p => p.specs?.microphone).filter(Boolean))],
+            sizes: [...new Set(currentPeripherals.map(p => p.specs?.size).filter(Boolean))],
+            thicknesses: [...new Set(currentPeripherals.map(p => p.specs?.thickness).filter(Boolean))]
         };
     });
 
@@ -254,21 +323,19 @@
         let result = allPeripherals.value.filter(p => p.category === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
-        if (selectedFilters.value.brands.length > 0) {
-            result = result.filter(p => selectedFilters.value.brands.includes(p.brand));
-        }
-        
-        if (selectedFilters.value.connectivity.length > 0) {
-            result = result.filter(p => selectedFilters.value.connectivity.includes(p.connectivity));
-        }
+        const f = selectedFilters.value;
 
-        if (selectedFilters.value.techTypes.length > 0) {
-            result = result.filter(p => selectedFilters.value.techTypes.includes(p.techType));
-        }
-
-        if (selectedFilters.value.lighting.length > 0) {
-            result = result.filter(p => selectedFilters.value.lighting.includes(p.lighting));
-        }
+        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
+        if (f.connectivity.length > 0) result = result.filter(p => f.connectivity.includes(p.specs?.connectivity));
+        if (f.techTypes.length > 0) result = result.filter(p => f.techTypes.includes(p.specs?.techType));
+        if (f.lighting.length > 0) result = result.filter(p => f.lighting.includes(p.specs?.lighting));
+        if (f.dpis.length > 0) result = result.filter(p => f.dpis.includes(p.specs?.dpi));
+        if (f.weights.length > 0) result = result.filter(p => f.weights.includes(p.specs?.weight));
+        if (f.formats.length > 0) result = result.filter(p => f.formats.includes(p.specs?.format));
+        if (f.switches.length > 0) result = result.filter(p => f.switches.includes(p.specs?.switches));
+        if (f.microphones.length > 0) result = result.filter(p => f.microphones.includes(p.specs?.microphone));
+        if (f.sizes.length > 0) result = result.filter(p => f.sizes.includes(p.specs?.size));
+        if (f.thicknesses.length > 0) result = result.filter(p => f.thicknesses.includes(p.specs?.thickness));
         
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
@@ -318,6 +385,33 @@
         color: #00CEC9 !important;
         background: rgba(0, 206, 201, 0.1) !important;
         border-left: 4px solid #00CEC9;
+    }
+
+    .custom-expansion-panels {
+        background: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel) {
+        background-color: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-title) {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        min-height: 48px !important;
+        border-bottom: 1px solid rgba(245, 246, 250, 0.05); 
+        color: #00CEC9 !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-title__overlay) {
+        background-color: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-text__wrapper) {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 12px !important;
+        padding-bottom: 16px !important;
     }
 
     .neon-slider :deep(.v-slider-track__fill) {
