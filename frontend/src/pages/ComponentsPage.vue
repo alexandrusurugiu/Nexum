@@ -13,7 +13,6 @@
             <v-row>
                 <v-col cols="12" md="3" lg="2">
                     <v-card class="filter-panel pa-5 rounded-xl" elevation="10">
-                        
                         <h3 class="text-h6 font-weight-bold cloud-text mb-4">Categorii</h3>
                         <v-list bg-color="transparent" class="pa-0 mb-6">
                             <v-list-item
@@ -54,61 +53,97 @@
 
                         <h3 class="text-h6 font-weight-bold cloud-text mb-4">Filtre</h3>
 
-                        <div class="mb-5" v-if="availableFilters.brands.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Producător</div>
-                            <v-checkbox
-                                v-for="brand in availableFilters.brands" :key="brand"
-                                v-model="selectedFilters.brands"
-                                :label="brand"
-                                :value="brand"
-                                color="#00CEC9"
-                                density="compact"
-                                hide-details
-                                class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                        <v-expansion-panels variant="accordion" multiple class="custom-expansion-panels" bg-color="transparent">
+                            <v-expansion-panel v-if="availableFilters.brands.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Producător
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="brand in availableFilters.brands" :key="brand" v-model="selectedFilters.brands" :label="brand" :value="brand" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.sockets.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Socket</div>
-                            <v-checkbox
-                                v-for="socket in availableFilters.sockets" :key="socket"
-                                v-model="selectedFilters.sockets"
-                                :label="socket"
-                                :value="socket"
-                                color="#00CEC9"
-                                density="compact"
-                                hide-details
-                                class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.series.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Serie
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="serie in availableFilters.series" :key="serie" v-model="selectedFilters.series" :label="serie" :value="serie" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.memory.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Capacitate</div>
-                            <v-checkbox
-                                v-for="mem in availableFilters.memory" :key="mem"
-                                v-model="selectedFilters.memory"
-                                :label="mem"
-                                :value="mem"
-                                color="#00CEC9"
-                                density="compact"
-                                hide-details
-                                class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.models.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Model
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="model in availableFilters.models" :key="model" v-model="selectedFilters.models" :label="model" :value="model" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
 
-                        <div class="mb-5" v-if="availableFilters.types.length > 0">
-                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Tip / Format</div>
-                            <v-checkbox
-                                v-for="type in availableFilters.types" :key="type"
-                                v-model="selectedFilters.types"
-                                :label="type"
-                                :value="type"
-                                color="#00CEC9"
-                                density="compact"
-                                hide-details
-                                class="custom-checkbox"
-                            ></v-checkbox>
-                        </div>
+                            <v-expansion-panel v-if="availableFilters.sockets.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Socket
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="socket in availableFilters.sockets" :key="socket" v-model="selectedFilters.sockets" :label="socket" :value="socket" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.cores.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Număr Nuclee
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="core in availableFilters.cores" :key="core" v-model="selectedFilters.cores" :label="`${core} Nuclee`" :value="core" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.chipsets.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Chipset
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="chipset in availableFilters.chipsets" :key="chipset" v-model="selectedFilters.chipsets" :label="chipset" :value="chipset" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.memory.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Capacitate
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="mem in availableFilters.memory" :key="mem" v-model="selectedFilters.memory" :label="mem" :value="mem" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.memoryTypes.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Tip Memorie
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="type in availableFilters.memoryTypes" :key="type" v-model="selectedFilters.memoryTypes" :label="type" :value="type" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.types.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Tip / Format
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="type in availableFilters.types" :key="type" v-model="selectedFilters.types" :label="type" :value="type" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.interfaces.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
+                                    Interfață
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="intf in availableFilters.interfaces" :key="intf" v-model="selectedFilters.interfaces" :label="intf" :value="intf" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
                     </v-card>
                 </v-col>
 
@@ -215,7 +250,13 @@
         brands: [],
         sockets: [],
         memory: [],
-        types: []
+        types: [],
+        cores: [],
+        chipsets: [],
+        series: [],
+        models: [],
+        memoryTypes: [],
+        interfaces: []
     });
     const specLabels = {
         socket: 'Socket',
@@ -243,7 +284,18 @@
 
     const resetFilters = () => {
         priceRange.value = [0, 10000];
-        selectedFilters.value = { brands: [], sockets: [], memory: [], types: [] };
+        selectedFilters.value = { 
+            brands: [], 
+            series: [], 
+            models: [], 
+            sockets: [], 
+            memory: [], 
+            types: [], 
+            cores: [], 
+            chipsets: [], 
+            memoryTypes: [], 
+            interfaces: [] 
+        };
     };
 
     const categories = [
@@ -253,6 +305,31 @@
         { id: 'memorie_ram', name: 'Memorii RAM', icon: 'mdi-memory' },
         { id: 'stocare', name: 'Stocare internă', icon: 'mdi-harddisk' }
     ];
+
+    const getSeries = (name, category) => {
+        if (category === 'procesoare') {
+            const series = ['Ryzen 9', 'Ryzen 7', 'Ryzen 5', 'Ryzen 3', 'Core i9', 'Core i7', 'Core i5', 'Core i3'];
+            return series.find(s => name.includes(s)) || null;
+        }
+        if (category === 'placi_video') {
+            if (name.includes('RTX 40')) return 'GeForce RTX 40 Series';
+            if (name.includes('RTX 30')) return 'GeForce RTX 30 Series';
+            if (name.includes('RX 7')) return 'Radeon RX 7000 Series';
+            if (name.includes('RX 6')) return 'Radeon RX 6000 Series';
+        }
+        return null;
+    };
+
+    const getModel = (name, category) => {
+        if (category === 'procesoare') {
+            return name.replace('Procesor AMD ', '').replace('Procesor Intel ', '');
+        }
+        if (category === 'placi_video') {
+            const match = name.match(/(RTX \d{4}(?: Ti)?(?: SUPER)?|RX \d{4}(?: XT)?(?: XTX)?(?: GRE)?)/);
+            return match ? match[0] : null;
+        }
+        return null;
+    };
 
     const activeCategoryName = computed(() => {
         return categories.find(c => c.id === activeCategory.value)?.name || 'Produse';
@@ -273,9 +350,15 @@
         
         return {
             brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            sockets: [...new Set(currentProducts.map(p => p.socket).filter(Boolean))],
-            memory: [...new Set(currentProducts.map(p => p.memory).filter(Boolean))],
-            types: [...new Set(currentProducts.map(p => p.type).filter(Boolean))]
+            sockets: [...new Set(currentProducts.map(p => p.specs?.socket).filter(Boolean))],
+            memory: [...new Set(currentProducts.map(p => p.specs?.memory || p.specs?.capacity).filter(Boolean))],
+            types: [...new Set(currentProducts.map(p => p.specs?.type).filter(Boolean))],
+            cores: [...new Set(currentProducts.map(p => p.specs?.cores).filter(Boolean))].sort((a,b) => a - b),
+            series: [...new Set(currentProducts.map(p => getSeries(p.name, p.category)).filter(Boolean))].sort(),
+            models: [...new Set(currentProducts.map(p => getModel(p.name, p.category)).filter(Boolean))].sort(),
+            chipsets: [...new Set(currentProducts.map(p => p.specs?.chipset).filter(Boolean))],
+            memoryTypes: [...new Set(currentProducts.map(p => p.specs?.memory_type || p.specs?.memory_support).filter(Boolean))],
+            interfaces: [...new Set(currentProducts.map(p => p.specs?.interface).filter(Boolean))]
         };
     });
 
@@ -283,18 +366,18 @@
         let result = allComponents.value.filter(p => p.category === activeCategory.value);
         result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
         
-        if (selectedFilters.value.brands.length > 0) {
-            result = result.filter(p => selectedFilters.value.brands.includes(p.brand));
-        }
-        if (selectedFilters.value.sockets.length > 0) {
-            result = result.filter(p => selectedFilters.value.sockets.includes(p.socket));
-        }
-        if (selectedFilters.value.memory.length > 0) {
-            result = result.filter(p => selectedFilters.value.memory.includes(p.memory));
-        }
-        if (selectedFilters.value.types.length > 0) {
-            result = result.filter(p => selectedFilters.value.types.includes(p.type));
-        }
+        const f = selectedFilters.value;
+
+        if (f.series.length > 0) result = result.filter(p => f.series.includes(getSeries(p.name, p.category)));
+        if (f.models.length > 0) result = result.filter(p => f.models.includes(getModel(p.name, p.category)));
+        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
+        if (f.sockets.length > 0) result = result.filter(p => f.sockets.includes(p.specs?.socket));
+        if (f.memory.length > 0) result = result.filter(p => f.memory.includes(p.specs?.memory) || f.memory.includes(p.specs?.capacity));
+        if (f.types.length > 0) result = result.filter(p => f.types.includes(p.specs?.type));
+        if (f.cores.length > 0) result = result.filter(p => f.cores.includes(p.specs?.cores));
+        if (f.chipsets.length > 0) result = result.filter(p => f.chipsets.includes(p.specs?.chipset));
+        if (f.memoryTypes.length > 0) result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
+        if (f.interfaces.length > 0) result = result.filter(p => f.interfaces.includes(p.specs?.interface));
         
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
@@ -471,5 +554,32 @@
         color: #F5F6FA !important;
         transform: scale(1.1) rotate(5deg);
         box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+    }
+
+    .custom-expansion-panels {
+        background: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel) {
+        background-color: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-title) {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        min-height: 48px !important;
+        border-bottom: 1px solid rgba(245, 246, 250, 0.05);
+        color: #00CEC9 !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-title__overlay) {
+        background-color: transparent !important;
+    }
+
+    .custom-expansion-panels :deep(.v-expansion-panel-text__wrapper) {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 12px !important;
+        padding-bottom: 16px !important;
     }
 </style>
