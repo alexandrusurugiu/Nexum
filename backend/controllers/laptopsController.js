@@ -1,6 +1,6 @@
 const { db } = require('../database/db');
 
-const getProducts = async (req, res) => {
+const getLaptops = async (req, res) => {
     try {
         const {
             category,
@@ -10,8 +10,8 @@ const getProducts = async (req, res) => {
             sort
         } = req.query;
 
-        let productsRef = db.collection('products');
-        let query = productsRef;
+        let laptopsRef = db.collection('products');
+        let query = laptopsRef;
 
         if (category) {
             query = query.where('category', '==', category);
@@ -41,9 +41,9 @@ const getProducts = async (req, res) => {
             return res.status(200).json({ success: true, count: 0, data: [] });
         }
 
-        let productsList = [];
+        let laptopsList = [];
         snapshot.forEach(doc => {
-            productsList.push({
+            laptopsList.push({
                 id: doc.id, 
                 ...doc.data() 
             });
@@ -53,29 +53,29 @@ const getProducts = async (req, res) => {
         
         if (sockets) {
             const socketList = sockets.split(',');
-            productsList = productsList.filter(p => socketList.includes(p.socket));
+            laptopsList = laptopsList.filter(p => socketList.includes(p.socket));
         }
         if (memory) {
             const memoryList = memory.split(',');
-            productsList = productsList.filter(p => memoryList.includes(p.memory));
+            laptopsList = laptopsList.filter(p => memoryList.includes(p.memory));
         }
         if (types) {
             const typesList = types.split(',');
-            productsList = productsList.filter(p => typesList.includes(p.type));
+            laptopsList = laptopsList.filter(p => typesList.includes(p.type));
         }
 
         res.status(200).json({
             success: true,
-            count: productsList.length,
-            data: productsList
+            count: laptopsList.length,
+            data: laptopsList
         });
     } catch (error) {
         console.error("Eroare Firebase:", error);
         res.status(500).json({
             success: false,
-            message: 'Eroare la obținerea produselor din baza de date.'
+            message: 'Eroare la obținerea laptopurilor din baza de date.'
         });
     }
 };
 
-module.exports = { getProducts };
+module.exports = { getLaptops };

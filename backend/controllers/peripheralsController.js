@@ -1,6 +1,6 @@
 const { db } = require('../database/db');
 
-exports.getPeripherals = async (req, res) => {
+const getPeripherals = async (req, res) => {
     try {
         const {
             category,
@@ -77,3 +77,5 @@ exports.getPeripherals = async (req, res) => {
         });
     }
 };
+
+module.exports = { getPeripherals };
