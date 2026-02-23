@@ -75,6 +75,27 @@
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
+                            <v-expansion-panel v-if="availableFilters.motherboardSupport.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Plăci Suportate</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="mb in availableFilters.motherboardSupport" :key="mb" v-model="selectedFilters.motherboardSupport" :label="mb" :value="mb" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.sidePanels.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Panou Lateral</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="panel in availableFilters.sidePanels" :key="panel" v-model="selectedFilters.sidePanels" :label="panel" :value="panel" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.includedFans.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Ventilatoare</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="fan in availableFilters.includedFans" :key="fan" v-model="selectedFilters.includedFans" :label="`${fan} incluse`" :value="fan" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
                             <v-expansion-panel v-if="availableFilters.sockets.length > 0" elevation="0">
                                 <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Socket</v-expansion-panel-title>
                                 <v-expansion-panel-text>
@@ -262,27 +283,31 @@
         puteri: [],
         certificari: [],
         modularitati: [],
-        formate: []
+        formate: [],
+        motherboardSupport: [],
+        sidePanels: [],
+        includedFans: []
     });
 
     const specLabels = {
         socket: 'Socket',
         memory: 'Capacitate memorie',
         memory_type: 'Tip Memorie',
-        max_memory: 'Memorie maximă suportată',
-        memory_frequency: 'Frecvență memorie suportată',
+        max_memory: 'Memorie maximă',
+        memory_frequency: 'Frecvență memorie',
         type: 'Tip / Format',
         cores: 'Număr nuclee',
-        threads: 'Număr fire de execuție',
+        threads: 'Fire de execuție',
         frequency: 'Frecvență',
         boost_frequency: 'Frecvență maximă',
         tdp: 'Consum (TDP)',
-        refreshRate: 'Rată de refresh',
-        panel: 'Tip panou',
         putere: 'Putere',
-        certificare: 'Certificare',
+        certificare: 'Certificare 80+',
         modular: 'Modularitate',
-        format: 'Format'
+        format: 'Format',
+        motherboardSupport: 'Plăci de bază suportate',
+        sidePanel: 'Panou lateral',
+        includedFans: 'Ventilatoare incluse'
     };
 
     watch(activeCategory, () => {
@@ -298,7 +323,8 @@
         selectedFilters.value = { 
             brands: [], series: [], models: [], sockets: [], memory: [], 
             types: [], cores: [], chipsets: [], memoryTypes: [], interfaces: [],
-            puteri: [], certificari: [], modularitati: [], formate: []
+            puteri: [], certificari: [], modularitati: [], formate: [],
+            motherboardSupport: [], sidePanels: [], includedFans: []
         };
     };
 
@@ -308,7 +334,8 @@
         { id: 'placi_de_baza', name: 'Plăci de bază', icon: 'mdi-developer-board' },
         { id: 'memorie_ram', name: 'Memorii RAM', icon: 'mdi-memory' },
         { id: 'stocare', name: 'Stocare internă', icon: 'mdi-harddisk' },
-        { id: 'surse', name: 'Surse', icon: 'mdi-power-plug' }
+        { id: 'surse', name: 'Surse', icon: 'mdi-power-plug' },
+        { id: 'carcase', name: 'Carcase', icon: 'mdi-desktop-tower' }
     ];
 
     const getSeries = (name, category) => {
@@ -367,7 +394,10 @@
             puteri: [...new Set(currentProducts.map(p => p.specs?.putere).filter(Boolean))].sort((a,b) => parseInt(a) - parseInt(b)),
             certificari: [...new Set(currentProducts.map(p => p.specs?.certificare).filter(Boolean))],
             modularitati: [...new Set(currentProducts.map(p => p.specs?.modular).filter(Boolean))],
-            formate: [...new Set(currentProducts.map(p => p.specs?.format).filter(Boolean))]
+            formate: [...new Set(currentProducts.map(p => p.specs?.format).filter(Boolean))],
+            motherboardSupport: [...new Set(currentProducts.flatMap(p => p.specs?.motherboardSupport ? p.specs.motherboardSupport.split(',').map(s => s.trim()) : []))].sort(),
+            sidePanels: [...new Set(currentProducts.map(p => p.specs?.sidePanel).filter(Boolean))],
+            includedFans: [...new Set(currentProducts.map(p => p.specs?.includedFans).filter(Boolean))].sort()
         };
     });
 
@@ -388,12 +418,22 @@
         if (f.memoryTypes.length > 0) result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
         if (f.interfaces.length > 0) result = result.filter(p => f.interfaces.includes(p.specs?.interface));
         
-        // Logica noilor filtre de surse
         if (f.puteri.length > 0) result = result.filter(p => f.puteri.includes(p.specs?.putere));
         if (f.certificari.length > 0) result = result.filter(p => f.certificari.includes(p.specs?.certificare));
         if (f.modularitati.length > 0) result = result.filter(p => f.modularitati.includes(p.specs?.modular));
         if (f.formate.length > 0) result = result.filter(p => f.formate.includes(p.specs?.format));
-        
+
+        if (f.motherboardSupport.length > 0) {
+            result = result.filter(p => {
+                if (!p.specs?.motherboardSupport) return false;
+                const supportedFormats = p.specs.motherboardSupport.split(',').map(s => s.trim());
+                
+                return f.motherboardSupport.some(selectedFormat => supportedFormats.includes(selectedFormat));
+            });
+        }
+        if (f.sidePanels.length > 0) result = result.filter(p => f.sidePanels.includes(p.specs?.sidePanel));
+        if (f.includedFans.length > 0) result = result.filter(p => f.includedFans.includes(p.specs?.includedFans));
+
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
         } else if (sortOption.value === 'price_desc') {
@@ -448,13 +488,13 @@
         background: linear-gradient(90deg, #0984E3, #00CEC9) !important; 
         box-shadow: 0 0 10px rgba(0, 206, 201, 0.4); 
     }
-
     .neon-slider :deep(.v-slider-track__background) { 
         opacity: 0.2 !important; 
     }
 
     .neon-thumb {
-        width: 18px; height: 18px; 
+        width: 18px; 
+        height: 18px; 
         border-radius: 50%; 
         background-color: #1E272E; 
         border: 3px solid #00CEC9; 
@@ -467,13 +507,13 @@
         transform: scale(1.2);
     }
 
-    .custom-checkbox :deep(.v-label) {
-        color: #F5F6FA !important;
-        opacity: 0.85;
-        font-size: 0.9rem;
+    .custom-checkbox :deep(.v-label) { 
+        color: #F5F6FA !important; 
+        opacity: 0.85; 
+        font-size: 0.9rem; 
     }
 
-    .custom-checkbox :deep(.v-selection-control__input > .v-icon) {
+    .custom-checkbox :deep(.v-selection-control__input > .v-icon) { 
         opacity: 0.7; 
     }
 
@@ -482,9 +522,9 @@
         filter: drop-shadow(0 0 5px rgba(0, 206, 201, 0.5));
     }
 
-    .sort-bar {
-        background-color: #253038;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+    .sort-bar { 
+        background-color: #253038; 
+        border: 1px solid rgba(245, 246, 250, 0.05); 
     }
 
     .custom-select :deep(.v-field) { 
@@ -500,7 +540,7 @@
         border: 1px solid rgba(245, 246, 250, 0.05);
         border-radius: 24px !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
+        position: relative; 
         overflow: hidden;
     }
 
@@ -513,8 +553,8 @@
     .img-container {
         background-color: #F5F6FA; 
         margin: 12px 12px 0 12px;
-        padding: 20px;
-        border-radius: 16px;
+        padding: 20px; 
+        border-radius: 16px; 
         position: relative;
         box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
     }
@@ -530,12 +570,12 @@
         filter: contrast(1.05);
     }
 
-    .product-card .v-card-text {
-        padding-top: 24px !important;
+    .product-card .v-card-text { 
+        padding-top: 24px !important; 
     }
 
-    .product-card:hover .product-img {
-        transform: scale(1.15) translateY(-5px);
+    .product-card:hover .product-img { 
+        transform: scale(1.15) translateY(-5px); 
     }
     
     .discount-badge {
@@ -559,42 +599,42 @@
         padding-top: 12px; 
     }
 
-    .cart-btn {
-        background-color: rgba(9, 132, 227, 0.1) !important;
-        transition: all 0.3s ease;
+    .cart-btn { 
+        background-color: rgba(9, 132, 227, 0.1) !important; 
+        transition: all 0.3s ease; 
     }
 
     .cart-btn:hover {
-        background-color: #0984E3 !important;
+        background-color: #0984E3 !important; 
         color: #F5F6FA !important;
-        transform: scale(1.1) rotate(5deg);
+        transform: scale(1.1) rotate(5deg); 
         box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
     }
 
-    .custom-expansion-panels {
-        background: transparent !important;
+    .custom-expansion-panels { 
+        background: transparent !important; 
     }
 
-    .custom-expansion-panels :deep(.v-expansion-panel) {
-        background-color: transparent !important;
+    .custom-expansion-panels :deep(.v-expansion-panel) { 
+        background-color: transparent !important; 
     }
 
     .custom-expansion-panels :deep(.v-expansion-panel-title) {
-        padding-left: 0 !important;
+        padding-left: 0 !important; 
         padding-right: 0 !important;
-        min-height: 48px !important;
-        border-bottom: 1px solid rgba(245, 246, 250, 0.05);
+         min-height: 48px !important;
+        border-bottom: 1px solid rgba(245, 246, 250, 0.05); 
         color: #00CEC9 !important;
     }
 
-    .custom-expansion-panels :deep(.v-expansion-panel-title__overlay) {
-        background-color: transparent !important;
+    .custom-expansion-panels :deep(.v-expansion-panel-title__overlay) { 
+        background-color: transparent !important; 
     }
 
     .custom-expansion-panels :deep(.v-expansion-panel-text__wrapper) {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        padding-top: 12px !important;
+        padding-left: 0 !important; 
+        padding-right: 0 !important; 
+        padding-top: 12px !important; 
         padding-bottom: 16px !important;
     }
 </style>
