@@ -55,94 +55,96 @@
 
                         <v-expansion-panels variant="accordion" multiple class="custom-expansion-panels" bg-color="transparent">
                             <v-expansion-panel v-if="availableFilters.brands.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Producător
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Producător</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="brand in availableFilters.brands" :key="brand" v-model="selectedFilters.brands" :label="brand" :value="brand" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.series.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Serie
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Serie</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="serie in availableFilters.series" :key="serie" v-model="selectedFilters.series" :label="serie" :value="serie" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.models.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Model
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Model</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="model in availableFilters.models" :key="model" v-model="selectedFilters.models" :label="model" :value="model" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.sockets.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Socket
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Socket</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="socket in availableFilters.sockets" :key="socket" v-model="selectedFilters.sockets" :label="socket" :value="socket" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.cores.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Număr Nuclee
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Număr Nuclee</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="core in availableFilters.cores" :key="core" v-model="selectedFilters.cores" :label="`${core} Nuclee`" :value="core" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.chipsets.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Chipset
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Chipset</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="chipset in availableFilters.chipsets" :key="chipset" v-model="selectedFilters.chipsets" :label="chipset" :value="chipset" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.memory.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Capacitate
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Capacitate</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="mem in availableFilters.memory" :key="mem" v-model="selectedFilters.memory" :label="mem" :value="mem" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
                             <v-expansion-panel v-if="availableFilters.memoryTypes.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Tip Memorie
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Tip Memorie</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="type in availableFilters.memoryTypes" :key="type" v-model="selectedFilters.memoryTypes" :label="type" :value="type" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
 
-                            <v-expansion-panel v-if="availableFilters.types.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Tip / Format
-                                </v-expansion-panel-title>
-                                <v-expansion-panel-text>
-                                    <v-checkbox v-for="type in availableFilters.types" :key="type" v-model="selectedFilters.types" :label="type" :value="type" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
-                                </v-expansion-panel-text>
-                            </v-expansion-panel>
-
                             <v-expansion-panel v-if="availableFilters.interfaces.length > 0" elevation="0">
-                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">
-                                    Interfață
-                                </v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Interfață</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-checkbox v-for="intf in availableFilters.interfaces" :key="intf" v-model="selectedFilters.interfaces" :label="intf" :value="intf" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.puteri.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Putere (W)</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="putere in availableFilters.puteri" :key="putere" v-model="selectedFilters.puteri" :label="putere" :value="putere" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.certificari.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Certificare</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="cert in availableFilters.certificari" :key="cert" v-model="selectedFilters.certificari" :label="cert" :value="cert" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.modularitati.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Modularitate</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="mod in availableFilters.modularitati" :key="mod" v-model="selectedFilters.modularitati" :label="mod" :value="mod" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
+                            <v-expansion-panel v-if="availableFilters.formate.length > 0" elevation="0">
+                                <v-expansion-panel-title class="text-subtitle-2 cyan-text font-weight-bold text-uppercase px-0" style="letter-spacing: 1px;">Format / Tip</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-checkbox v-for="format in availableFilters.formate" :key="format" v-model="selectedFilters.formate" :label="format" :value="format" color="#00CEC9" density="compact" hide-details class="custom-checkbox"></v-checkbox>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+
                         </v-expansion-panels>
                     </v-card>
                 </v-col>
@@ -186,7 +188,7 @@
                                 </v-chip>
 
                                 <div class="img-container pa-4 text-center">
-                                    <v-img :src="component.specs.image" height="200" contain class="product-img mx-auto"></v-img>
+                                    <v-img :src="component.specs?.image || component.image" height="200" contain class="product-img mx-auto"></v-img>
                                 </div>
                                 
                                 <v-card-text class="flex-grow-1 pt-4">
@@ -205,7 +207,6 @@
                                                     <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
                                                 </span>
                                             </div>
-
                                         </template>
                                     </div>
                                 </v-card-text>
@@ -246,6 +247,7 @@
     const activeCategory = ref('procesoare');
     const sortOption = ref('popular');
     const priceRange = ref([0, 10000]);
+
     const selectedFilters = ref({
         brands: [],
         sockets: [],
@@ -256,8 +258,13 @@
         series: [],
         models: [],
         memoryTypes: [],
-        interfaces: []
+        interfaces: [],
+        puteri: [],
+        certificari: [],
+        modularitati: [],
+        formate: []
     });
+
     const specLabels = {
         socket: 'Socket',
         memory: 'Capacitate memorie',
@@ -271,7 +278,11 @@
         boost_frequency: 'Frecvență maximă',
         tdp: 'Consum (TDP)',
         refreshRate: 'Rată de refresh',
-        panel: 'Tip panou'
+        panel: 'Tip panou',
+        putere: 'Putere',
+        certificare: 'Certificare',
+        modular: 'Modularitate',
+        format: 'Format'
     };
 
     watch(activeCategory, () => {
@@ -285,16 +296,9 @@
     const resetFilters = () => {
         priceRange.value = [0, 10000];
         selectedFilters.value = { 
-            brands: [], 
-            series: [], 
-            models: [], 
-            sockets: [], 
-            memory: [], 
-            types: [], 
-            cores: [], 
-            chipsets: [], 
-            memoryTypes: [], 
-            interfaces: [] 
+            brands: [], series: [], models: [], sockets: [], memory: [], 
+            types: [], cores: [], chipsets: [], memoryTypes: [], interfaces: [],
+            puteri: [], certificari: [], modularitati: [], formate: []
         };
     };
 
@@ -303,7 +307,8 @@
         { id: 'placi_video', name: 'Plăci video', icon: 'mdi-expansion-card-variant' },
         { id: 'placi_de_baza', name: 'Plăci de bază', icon: 'mdi-developer-board' },
         { id: 'memorie_ram', name: 'Memorii RAM', icon: 'mdi-memory' },
-        { id: 'stocare', name: 'Stocare internă', icon: 'mdi-harddisk' }
+        { id: 'stocare', name: 'Stocare internă', icon: 'mdi-harddisk' },
+        { id: 'surse', name: 'Surse', icon: 'mdi-power-plug' }
     ];
 
     const getSeries = (name, category) => {
@@ -358,7 +363,11 @@
             models: [...new Set(currentProducts.map(p => getModel(p.name, p.category)).filter(Boolean))].sort(),
             chipsets: [...new Set(currentProducts.map(p => p.specs?.chipset).filter(Boolean))],
             memoryTypes: [...new Set(currentProducts.map(p => p.specs?.memory_type || p.specs?.memory_support).filter(Boolean))],
-            interfaces: [...new Set(currentProducts.map(p => p.specs?.interface).filter(Boolean))]
+            interfaces: [...new Set(currentProducts.map(p => p.specs?.interface).filter(Boolean))],
+            puteri: [...new Set(currentProducts.map(p => p.specs?.putere).filter(Boolean))].sort((a,b) => parseInt(a) - parseInt(b)),
+            certificari: [...new Set(currentProducts.map(p => p.specs?.certificare).filter(Boolean))],
+            modularitati: [...new Set(currentProducts.map(p => p.specs?.modular).filter(Boolean))],
+            formate: [...new Set(currentProducts.map(p => p.specs?.format).filter(Boolean))]
         };
     });
 
@@ -378,6 +387,12 @@
         if (f.chipsets.length > 0) result = result.filter(p => f.chipsets.includes(p.specs?.chipset));
         if (f.memoryTypes.length > 0) result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
         if (f.interfaces.length > 0) result = result.filter(p => f.interfaces.includes(p.specs?.interface));
+        
+        // Logica noilor filtre de surse
+        if (f.puteri.length > 0) result = result.filter(p => f.puteri.includes(p.specs?.putere));
+        if (f.certificari.length > 0) result = result.filter(p => f.certificari.includes(p.specs?.certificare));
+        if (f.modularitati.length > 0) result = result.filter(p => f.modularitati.includes(p.specs?.modular));
+        if (f.formate.length > 0) result = result.filter(p => f.formate.includes(p.specs?.format));
         
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
@@ -515,7 +530,7 @@
         filter: contrast(1.05);
     }
 
-        .product-card .v-card-text {
+    .product-card .v-card-text {
         padding-top: 24px !important;
     }
 

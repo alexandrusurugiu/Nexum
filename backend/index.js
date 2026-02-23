@@ -3,12 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+
 const componentsRoutes = require('./routes/componentsRouter');
 const peripheralsRoutes = require('./routes/peripheralsRouter');
 const laptopsRoutes = require('./routes/laptopsRouter');
 const cartRoutes = require('./routes/cartRouter');
 const authRoutes = require('./routes/authRouter');
 const monitorsRoutes = require('./routes/monitorsRouter');
+const configRoutes = require('./routes/configRouter');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -27,6 +29,7 @@ app.use('/server/laptops', laptopsRoutes);
 app.use('/server/cart', cartRoutes);
 app.use('/server/auth', authRoutes);
 app.use('/server/monitors', monitorsRoutes);
+app.use('/server/config', configRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}...`);

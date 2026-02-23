@@ -1,0 +1,28 @@
+[
+  { "brand": "Corsair", "category": "surse", "name": "Sursa Corsair RM850e V2", "price": 650, "specs": { "putere": "850W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Corsair", "category": "surse", "name": "Sursa Corsair RM1000x Shift", "price": 950, "specs": { "putere": "1000W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Corsair", "category": "surse", "name": "Sursa Corsair CV550", "price": 280, "specs": { "putere": "550W", "certificare": "80 PLUS Bronze", "modular": "Fix", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Corsair", "category": "surse", "name": "Sursa Corsair SF750", "price": 850, "specs": { "putere": "750W", "certificare": "80 PLUS Platinum", "modular": "Full Modular", "format": "SFX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "Seasonic", "category": "surse", "name": "Sursa Seasonic Focus GX, 750W", "price": 600, "specs": { "putere": "750W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Seasonic", "category": "surse", "name": "Sursa Seasonic Prime TX-1000", "price": 1400, "specs": { "putere": "1000W", "certificare": "80 PLUS Titanium", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Seasonic", "category": "surse", "name": "Sursa Seasonic B12 BC-650", "price": 320, "specs": { "putere": "650W", "certificare": "80 PLUS Bronze", "modular": "Fix", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Seasonic", "category": "surse", "name": "Sursa Seasonic Focus SGX-650", "price": 680, "specs": { "putere": "650W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "SFX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "be quiet!", "category": "surse", "name": "Sursa be quiet! Straight Power 12", "price": 800, "specs": { "putere": "850W", "certificare": "80 PLUS Platinum", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "be quiet!", "category": "surse", "name": "Sursa be quiet! Dark Power Pro 13", "price": 1800, "specs": { "putere": "1300W", "certificare": "80 PLUS Titanium", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "be quiet!", "category": "surse", "name": "Sursa be quiet! System Power 10", "price": 250, "specs": { "putere": "450W", "certificare": "80 PLUS Bronze", "modular": "Fix", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "ASUS", "category": "surse", "name": "Sursa ASUS ROG Thor 1000W Platinum II", "price": 1650, "specs": { "putere": "1000W", "certificare": "80 PLUS Platinum", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "ASUS", "category": "surse", "name": "Sursa ASUS TUF Gaming 750W Gold", "price": 620, "specs": { "putere": "750W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "ASUS", "category": "surse", "name": "Sursa ASUS ROG Loki SFX-L 850W", "price": 1100, "specs": { "putere": "850W", "certificare": "80 PLUS Platinum", "modular": "Full Modular", "format": "SFX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "GIGABYTE", "category": "surse", "name": "Sursa GIGABYTE UD1000GM", "price": 680, "specs": { "putere": "1000W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "GIGABYTE", "category": "surse", "name": "Sursa GIGABYTE P650B", "price": 280, "specs": { "putere": "650W", "certificare": "80 PLUS Bronze", "modular": "Fix", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "AQIRYS", "category": "surse", "name": "Sursa AQIRYS Pulsar LS", "price": 220, "specs": { "putere": "550W", "certificare": "80 PLUS White", "modular": "Fix", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "AQIRYS", "category": "surse", "name": "Sursa AQIRYS Magnetar", "price": 450, "specs": { "putere": "750W", "certificare": "80 PLUS Gold", "modular": "Semi Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+
+  { "brand": "Thermaltake", "category": "surse", "name": "Sursa Thermaltake Toughpower GF3", "price": 950, "specs": { "putere": "1200W", "certificare": "80 PLUS Gold", "modular": "Full Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } },
+  { "brand": "Thermaltake", "category": "surse", "name": "Sursa Thermaltake Smart BM2", "price": 300, "specs": { "putere": "650W", "certificare": "80 PLUS Bronze", "modular": "Semi Modular", "format": "ATX", "image": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400" } }
+]

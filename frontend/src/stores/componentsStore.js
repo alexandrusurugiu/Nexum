@@ -7,7 +7,9 @@ export const useComponentsStore = defineStore('components', () => {
   const isLoading = ref(false);
 
   const fetchComponents = async () => {
-    if (allComponents.value.length > 0) return; 
+    if (allComponents.value.length > 0) {
+      return; 
+    }
 
     isLoading.value = true;
     try {
