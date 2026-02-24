@@ -23,13 +23,13 @@
                 class="step-item d-flex align-center px-4 py-2 mx-1 rounded-lg"
                 :class="{ 'active-step': currentStep === index, 'completed-step': selectedBuild[step.id] }"
               >
-                <v-icon :color="currentStep === index ? '#00CEC9' : (selectedBuild[step.id] ? '#0984E3' : 'rgba(245,246,250,0.5)')" class="mr-2">
+                <v-icon :color="currentStep === index ? '#10B981' : (selectedBuild[step.id] ? '#059669' : 'rgba(245,246,250,0.5)')" class="mr-2">
                   {{ step.icon }}
                 </v-icon>
                 <span class="font-weight-bold" :class="currentStep === index ? 'cyan-text' : 'cloud-text opacity-80'">
                   {{ step.name }}
                 </span>
-                <v-icon v-if="selectedBuild[step.id]" color="#0984E3" size="small" class="ml-2">mdi-check-circle</v-icon>
+                <v-icon v-if="selectedBuild[step.id]" color="#059669" size="small" class="ml-2">mdi-check-circle</v-icon>
               </div>
             </div>
           </v-card>
@@ -62,7 +62,7 @@
                 <v-card-actions class="pa-4 pt-0 d-flex justify-space-between align-end">
                   <div class="text-h6 font-weight-black cloud-text">{{ part.price }} <span class="text-body-2 cyan-text">Lei</span></div>
                   <v-btn 
-                    :color="selectedBuild[steps[currentStep].id]?.id === part.id ? '#00CEC9' : '#0984E3'" 
+                    :color="selectedBuild[steps[currentStep].id]?.id === part.id ? '#10B981' : '#059669'" 
                     variant="tonal" class="rounded-lg font-weight-bold"
                   >
                     {{ selectedBuild[steps[currentStep].id]?.id === part.id ? 'Selectat' : 'Alege' }}
@@ -89,16 +89,33 @@
                 </div>
               </div>
 
-              <v-divider class="border-opacity-25 mb-4" color="#00CEC9"></v-divider>
+              <v-divider class="border-opacity-25 mb-4" color="#10B981"></v-divider>
 
-              <div class="mb-4 pa-3 rounded-lg" :class="compatibilityStatus.colorClass">
-                <div class="d-flex align-center">
-                  <v-icon :icon="compatibilityStatus.icon" class="mr-2"></v-icon>
-                  <span class="font-weight-bold text-body-2">{{ compatibilityStatus.message }}</span>
+              <div v-if="totalWattage > 0" class="mb-5">
+                <div class="d-flex justify-space-between align-end mb-2">
+                  <div class="d-flex align-center">
+                    <v-icon color="#f1c40f" size="small" class="mr-2 opacity-80">mdi-lightning-bolt</v-icon>
+                    <span class="text-caption cloud-text opacity-80 text-uppercase font-weight-bold" style="letter-spacing: 1px;">Consum Energie</span>
+                  </div>
+                  <div class="text-right" style="line-height: 1;">
+                    <span class="text-h6 font-weight-black" :class="isPsuWeak ? 'text-red-lighten-1' : 'cloud-text'">{{ totalWattage }}W</span>
+                    <span v-if="selectedBuild.psu" class="text-caption cloud-text opacity-50 font-weight-medium"> / {{ selectedBuild.psu.psuWattage }}W</span>
+                  </div>
                 </div>
-                <div v-if="totalWattage > 0" class="mt-2 text-caption opacity-80">
-                  Consum estimat: <strong>{{ totalWattage }}W</strong>
-                </div>
+                
+                <v-progress-linear
+                  v-if="selectedBuild.psu"
+                  :model-value="(totalWattage / selectedBuild.psu.psuWattage) * 100"
+                  :color="isPsuWeak ? '#ff4757' : '#10B981'"
+                  height="6"
+                  rounded
+                  bg-color="rgba(245, 246, 250, 0.05)"
+                ></v-progress-linear>
+              </div>
+
+              <div class="mb-6 pa-3 rounded-lg transition-all d-flex align-center" :class="compatibilityStatus.colorClass">
+                <v-icon :icon="compatibilityStatus.icon" class="mr-2"></v-icon>
+                <span class="font-weight-bold text-body-2">{{ compatibilityStatus.message }}</span>
               </div>
 
               <div class="d-flex justify-space-between align-end mb-6">
@@ -106,8 +123,16 @@
                 <span class="text-h4 font-weight-black cloud-text">{{ totalPrice }} <span class="text-h6 cyan-text">Lei</span></span>
               </div>
 
-              <v-btn block size="x-large" class="electric-btn font-weight-bold rounded-lg" @click="addBuildToCart">
-                <v-icon start>mdi-cart-plus</v-icon> Adaugă Configurația
+              <v-btn 
+                block 
+                size="x-large" 
+                class="font-weight-bold rounded-lg" 
+                :class="isPsuWeak ? 'bg-grey-darken-3 text-grey-lighten-1' : 'electric-btn'"
+                :disabled="isPsuWeak"
+                @click="addBuildToCart"
+              >
+                <v-icon start>{{ isPsuWeak ? 'mdi-power-plug-off' : 'mdi-cart-plus' }}</v-icon> 
+                {{ isPsuWeak ? 'Alege o sursă mai puternică' : 'Adaugă Configurația' }}
               </v-btn>
             </v-card>
           </div>
@@ -281,14 +306,19 @@
     return watts > 0 ? watts + 75 : 0;
   });
 
+  const isPsuWeak = computed(() => {
+    return selectedBuild.value.psu && totalWattage.value > selectedBuild.value.psu.psuWattage;
+  });
+
   const compatibilityStatus = computed(() => {
     const buildKeys = Object.keys(selectedBuild.value);
+    
     if (buildKeys.length === 0) {
-      return { message: 'Sistem Gol', icon: 'mdi-information', colorClass: 'bg-glass-neutral text-cloud' };
+      return { message: 'Sistem Gol', icon: 'mdi-information', colorClass: 'bg-glass-neutral cloud-text' };
     }
 
-    if (selectedBuild.value.psu && totalWattage.value > selectedBuild.value.psu.psuWattage) {
-      return { message: 'Avertisment: Sursă prea slabă!', icon: 'mdi-alert', colorClass: 'bg-glass-error text-white' };
+    if (isPsuWeak.value) {
+      return { message: 'Pericol: Sursă prea slabă!', icon: 'mdi-alert-octagon', colorClass: 'bg-glass-error text-white border-error shadow-error' };
     }
 
     if (buildKeys.length === steps.length) {
@@ -311,15 +341,15 @@
 
 <style scoped>
   .nexum-bg { 
-    background-color: #1E272E !important; 
+    background-color: #121212 !important; 
   }
 
   .cloud-text { 
-    color: #F5F6FA !important; 
+    color: #F3F4F6 !important; 
   }
 
   .cyan-text { 
-    color: #00CEC9 !important; 
+    color: #10B981 !important; 
   }
 
   .opacity-50 { 
@@ -350,8 +380,8 @@
   }
 
   .category-wrapper {
-    background-color: #253038;
-    border-top: 2px solid #00CEC9;
+    background-color: #1E1E1E;
+    border-top: 2px solid #10B981;
   }
 
   .hide-scrollbar::-webkit-scrollbar { 
@@ -369,25 +399,25 @@
   }
 
   .active-step { 
-    background: rgba(0, 206, 201, 0.1) !important; 
-    border: 1px solid rgba(0, 206, 201, 0.3); 
+    background: rgba(16, 185, 129, 0.1) !important; 
+    border: 1px solid rgba(16, 185, 129, 0.3); 
   }
 
   .product-card {
-    background-color: #253038 !important; 
+    background-color: #1E1E1E !important; 
     border: 1px solid rgba(245, 246, 250, 0.05);
     transition: all 0.3s ease;
   }
 
   .product-card:hover {
     transform: translateY(-5px); 
-    border-color: rgba(0, 206, 201, 0.3);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
   }
 
   .selected-card {
-    border-color: #00CEC9 !important;
-    box-shadow: 0 0 15px rgba(0, 206, 201, 0.2) !important;
+    border-color: #10B981 !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
   }
 
   .img-container { 
@@ -401,22 +431,26 @@
   }
 
   .summary-card {
-    background-color: #253038 !important;
-    border: 1px solid rgba(0, 206, 201, 0.2);
+    background-color: #1E1E1E !important;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .transition-all {
+    transition: all 0.3s ease;
   }
 
   .bg-glass-neutral { 
     background: rgba(245, 246, 250, 0.05); 
+    border: 1px solid transparent;
   }
 
   .bg-glass-cyan {
-    background: rgba(0, 206, 201, 0.1); 
-    border: 1px solid rgba(0, 206, 201, 0.3); 
+    background: rgba(16, 185, 129, 0.1); 
+    border: 1px solid rgba(16, 185, 129, 0.3); 
   }
 
   .bg-glass-error { 
-    background: rgba(255, 71, 87, 0.2); 
-    border: 1px solid rgba(255, 71, 87, 0.5); 
+    background: rgba(255, 71, 87, 0.15); 
   }
 
   .bg-glass-success { 
@@ -424,15 +458,23 @@
     border: 1px solid rgba(46, 213, 115, 0.5); 
   }
 
+  .border-error {
+    border: 1px solid #ff4757 !important;
+  }
+
+  .shadow-error {
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+  }
+
   .electric-btn {
-    background: linear-gradient(45deg, #0984E3, #00CEC9) !important; 
-    color: #F5F6FA !important;
+    background: linear-gradient(45deg, #059669, #10B981) !important; 
+    color: #F3F4F6 !important;
     letter-spacing: 1px; 
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .electric-btn:hover {
     transform: translateY(-2px); 
-    box-shadow: 0 8px 20px -5px rgba(0, 206, 201, 0.6) !important;
+    box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.6) !important;
   }
 </style>

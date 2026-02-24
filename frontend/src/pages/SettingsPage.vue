@@ -38,7 +38,7 @@
                                 <v-list-item-title class="font-weight-medium">Preferințe Site</v-list-item-title>
                             </v-list-item>
 
-                            <v-divider class="border-opacity-25 my-4" color="#00CEC9"></v-divider>
+                            <v-divider class="border-opacity-25 my-4" color="#10B981"></v-divider>
 
                             <v-list-item class="menu-item danger-item rounded-lg" prepend-icon="mdi-delete-alert-outline" @click="confirmDeleteAccount">
                                 <v-list-item-title class="font-weight-medium">Șterge Contul</v-list-item-title>
@@ -56,33 +56,33 @@
                             <v-row>
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parola Actuală</div>
-                                    <v-text-field v-model="passwords.current" type="password" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
+                                    <v-text-field v-model="passwords.current" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
                                 </v-col>
                                 
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parola Nouă</div>
-                                    <v-text-field v-model="passwords.new" type="password" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
+                                    <v-text-field v-model="passwords.new" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
                                 </v-col>
 
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Confirmă Parola Nouă</div>
-                                    <v-text-field v-model="passwords.confirm" type="password" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-4"></v-text-field>
+                                    <v-text-field v-model="passwords.confirm" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-4"></v-text-field>
                                 </v-col>
                             </v-row>
                             
-                            <v-btn type="submit" color="#0984E3" size="large" class="rounded-lg neon-btn font-weight-bold">
+                            <v-btn type="submit" color="#10B981" size="large" class="rounded-lg neon-btn font-weight-bold">
                                 Actualizează Parola
                             </v-btn>
                         </v-form>
 
-                        <v-divider class="border-opacity-25 my-8" color="#00CEC9"></v-divider>
+                        <v-divider class="border-opacity-25 my-8" color="#10B981"></v-divider>
 
                         <h2 class="text-h5 font-weight-bold cloud-text mb-4">Autentificare în doi pași (2FA)</h2>
                         <div class="d-flex align-center justify-space-between flex-wrap">
                             <p class="cloud-text opacity-80 text-body-1 mb-4 mb-sm-0 mr-4">
                                 Adaugă un strat suplimentar de securitate contului tău cerând un cod la logare.
                             </p>
-                            <v-btn color="#00CEC9" variant="tonal" class="rounded-lg font-weight-bold">
+                            <v-btn color="#10B981" variant="tonal" class="rounded-lg font-weight-bold">
                                 Activează 2FA
                             </v-btn>
                         </div>
@@ -94,7 +94,7 @@
                         <v-list bg-color="transparent" class="pa-0">
                             <v-list-item class="px-0 mb-4">
                                 <template v-slot:prepend>
-                                    <v-switch v-model="notifications.orders" color="#00CEC9" hide-details class="custom-switch mr-4"></v-switch>
+                                    <v-switch v-model="notifications.orders" color="#10B981" hide-details class="custom-switch mr-4"></v-switch>
                                 </template>
                                 <v-list-item-title class="cloud-text font-weight-bold text-h6">Actualizări Comenzi</v-list-item-title>
                                 <v-list-item-subtitle class="cloud-text opacity-70 mt-1" style="white-space: normal;">
@@ -104,7 +104,7 @@
 
                             <v-list-item class="px-0 mb-4">
                                 <template v-slot:prepend>
-                                    <v-switch v-model="notifications.newsletter" color="#00CEC9" hide-details class="custom-switch mr-4"></v-switch>
+                                    <v-switch v-model="notifications.newsletter" color="#10B981" hide-details class="custom-switch mr-4"></v-switch>
                                 </template>
                                 <v-list-item-title class="cloud-text font-weight-bold text-h6">Noutăți și Promoții</v-list-item-title>
                                 <v-list-item-subtitle class="cloud-text opacity-70 mt-1" style="white-space: normal;">
@@ -114,7 +114,7 @@
 
                             <v-list-item class="px-0">
                                 <template v-slot:prepend>
-                                    <v-switch v-model="notifications.sms" color="#00CEC9" hide-details class="custom-switch mr-4"></v-switch>
+                                    <v-switch v-model="notifications.sms" color="#10B981" hide-details class="custom-switch mr-4"></v-switch>
                                 </template>
                                 <v-list-item-title class="cloud-text font-weight-bold text-h6">Alerte SMS (Curier)</v-list-item-title>
                                 <v-list-item-subtitle class="cloud-text opacity-70 mt-1" style="white-space: normal;">
@@ -124,7 +124,7 @@
                         </v-list>
 
                         <div class="mt-8">
-                            <v-btn color="#0984E3" size="large" class="rounded-lg neon-btn font-weight-bold" @click="savePreferences('Notificările')">
+                            <v-btn color="#10B981" size="large" class="rounded-lg neon-btn font-weight-bold" @click="savePreferences('Notificările')">
                                 Salvează Preferințele
                             </v-btn>
                         </div>
@@ -139,7 +139,7 @@
                                 <v-select 
                                     v-model="preferences.theme" 
                                     :items="['Dark Mode (Implicit)', 'Light Mode', 'Sincronizare cu sistemul']" 
-                                    variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
+                                    variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
                                 ></v-select>
                             </v-col>
                             
@@ -148,13 +148,13 @@
                                 <v-select 
                                     v-model="preferences.language" 
                                     :items="['Română', 'English']" 
-                                    variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
+                                    variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
                                 ></v-select>
                             </v-col>
                         </v-row>
 
                         <div class="mt-4">
-                            <v-btn color="#0984E3" size="large" class="rounded-lg neon-btn font-weight-bold" @click="savePreferences('Setările de afișare')">
+                            <v-btn color="#059669" size="large" class="rounded-lg neon-btn font-weight-bold" @click="savePreferences('Setările de afișare')">
                                 Aplică Modificările
                             </v-btn>
                         </div>
@@ -228,15 +228,15 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #1E272E !important; 
+        background-color: #121212 !important; 
     }
 
     .cloud-text { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .cyan-text { 
-        color: #00CEC9 !important; 
+        color: #10B981 !important; 
     }
 
     .opacity-80 { 
@@ -248,12 +248,12 @@
     }
 
     .settings-panel {
-        background-color: #253038 !important;
+        background-color: #1E1E1E !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
 
     .menu-item {
-        color: #F5F6FA !important;
+        color: #F3F4F6 !important;
         opacity: 0.7;
         transition: all 0.3s ease;
     }
@@ -265,9 +265,9 @@
 
     .active-menu-item {
         opacity: 1;
-        color: #00CEC9 !important;
-        background: rgba(0, 206, 201, 0.1) !important;
-        border-left: 4px solid #00CEC9;
+        color: #10B981 !important;
+        background: rgba(16, 185, 129, 0.1) !important;
+        border-left: 4px solid #10B981;
     }
 
     .danger-item {
@@ -280,7 +280,7 @@
     }
 
     .custom-input :deep(.v-field__input) { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .custom-switch :deep(.v-selection-control__wrapper) {
@@ -288,12 +288,16 @@
     }
 
     .neon-btn {
-        box-shadow: 0 0 15px rgba(9, 132, 227, 0.5);
-        transition: all 0.3s ease;
-    }
+      background-color: #10B981 !important; 
+      color: #121212 !important; 
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+      transition: all 0.3s ease;
+  }
     
-    .neon-btn:hover {
-        box-shadow: 0 0 25px rgba(9, 132, 227, 0.8);
-        transform: translateY(-2px);
-    }
+    .neon-btn {
+      background-color: #10B981 !important; 
+      color: #121212 !important; 
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+      transition: all 0.3s ease;
+  }
 </style>

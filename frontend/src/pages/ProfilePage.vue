@@ -23,7 +23,7 @@
                             </div>
                         </div>
 
-                        <v-divider class="border-opacity-25 mb-4" color="#00CEC9"></v-divider>
+                        <v-divider class="border-opacity-25 mb-4" color="#10B981"></v-divider>
 
                         <v-list bg-color="transparent" class="pa-0">
                             <v-list-item 
@@ -56,28 +56,28 @@
                             <v-row>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Nume Complet</div>
-                                    <v-text-field v-model="editForm.name" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.name" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă Email</div>
-                                    <v-text-field :model-value="authStore.user.email" disabled variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input disabled-input"></v-text-field>
+                                    <v-text-field :model-value="authStore.user.email" disabled variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input disabled-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Telefon</div>
-                                    <v-text-field v-model="editForm.phone" placeholder="07xx xxx xxx" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.phone" placeholder="07xx xxx xxx" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">URL Avatar (Opțional)</div>
-                                    <v-text-field v-model="editForm.avatar" placeholder="https://..." variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.avatar" placeholder="https://..." variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă de Livrare</div>
-                                    <v-textarea v-model="editForm.address" rows="3" placeholder="Strada, Număr, Oraș, Județ, Cod Poștal" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-textarea>
+                                    <v-textarea v-model="editForm.address" rows="3" placeholder="Strada, Număr, Oraș, Județ, Cod Poștal" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-textarea>
                                 </v-col>
                             </v-row>
                             
                             <div class="d-flex justify-end mt-4">
-                                <v-btn type="submit" color="#0984E3" size="large" class="rounded-lg neon-btn px-8 font-weight-bold" :loading="authStore.isLoading">
+                                <v-btn type="submit" color="#059669" size="large" class="rounded-lg neon-btn px-8 font-weight-bold" :loading="authStore.isLoading">
                                     Salvează Modificările
                                 </v-btn>
                             </div>
@@ -88,7 +88,7 @@
                         <v-icon size="80" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-package-variant-closed</v-icon>
                         <h2 class="text-h5 cloud-text font-weight-bold">Nu ai plasat nicio comandă</h2>
                         <p class="cloud-text opacity-80 mt-2 mb-6">Aici vor apărea toate comenzile tale după ce finalizezi cumpărăturile din coș.</p>
-                        <v-btn color="#00CEC9" variant="tonal" class="rounded-lg" to="/home">
+                        <v-btn color="#10B981" variant="tonal" class="rounded-lg" to="/home">
                             Începe Cumpărăturile
                         </v-btn>
                     </v-card>
@@ -100,7 +100,7 @@
                     <v-card class="auth-card rounded-xl pa-8 pa-sm-10" elevation="15">
                         
                         <div class="text-center mb-8">
-                            <v-icon size="64" color="#00CEC9" class="mb-4 drop-shadow-cyan">
+                            <v-icon size="64" color="#10B981" class="mb-4 drop-shadow-cyan">
                                 {{ isLogin ? 'mdi-shield-account' : 'mdi-account-plus-outline' }}
                             </v-icon>
                             <h2 class="text-h4 font-weight-black cloud-text mb-2">
@@ -126,27 +126,27 @@
                                 
                                 <v-form v-if="isLogin" @submit.prevent="submitLogin" key="login">
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
                                     
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă</div>
-                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                                    <v-btn type="submit" block color="#0984E3" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
+                                    <v-btn type="submit" block color="#059669" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
                                         Intră în Cont
                                     </v-btn>
                                 </v-form>
 
                                 <v-form v-else @submit.prevent="submitRegister" key="register">
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Nume Complet</div>
-                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
 
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
                                     
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă (Minim 6 caractere)</div>
-                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                                    <v-btn type="submit" block color="#00CEC9" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: #1E272E !important; letter-spacing: 1px;" :loading="authStore.isLoading">
+                                    <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: #121212 !important; letter-spacing: 1px;" :loading="authStore.isLoading">
                                         Creează Cont
                                     </v-btn>
                                 </v-form>
@@ -213,15 +213,15 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #1E272E !important; 
+        background-color: #121212 !important; 
     }
 
     .cloud-text { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .cyan-text { 
-        color: #00CEC9 !important; 
+        color: #10B981 !important; 
     }
 
     .opacity-80 { 
@@ -233,15 +233,15 @@
     }
 
     .profile-panel {
-        background-color: #253038 !important;
+        background-color: #1E1E1E !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
     .border-cyan { 
-        border: 1px solid rgba(0, 206, 201, 0.5) !important; 
+        border: 1px solid rgba(16, 185, 129, 0.5) !important; 
     }
 
     .menu-item { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
         opacity: 0.7; 
         transition: all 0.3s ease; 
     }
@@ -253,9 +253,9 @@
 
     .active-menu-item { 
         opacity: 1; 
-        color: #00CEC9 !important; 
-        background: rgba(0, 206, 201, 0.1) !important; 
-        border-left: 4px solid #00CEC9; 
+        color: #10B981 !important; 
+        background: rgba(16, 185, 129, 0.1) !important; 
+        border-left: 4px solid #10B981; 
     }
 
     .logout-item { 
@@ -280,11 +280,11 @@
     .auth-card {
         background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 206, 201, 0.05) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.05) !important;
     }
 
     .drop-shadow-cyan {
-        filter: drop-shadow(0 0 10px rgba(0, 206, 201, 0.6));
+        filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
     }
 
     .custom-toggle-wrapper {
@@ -302,10 +302,10 @@
         bottom: 5px;
         left: 5px;
         width: calc(50% - 5px);
-        background: linear-gradient(90deg, #0984E3, #00CEC9);
+        background: linear-gradient(90deg, #059669, #10B981);
         border-radius: 25px;
         transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        box-shadow: 0 4px 12px rgba(0, 206, 201, 0.3);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     .toggle-slider.is-right {
@@ -318,7 +318,7 @@
         z-index: 1;
         background: transparent;
         border: none;
-        color: #F5F6FA;
+        color: #F3F4F6;
         font-weight: 700;
         font-size: 0.95rem;
         padding: 12px 0;
@@ -340,28 +340,33 @@
     }
     
     .custom-input :deep(.v-field--focused) {
-        background-color: rgba(0, 206, 201, 0.03);
+        background-color: rgba(16, 185, 129, 0.03);
     }
     
     .custom-input :deep(.v-field__input) { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .neon-btn {
-        box-shadow: 0 4px 15px rgba(9, 132, 227, 0.4);
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    }
+      background-color: #10B981 !important; 
+      color: #121212 !important; 
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+      transition: all 0.3s ease;
+  }
+
     .neon-btn:hover {
-        box-shadow: 0 8px 25px rgba(9, 132, 227, 0.6);
-        transform: translateY(-2px);
-    }
+      background-color: #059669 !important;
+      color: #F3F4F6 !important;
+      transform: translateY(-2px); 
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25) !important;
+  }
 
     .auth-register-btn {
-        box-shadow: 0 4px 15px rgba(0, 206, 201, 0.3);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
     .auth-register-btn:hover {
-        box-shadow: 0 8px 25px rgba(0, 206, 201, 0.5);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
         transform: translateY(-2px);
     }
 

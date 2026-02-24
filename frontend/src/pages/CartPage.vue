@@ -15,7 +15,7 @@
                     <div v-if="cartStore.items.length === 0" class="text-center py-16 cart-panel rounded-xl">
                         <v-icon size="80" color="rgba(245, 246, 250, 0.2)" class="mb-4">mdi-cart-outline</v-icon>
                         <h2 class="cloud-text opacity-80">Coșul tău este gol</h2>
-                        <v-btn color="#00CEC9" variant="tonal" class="mt-6" to="/home">Înapoi la cumpărături</v-btn>
+                        <v-btn color="#10B981" variant="tonal" class="mt-6" to="/home">Înapoi la cumpărături</v-btn>
                     </div>
 
                     <v-card v-else v-for="item in cartStore.items" :key="item.id" class="cart-panel mb-4 pa-4 rounded-xl d-flex align-center flex-wrap" elevation="5">
@@ -28,11 +28,11 @@
                         </div>
 
                         <div class="d-flex align-center mr-4 mt-4 mt-sm-0 bg-dark-blue pa-1 rounded-lg border-cyan">
-                            <v-btn icon size="small" variant="text" color="#F5F6FA" @click="cartStore.removeFromCart(item.id)">
+                            <v-btn icon size="small" variant="text" color="#F3F4F6" @click="cartStore.removeFromCart(item.id)">
                                 <v-icon>mdi-minus</v-icon>
                             </v-btn>
                             <span class="cloud-text font-weight-bold px-4 text-h6">{{ item.quantity }}</span>
-                            <v-btn icon size="small" variant="text" color="#F5F6FA" @click="cartStore.addToCart(item)">
+                            <v-btn icon size="small" variant="text" color="#F3F4F6" @click="cartStore.addToCart(item)">
                                 <v-icon>mdi-plus</v-icon>
                             </v-btn>
                         </div>
@@ -56,14 +56,14 @@
                             <span class="cyan-text font-weight-bold">Gratuit</span>
                         </div>
 
-                        <v-divider class="border-opacity-25 mb-6" color="#00CEC9"></v-divider>
+                        <v-divider class="border-opacity-25 mb-6" color="#10B981"></v-divider>
 
                         <div class="d-flex justify-space-between mb-6">
                             <span class="text-h6 cloud-text font-weight-bold">Total:</span>
                             <span class="text-h4 cyan-text font-weight-black">{{ cartStore.cartTotal }} Lei</span>
                         </div>
 
-                        <v-btn block color="#0984E3" size="x-large" class="rounded-lg font-weight-bold neon-btn" @click="checkout">
+                        <v-btn block color="#059669" size="x-large" class="rounded-lg font-weight-bold neon-btn" @click="checkout">
                             Finalizează Comanda
                         </v-btn>
                     </v-card>
@@ -91,15 +91,15 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #1E272E !important; 
+        background-color: #121212 !important; 
     }
 
     .cloud-text { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .cyan-text { 
-        color: #00CEC9 !important; 
+        color: #10B981 !important; 
     }
 
     .opacity-80 { 
@@ -111,7 +111,7 @@
     }
     
     .cart-panel {
-        background-color: #253038 !important;
+        background-color: #1E1E1E !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
     
@@ -120,18 +120,22 @@
     }
 
     .border-cyan { 
-        border: 1px solid rgba(0, 206, 201, 0.3); 
+        border: 1px solid rgba(16, 185, 129, 0.3); 
     }
 
     .neon-btn {
-        box-shadow: 0 0 15px rgba(9, 132, 227, 0.5);
-        transition: all 0.3s ease;
-    }
+      background-color: #10B981 !important; 
+      color: #121212 !important; 
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+      transition: all 0.3s ease;
+  }
 
     .neon-btn:hover {
-        box-shadow: 0 0 25px rgba(9, 132, 227, 0.8);
-        transform: translateY(-2px);
-    }
+      background-color: #059669 !important;
+      color: #F3F4F6 !important;
+      transform: translateY(-2px); 
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25) !important;
+  }
 
     .line-clamp-1 {
         display: -webkit-box; 

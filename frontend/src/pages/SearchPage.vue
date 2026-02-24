@@ -13,13 +13,13 @@
             </div>
 
             <div v-if="isLoading" class="text-center py-16">
-                <v-progress-circular indeterminate color="#00CEC9" size="64"></v-progress-circular>
+                <v-progress-circular indeterminate color="#10B981" size="64"></v-progress-circular>
             </div>
 
             <div v-else-if="searchResults.length === 0" class="text-center py-16">
                 <v-icon size="100" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-magnify-close</v-icon>
                 <h2 class="cloud-text opacity-80">Nu am găsit niciun produs</h2>
-                <v-btn color="#00CEC9" variant="tonal" class="mt-6 rounded-lg font-weight-bold" to="/home">
+                <v-btn color="#10B981" variant="tonal" class="mt-6 rounded-lg font-weight-bold" to="/home">
                     Înapoi la Magazin
                 </v-btn>
             </div>
@@ -27,7 +27,7 @@
             <v-row v-else>
                 <v-col v-for="product in searchResults" :key="product.id" cols="12" sm="6" md="4" lg="3">
                     <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
-                        <v-chip v-if="product.discount" color="#0984E3" class="discount-badge font-weight-bold" size="small">
+                        <v-chip v-if="product.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                             -{{ product.discount }}%
                         </v-chip>
 
@@ -36,7 +36,7 @@
                         </div>
                         
                         <v-card-text class="flex-grow-1 pt-4">
-                            <span class="text-caption text-uppercase font-weight-bold" style="color: #00CEC9; letter-spacing: 1px;">
+                            <span class="text-caption text-uppercase font-weight-bold" style="color: #10B981; letter-spacing: 1px;">
                                 {{ product.brand }} <span class="cloud-text opacity-50 mx-1">|</span> {{ formatCategory(product.category) }}
                             </span>
                             
@@ -47,7 +47,7 @@
                             <div class="quick-specs" v-if="product.specs">
                                 <template v-for="(value, key) in product.specs" :key="key">
                                     <div v-if="key !== 'image' && key !== 'image2' && value" class="d-flex align-center mb-1">
-                                        <v-icon size="small" color="#00CEC9" class="mr-2 opacity-80">mdi-circle-small</v-icon>
+                                        <v-icon size="small" color="#10B981" class="mr-2 opacity-80">mdi-circle-small</v-icon>
                                         <span class="cloud-text opacity-80 text-body-2 text-truncate">
                                             <strong class="cyan-text" style="opacity: 0.9;">{{ formatSpecLabel(key) }}:</strong> {{ value }}
                                         </span>
@@ -65,7 +65,7 @@
                                     {{ product.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                 </div>
                             </div>
-                            <v-btn icon color="#0984E3" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(product)" title="Adaugă în coș">
+                            <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(product)" title="Adaugă în coș">
                                 <v-icon>mdi-cart-plus</v-icon>
                             </v-btn>
                         </v-card-actions>
@@ -162,15 +162,15 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #1E272E !important; 
+        background-color: #121212 !important; 
     }
 
     .cloud-text { 
-        color: #F5F6FA !important; 
+        color: #F3F4F6 !important; 
     }
 
     .cyan-text { 
-        color: #00CEC9 !important; 
+        color: #10B981 !important; 
     }
 
     .opacity-80 { 
@@ -182,7 +182,7 @@
     }
 
     .product-card {
-        background-color: #253038 !important;
+        background-color: #1E1E1E !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
         border-radius: 24px !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -192,12 +192,12 @@
 
     .product-card:hover {
         transform: translateY(-10px);
-        border-color: rgba(0, 206, 201, 0.4);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 206, 201, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
     }
 
     .img-container {
-        background-color: #F5F6FA; 
+        background-color: #F3F4F6; 
         margin: 12px 12px 0 12px;
         padding: 20px;
         border-radius: 16px;
@@ -229,14 +229,14 @@
     }
 
     .cart-btn {
-        background-color: rgba(9, 132, 227, 0.1) !important;
+        background-color: rgba(5, 150, 105, 0.1) !important;
         transition: all 0.3s ease;
     }
 
     .cart-btn:hover {
-        background-color: #0984E3 !important;
-        color: #F5F6FA !important;
+        background-color: #059669 !important;
+        color: #F3F4F6 !important;
         transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+        box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
     }
 </style>
