@@ -11,6 +11,7 @@ const cartRoutes = require('./routes/cartRouter');
 const authRoutes = require('./routes/authRouter');
 const monitorsRoutes = require('./routes/monitorsRouter');
 const configRoutes = require('./routes/configRouter');
+const searchRoutes = require('./routes/searchRouter');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -30,6 +31,7 @@ app.use('/server/cart', cartRoutes);
 app.use('/server/auth', authRoutes);
 app.use('/server/monitors', monitorsRoutes);
 app.use('/server/config', configRoutes);
+app.use('/server/search', searchRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}...`);

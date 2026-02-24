@@ -51,6 +51,11 @@ const router = createRouter({
       path: '/setari',
       name: 'setari',
       component: () => import('../pages/SettingsPage.vue')
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: () => import('../pages/SearchPage.vue')
     }
   ],
 })
