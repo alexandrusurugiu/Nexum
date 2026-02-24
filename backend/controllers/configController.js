@@ -2,8 +2,7 @@ const { db } = require('../database/db');
 
 const getConfiguratorParts = async (req, res) => {
     try {
-        const categories = ['procesoare', 'placi_de_baza', 'memorie_ram', 'placi_video', 'stocare', 'surse'];
-        
+        const categories = ['procesoare', 'placi_de_baza', 'memorie_ram', 'placi_video', 'stocare', 'surse', 'carcase'];        
         const snapshot = await db.collection('products').where('category', 'in', categories).get();
 
         let parts = [];

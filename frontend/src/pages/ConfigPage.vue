@@ -36,7 +36,12 @@
 
           <h2 class="text-h5 font-weight-bold cloud-text mb-4">Alege {{ steps[currentStep].name }}</h2>
           
-          <v-row>
+          <v-alert v-if="currentAvailableParts.length === 0" color="warning" variant="tonal" class="rounded-xl mt-4">
+            <v-icon start>mdi-alert-circle</v-icon>
+            Nu există componente compatibile cu restul sistemului tău în această categorie. Te rugăm să verifici alegerile anterioare.
+          </v-alert>
+
+          <v-row v-else>
             <v-col v-for="part in currentAvailableParts" :key="part.id" cols="12" sm="6" lg="4">
               <v-card 
                 class="product-card h-100 d-flex flex-column rounded-xl cursor-pointer" 
@@ -45,13 +50,7 @@
                 @click="selectPart(steps[currentStep].id, part)"
               >
                 <div class="img-container pa-4 text-center relative">
-                  <v-chip 
-                    v-if="!checkCompatibility(part).isCompatible" 
-                    color="error" size="small" class="absolute-top-right font-weight-bold"
-                  >
-                    Incompatibil
-                  </v-chip>
-                  <v-img :src="part.image" height="150" contain class="product-img mx-auto" :class="{'opacity-50': !checkCompatibility(part).isCompatible}"></v-img>
+                  <v-img :src="part.image" height="150" contain class="product-img mx-auto"></v-img>
                 </div>
                 
                 <v-card-text class="flex-grow-1 pt-4">
@@ -65,7 +64,6 @@
                   <v-btn 
                     :color="selectedBuild[steps[currentStep].id]?.id === part.id ? '#00CEC9' : '#0984E3'" 
                     variant="tonal" class="rounded-lg font-weight-bold"
-                    :disabled="!checkCompatibility(part).isCompatible"
                   >
                     {{ selectedBuild[steps[currentStep].id]?.id === part.id ? 'Selectat' : 'Alege' }}
                   </v-btn>
@@ -140,19 +138,16 @@
     { id: 'ram', name: 'Memorie RAM', icon: 'mdi-memory' },
     { id: 'gpu', name: 'Placă Video', icon: 'mdi-expansion-card-variant' },
     { id: 'storage', name: 'Stocare', icon: 'mdi-harddisk' },
-    { id: 'psu', name: 'Sursă', icon: 'mdi-power-plug' }
+    { id: 'psu', name: 'Sursă', icon: 'mdi-power-plug' },
+    { id: 'case', name: 'Carcasă', icon: 'mdi-desktop-tower' }
   ];
 
   const currentStep = ref(0);
   const selectedBuild = ref({}); 
+
   const groupedParts = computed(() => {
     const groups = { 
-      cpu: [], 
-      mb: [], 
-      ram: [], 
-      gpu: [], 
-      storage: [], 
-      psu: [] 
+      cpu: [], mb: [], ram: [], gpu: [], storage: [], psu: [], case: [] 
     };
     
     allParts.value.forEach(p => {
@@ -165,6 +160,7 @@
       else if (p.category === 'placi_video') shortDesc = `${p.specs?.memory}, ${p.specs?.memory_type || ''}`;
       else if (p.category === 'stocare') shortDesc = `${p.specs?.capacity || p.specs?.memory}, ${p.specs?.type || ''}`;
       else if (p.category === 'surse') shortDesc = `${p.specs?.putere || 'N/A'}, ${p.specs?.certificare || ''}`;
+      else if (p.category === 'carcase') shortDesc = `${p.specs?.format || 'N/A'}, ${p.specs?.sidePanel || ''}`;
 
       const formattedPart = {
         ...p,
@@ -182,23 +178,31 @@
       else if (p.category === 'placi_video') groups.gpu.push(formattedPart);
       else if (p.category === 'stocare') groups.storage.push(formattedPart);
       else if (p.category === 'surse') groups.psu.push(formattedPart);
+      else if (p.category === 'carcase') groups.case.push(formattedPart);
     });
     
     return groups;
   });
 
-  const currentAvailableParts = computed(() => {
-    const currentCategory = steps[currentStep.value].id;
-    return groupedParts.value[currentCategory] || [];
-  });
-
-  const selectPart = (categoryId, part) => {
-    if (!checkCompatibility(part).isCompatible) return; 
+  const isFormatCompatible = (mbFormat, caseSupportStr) => {
+    if (!mbFormat || !caseSupportStr) return true; 
     
-    selectedBuild.value[categoryId] = part;
-    if (currentStep.value < steps.length - 1) {
-      currentStep.value++;
-    }
+    let mb = mbFormat.toLowerCase().replace(/[^a-z]/g, ''); 
+    if (mb.includes('micro') || mb === 'matx') mb = 'microatx';
+    else if (mb.includes('mini') || mb === 'mitx') mb = 'miniitx';
+    else if (mb.includes('extended') || mb === 'eatx') mb = 'eatx';
+    else if (mb === 'atx') mb = 'atx';
+
+    const supports = caseSupportStr.toLowerCase().split(',').map(s => {
+        let form = s.replace(/[^a-z]/g, '');
+        if (form.includes('micro') || form === 'matx') return 'microatx';
+        if (form.includes('mini') || form === 'mitx') return 'miniitx';
+        if (form.includes('extended') || form === 'eatx') return 'eatx';
+        if (form === 'atx') return 'atx';
+        return form;
+    });
+
+    return supports.includes(mb);
   };
 
   const checkCompatibility = (part) => {
@@ -206,22 +210,58 @@
     
     if (category === 'mb' && selectedBuild.value.cpu) {
       if (part.socket && selectedBuild.value.cpu.socket && !part.socket.includes(selectedBuild.value.cpu.socket)) {
-        return { isCompatible: false, reason: `Necesită socket ${selectedBuild.value.cpu.socket}` };
+        return { isCompatible: false };
       }
     }
     if (category === 'cpu' && selectedBuild.value.mb) {
       if (part.socket && selectedBuild.value.mb.socket && !selectedBuild.value.mb.socket.includes(part.socket)) {
-        return { isCompatible: false, reason: `Placa de bază are socket ${selectedBuild.value.mb.socket}` };
+        return { isCompatible: false };
       }
     }
 
     if (category === 'ram' && selectedBuild.value.mb) {
       if (part.ramType && selectedBuild.value.mb.ramType && !selectedBuild.value.mb.ramType.includes(part.ramType)) {
-        return { isCompatible: false, reason: `Placa de bază suportă ${selectedBuild.value.mb.ramType}` };
+        return { isCompatible: false };
+      }
+    }
+    if (category === 'mb' && selectedBuild.value.ram) {
+      if (part.ramType && selectedBuild.value.ram.ramType && !part.ramType.includes(selectedBuild.value.ram.ramType)) {
+        return { isCompatible: false };
+      }
+    }
+
+    if (category === 'case' && selectedBuild.value.mb) {
+      const mbFormat = selectedBuild.value.mb.specs?.type || selectedBuild.value.mb.specs?.format; 
+      const caseSupport = part.specs?.motherboardSupport; 
+      
+      if (mbFormat && caseSupport && !isFormatCompatible(mbFormat, caseSupport)) {
+         return { isCompatible: false };
+      }
+    }
+    if (category === 'mb' && selectedBuild.value.case) {
+      const mbFormat = part.specs?.type || part.specs?.format; 
+      const caseSupport = selectedBuild.value.case.specs?.motherboardSupport; 
+      
+      if (mbFormat && caseSupport && !isFormatCompatible(mbFormat, caseSupport)) {
+         return { isCompatible: false };
       }
     }
 
     return { isCompatible: true };
+  };
+
+  const currentAvailableParts = computed(() => {
+    const currentCategory = steps[currentStep.value].id;
+    const parts = groupedParts.value[currentCategory] || [];
+    
+    return parts.filter(part => checkCompatibility(part).isCompatible);
+  });
+
+  const selectPart = (categoryId, part) => {
+    selectedBuild.value[categoryId] = part;
+    if (currentStep.value < steps.length - 1) {
+      currentStep.value++;
+    }
   };
 
   const totalPrice = computed(() => {
