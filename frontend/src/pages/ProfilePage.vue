@@ -168,7 +168,7 @@
 
     const authStore = useAuthStore();
     const activeTab = ref('profile');
-    const isLogin = ref(true); // Controlează toggle-ul
+    const isLogin = ref(true); 
 
     const loginForm = ref({ email: '', password: '' });
     const registerForm = ref({ name: '', email: '', password: '' });
@@ -212,27 +212,70 @@
 </script>
 
 <style scoped>
-    .nexum-bg { background-color: #1E272E !important; }
-    .cloud-text { color: #F5F6FA !important; }
-    .cyan-text { color: #00CEC9 !important; }
-    .opacity-80 { opacity: 0.8; }
-    .opacity-50 { opacity: 0.5; }
+    .nexum-bg { 
+        background-color: #1E272E !important; 
+    }
 
-    /* CSS Pentru Dashboard-ul de profil */
+    .cloud-text { 
+        color: #F5F6FA !important; 
+    }
+
+    .cyan-text { 
+        color: #00CEC9 !important; 
+    }
+
+    .opacity-80 { 
+        opacity: 0.8; 
+    }
+
+    .opacity-50 { 
+        opacity: 0.5; 
+    }
+
     .profile-panel {
         background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
-    .border-cyan { border: 1px solid rgba(0, 206, 201, 0.5) !important; }
-    .menu-item { color: #F5F6FA !important; opacity: 0.7; transition: all 0.3s ease; }
-    .menu-item:hover { opacity: 1; background-color: rgba(245, 246, 250, 0.05); }
-    .active-menu-item { opacity: 1; color: #00CEC9 !important; background: rgba(0, 206, 201, 0.1) !important; border-left: 4px solid #00CEC9; }
-    .logout-item { color: #ff7675 !important; }
-    .logout-item:hover { background-color: rgba(214, 48, 49, 0.1); }
-    .disabled-input :deep(.v-field) { background-color: rgba(245, 246, 250, 0.03) !important; }
-    .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .border-cyan { 
+        border: 1px solid rgba(0, 206, 201, 0.5) !important; 
+    }
 
-    /* --- CSS NOU PENTRU AUTH CARD (LOGIN/REGISTER) --- */
+    .menu-item { 
+        color: #F5F6FA !important; 
+        opacity: 0.7; 
+        transition: all 0.3s ease; 
+    }
+
+    .menu-item:hover { 
+        opacity: 1; 
+        background-color: rgba(245, 246, 250, 0.05); 
+    }
+
+    .active-menu-item { 
+        opacity: 1; 
+        color: #00CEC9 !important; 
+        background: rgba(0, 206, 201, 0.1) !important; 
+        border-left: 4px solid #00CEC9; 
+    }
+
+    .logout-item { 
+        color: #ff7675 !important; 
+    }
+
+    .logout-item:hover { 
+        background-color: rgba(214, 48, 49, 0.1); 
+    }
+
+    .disabled-input :deep(.v-field) { 
+        background-color: rgba(245, 246, 250, 0.03) !important; 
+    }
+
+    .line-clamp-1 { 
+        display: -webkit-box; 
+        -webkit-line-clamp: 1; 
+        -webkit-box-orient: vertical; 
+        overflow: hidden; 
+    }
     
     .auth-card {
         background-color: #253038 !important;
@@ -244,11 +287,10 @@
         filter: drop-shadow(0 0 10px rgba(0, 206, 201, 0.6));
     }
 
-    /* Comutator Segmentat Custom (Pill Switch) */
     .custom-toggle-wrapper {
         position: relative;
         display: flex;
-        background: rgba(15, 20, 25, 0.6); /* Fundal închis pentru "șanț" */
+        background: rgba(15, 20, 25, 0.6); 
         border-radius: 30px;
         padding: 5px;
         border: 1px solid rgba(245, 246, 250, 0.05);
@@ -292,7 +334,6 @@
         color: #ffffff;
     }
 
-    /* Styling Formulare & Input-uri */
     .custom-input :deep(.v-field) {
         border-radius: 12px;
         transition: all 0.3s ease;
@@ -306,7 +347,6 @@
         color: #F5F6FA !important; 
     }
 
-    /* Butoane de Submit Neon */
     .neon-btn {
         box-shadow: 0 4px 15px rgba(9, 132, 227, 0.4);
         transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -325,10 +365,9 @@
         transform: translateY(-2px);
     }
 
-    /* Animație de Glisare Formulare (Fade & Slide) */
     .form-container {
         position: relative;
-        overflow: hidden; /* Evită scrollbar-ul în timpul animației */
+        overflow: hidden; 
     }
 
     .fade-slide-enter-active,
