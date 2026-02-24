@@ -95,55 +95,64 @@
                 </v-col>
             </v-row>
 
-            <v-row v-else justify="center">
-                <v-col cols="12" md="5" lg="4">
-                    <v-card class="profile-panel rounded-xl pa-8 h-100" elevation="10">
-                        <h2 class="text-h5 font-weight-black cloud-text mb-6">Client Existent</h2>
+            <v-row v-else justify="center" align="center" class="mt-4">
+                <v-col cols="12" md="6" lg="5">
+                    <v-card class="auth-card rounded-xl pa-8 pa-sm-10" elevation="15">
                         
-                        <v-alert v-if="authStore.errorMsg && isLoginAttempt" type="error" variant="tonal" class="mb-4 rounded-lg">
+                        <div class="text-center mb-8">
+                            <v-icon size="64" color="#00CEC9" class="mb-4 drop-shadow-cyan">
+                                {{ isLogin ? 'mdi-shield-account' : 'mdi-account-plus-outline' }}
+                            </v-icon>
+                            <h2 class="text-h4 font-weight-black cloud-text mb-2">
+                                {{ isLogin ? 'Bine ai revenit' : 'Creează un cont' }}
+                            </h2>
+                            <p class="cloud-text opacity-50 text-body-2 px-4">
+                                {{ isLogin ? 'Introdu datele pentru a accesa configurațiile și comenzile tale.' : 'Alătură-te comunității și bucură-te de o experiență premium.' }}
+                            </p>
+                        </div>
+
+                        <div class="custom-toggle-wrapper mb-8">
+                            <div class="toggle-slider" :class="{ 'is-right': !isLogin }"></div>
+                            <button class="toggle-btn" :class="{ 'active': isLogin }" @click="isLogin = true">Autentificare</button>
+                            <button class="toggle-btn" :class="{ 'active': !isLogin }" @click="isLogin = false">Cont Nou</button>
+                        </div>
+
+                        <v-alert v-if="authStore.errorMsg" type="error" variant="tonal" class="mb-6 rounded-lg text-body-2 auth-alert">
                             {{ authStore.errorMsg }}
                         </v-alert>
 
-                        <v-form @submit.prevent="submitLogin">
-                            <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă Email</div>
-                            <v-text-field v-model="loginForm.email" type="email" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.4)" class="custom-input mb-2" required></v-text-field>
-                            
-                            <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parolă</div>
-                            <v-text-field v-model="loginForm.password" type="password" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.4)" class="custom-input mb-6" required></v-text-field>
+                        <div class="form-container">
+                            <transition name="fade-slide" mode="out-in">
+                                
+                                <v-form v-if="isLogin" @submit.prevent="submitLogin" key="login">
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
+                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă</div>
+                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                            <v-btn type="submit" block color="#0984E3" size="x-large" class="rounded-lg neon-btn font-weight-bold" :loading="authStore.isLoading && isLoginAttempt">
-                                Intră în cont
-                            </v-btn>
-                        </v-form>
-                    </v-card>
-                </v-col>
+                                    <v-btn type="submit" block color="#0984E3" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
+                                        Intră în Cont
+                                    </v-btn>
+                                </v-form>
 
-                <v-col cols="12" md="1" class="d-none d-md-flex justify-center align-center">
-                    <div class="vertical-divider"></div>
-                </v-col>
+                                <v-form v-else @submit.prevent="submitRegister" key="register">
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Nume Complet</div>
+                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
 
-                <v-col cols="12" md="5" lg="4">
-                    <v-card class="profile-panel rounded-xl pa-8 h-100" elevation="10">
-                        <h2 class="text-h5 font-weight-black cloud-text mb-6">Client Nou</h2>
-                        
-                        <v-alert v-if="authStore.errorMsg && !isLoginAttempt" type="error" variant="tonal" class="mb-4 rounded-lg">
-                            {{ authStore.errorMsg }}
-                        </v-alert>
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
+                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă (Minim 6 caractere)</div>
+                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                        <v-form @submit.prevent="submitRegister">
-                            <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Nume Complet</div>
-                            <v-text-field v-model="registerForm.name" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.4)" class="custom-input mb-2" required></v-text-field>
+                                    <v-btn type="submit" block color="#00CEC9" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: #1E272E !important; letter-spacing: 1px;" :loading="authStore.isLoading">
+                                        Creează Cont
+                                    </v-btn>
+                                </v-form>
 
-                            <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă Email</div>
-                            <v-text-field v-model="registerForm.email" type="email" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.4)" class="custom-input mb-2" required></v-text-field>
-                            
-                            <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parolă</div>
-                            <v-text-field v-model="registerForm.password" type="password" variant="outlined" color="#00CEC9" base-color="rgba(245, 246, 250, 0.4)" class="custom-input mb-6" required></v-text-field>
-
-                            <v-btn type="submit" block color="#00CEC9" variant="tonal" size="x-large" class="rounded-lg font-weight-bold" :loading="authStore.isLoading && !isLoginAttempt">
-                                Creează Cont
-                            </v-btn>
-                        </v-form>
+                            </transition>
+                        </div>
                     </v-card>
                 </v-col>
             </v-row>
@@ -159,22 +168,12 @@
 
     const authStore = useAuthStore();
     const activeTab = ref('profile');
-    const isLoginAttempt = ref(true);
-    const loginForm = ref({ 
-        email: '', 
-        password: '' 
-    });
-    const registerForm = ref({ 
-        name: '', 
-        email: '', 
-        password: '' 
-    });
-    const editForm = ref({ 
-        name: '', 
-        phone: '', 
-        address: '', 
-        avatar: '' 
-    });
+    const isLogin = ref(true); // Controlează toggle-ul
+
+    const loginForm = ref({ email: '', password: '' });
+    const registerForm = ref({ name: '', email: '', password: '' });
+    
+    const editForm = ref({ name: '', phone: '', address: '', avatar: '' });
 
     const populateEditForm = () => {
         if (authStore.user) {
@@ -191,114 +190,159 @@
     watch(() => authStore.user, populateEditForm);
 
     const submitLogin = async () => {
-        isLoginAttempt.value = true;
         const success = await authStore.login(loginForm.value.email, loginForm.value.password);
-        if (success) {
-            loginForm.value = { email: '', password: '' }; 
-        }
+        if (success) loginForm.value = { email: '', password: '' }; 
     };
 
     const submitRegister = async () => {
-        isLoginAttempt.value = false;
         const success = await authStore.register(registerForm.value.name, registerForm.value.email, registerForm.value.password);
-        if (success) {
-            registerForm.value = { name: '', email: '', password: '' }; 
-        }
+        if (success) registerForm.value = { name: '', email: '', password: '' }; 
     };
 
     const saveProfile = async () => {
         const success = await authStore.updateProfile(editForm.value);
-        if (success) {
-            alert("Datele au fost salvate cu succes!");
-        }
+        if (success) alert("Datele au fost salvate cu succes!");
     };
 
     const handleLogout = () => {
         authStore.logout();
         activeTab.value = 'profile';
+        isLogin.value = true;
     };
 </script>
 
 <style scoped>
-    .nexum-bg { 
-        background-color: #1E272E !important; 
-    }
+    .nexum-bg { background-color: #1E272E !important; }
+    .cloud-text { color: #F5F6FA !important; }
+    .cyan-text { color: #00CEC9 !important; }
+    .opacity-80 { opacity: 0.8; }
+    .opacity-50 { opacity: 0.5; }
 
-    .cloud-text { 
-        color: #F5F6FA !important; 
-    }
-
-    .cyan-text { 
-        color: #00CEC9 !important; 
-    }
-
-    .opacity-80 { 
-        opacity: 0.8; 
-    }
-
+    /* CSS Pentru Dashboard-ul de profil */
     .profile-panel {
         background-color: #253038 !important;
         border: 1px solid rgba(245, 246, 250, 0.05);
     }
+    .border-cyan { border: 1px solid rgba(0, 206, 201, 0.5) !important; }
+    .menu-item { color: #F5F6FA !important; opacity: 0.7; transition: all 0.3s ease; }
+    .menu-item:hover { opacity: 1; background-color: rgba(245, 246, 250, 0.05); }
+    .active-menu-item { opacity: 1; color: #00CEC9 !important; background: rgba(0, 206, 201, 0.1) !important; border-left: 4px solid #00CEC9; }
+    .logout-item { color: #ff7675 !important; }
+    .logout-item:hover { background-color: rgba(214, 48, 49, 0.1); }
+    .disabled-input :deep(.v-field) { background-color: rgba(245, 246, 250, 0.03) !important; }
+    .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
-    .border-cyan { 
-        border: 2px solid rgba(0, 206, 201, 0.5); 
+    /* --- CSS NOU PENTRU AUTH CARD (LOGIN/REGISTER) --- */
+    
+    .auth-card {
+        background-color: #253038 !important;
+        border: 1px solid rgba(245, 246, 250, 0.05);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 206, 201, 0.05) !important;
     }
 
-    .vertical-divider {
-        height: 70%;
-        width: 1px;
-        background-color: rgba(245, 246, 250, 0.1);
+    .drop-shadow-cyan {
+        filter: drop-shadow(0 0 10px rgba(0, 206, 201, 0.6));
     }
 
-    .menu-item {
-        color: #F5F6FA !important;
-        opacity: 0.7;
+    /* Comutator Segmentat Custom (Pill Switch) */
+    .custom-toggle-wrapper {
+        position: relative;
+        display: flex;
+        background: rgba(15, 20, 25, 0.6); /* Fundal închis pentru "șanț" */
+        border-radius: 30px;
+        padding: 5px;
+        border: 1px solid rgba(245, 246, 250, 0.05);
+    }
+
+    .toggle-slider {
+        position: absolute;
+        top: 5px;
+        bottom: 5px;
+        left: 5px;
+        width: calc(50% - 5px);
+        background: linear-gradient(90deg, #0984E3, #00CEC9);
+        border-radius: 25px;
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        box-shadow: 0 4px 12px rgba(0, 206, 201, 0.3);
+    }
+
+    .toggle-slider.is-right {
+        transform: translateX(100%);
+    }
+
+    .toggle-btn {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        color: #F5F6FA;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 12px 0;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.3s ease, color 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .toggle-btn.active {
+        opacity: 1;
+        color: #ffffff;
+    }
+
+    /* Styling Formulare & Input-uri */
+    .custom-input :deep(.v-field) {
+        border-radius: 12px;
         transition: all 0.3s ease;
     }
-
-    .menu-item:hover {
-        opacity: 1;
-        background-color: rgba(245, 246, 250, 0.05);
+    
+    .custom-input :deep(.v-field--focused) {
+        background-color: rgba(0, 206, 201, 0.03);
     }
-
-    .active-menu-item {
-        opacity: 1;
-        color: #00CEC9 !important;
-        background: rgba(0, 206, 201, 0.1) !important;
-        border-left: 4px solid #00CEC9;
-    }
-
-    .logout-item {
-        color: #ff7675 !important;
-    }
-
-    .logout-item:hover {
-        background-color: rgba(214, 48, 49, 0.1);
-    }
-
+    
     .custom-input :deep(.v-field__input) { 
         color: #F5F6FA !important; 
     }
-    
-    .disabled-input :deep(.v-field) {
-        background-color: rgba(245, 246, 250, 0.03) !important;
-    }
 
+    /* Butoane de Submit Neon */
     .neon-btn {
-        box-shadow: 0 0 15px rgba(9, 132, 227, 0.5);
-        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(9, 132, 227, 0.4);
+        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
-    
     .neon-btn:hover {
-        box-shadow: 0 0 25px rgba(9, 132, 227, 0.8);
+        box-shadow: 0 8px 25px rgba(9, 132, 227, 0.6);
         transform: translateY(-2px);
     }
 
-    .line-clamp-1 {
-        display: -webkit-box; 
-        -webkit-line-clamp: 1; 
-        -webkit-box-orient: vertical; 
-        overflow: hidden;
+    .auth-register-btn {
+        box-shadow: 0 4px 15px rgba(0, 206, 201, 0.3);
+        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .auth-register-btn:hover {
+        box-shadow: 0 8px 25px rgba(0, 206, 201, 0.5);
+        transform: translateY(-2px);
+    }
+
+    /* Animație de Glisare Formulare (Fade & Slide) */
+    .form-container {
+        position: relative;
+        overflow: hidden; /* Evită scrollbar-ul în timpul animației */
+    }
+
+    .fade-slide-enter-active,
+    .fade-slide-leave-active {
+        transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .fade-slide-enter-from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    .fade-slide-leave-to {
+        opacity: 0;
+        transform: translateX(-30px);
     }
 </style>

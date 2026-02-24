@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { auth } from '../firebase'; 
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('nexum_user')) || null);
@@ -9,36 +11,62 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isAuthenticated = computed(() => user.value !== null);
 
-    const login = async (email, password) => {
+    const register = async (name, email, password) => {
         isLoading.value = true;
         errorMsg.value = '';
         try {
-            const response = await axios.post('http://localhost:5000/server/auth/login', { email, password });
+            const result = await createUserWithEmailAndPassword(auth, email, password);
+            const firebaseUser = result.user;
+
+            const response = await axios.post('http://localhost:5000/server/auth/sync', {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                name: name,
+                avatar: ''
+            });
+
             if (response.data.success) {
                 user.value = response.data.user;
                 localStorage.setItem('nexum_user', JSON.stringify(user.value));
                 return true;
             }
         } catch (error) {
-            errorMsg.value = error.response?.data?.message || "Eroare la logare.";
+            console.error("Firebase Auth Error:", error);
+            if (error.code === 'auth/email-already-in-use') {
+                errorMsg.value = "Acest email este deja folosit.";
+            } else if (error.code === 'auth/weak-password') {
+                errorMsg.value = "Parola trebuie să aibă minim 6 caractere.";
+            } else {
+                errorMsg.value = "Eroare la înregistrare. Verifică datele introduse.";
+            }
             return false;
         } finally {
             isLoading.value = false;
         }
     };
 
-    const register = async (name, email, password) => {
+    const login = async (email, password) => {
         isLoading.value = true;
         errorMsg.value = '';
         try {
-            const response = await axios.post('http://localhost:5000/server/auth/register', { name, email, password });
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            const firebaseUser = result.user;
+
+            const response = await axios.post('http://localhost:5000/server/auth/sync', {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                name: '', 
+                avatar: ''
+            });
+
             if (response.data.success) {
                 user.value = response.data.user;
                 localStorage.setItem('nexum_user', JSON.stringify(user.value));
                 return true;
             }
         } catch (error) {
-            errorMsg.value = error.response?.data?.message || "Eroare la înregistrare.";
+            console.error("Firebase Auth Error:", error);
+            errorMsg.value = "Email sau parolă incorecte.";
             return false;
         } finally {
             isLoading.value = false;
@@ -62,7 +90,12 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Eroare la delogare Firebase:", error);
+        }
         user.value = null;
         localStorage.removeItem('nexum_user');
     };
