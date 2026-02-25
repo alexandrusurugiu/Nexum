@@ -420,10 +420,20 @@
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
   }
 
-  .img-container { 
-    background-color: rgba(30, 39, 46, 0.5); 
-    border-bottom: 1px solid rgba(245, 246, 250, 0.05); 
+  .img-container {
+    background-color: #F3F4F6; 
+    margin: 12px 12px 0 12px;
+    padding: 20px; 
+    border-radius: 16px; 
+    position: relative;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
   }
+
+  .product-img {
+        transition: all 0.5s ease;
+        mix-blend-mode: multiply; 
+        filter: contrast(1.05);
+    }
 
   .sticky-summary {
     position: sticky;
