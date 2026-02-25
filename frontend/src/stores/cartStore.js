@@ -69,5 +69,21 @@ export const useCartStore = defineStore('cart', () => {
         }
     };
 
-    return { items, isLoading, cartCount, cartTotal, fetchCart, addToCart, removeFromCart };
+    const clearCart = async () => {
+        isLoading.value = true;
+        try {
+            items.value = [];
+            localStorage.removeItem('cartItems');
+            
+            await axios.delete(`http://localhost:5000/server/cart/${userId}/clear`);
+            
+        } catch (error) {
+            console.error("Eroare la golirea coșului pe server:", error);
+            fetchCart();
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    return { items, isLoading, cartCount, cartTotal, fetchCart, addToCart, removeFromCart, clearCart };
 });

@@ -73,8 +73,34 @@ const removeFromCart = async (req, res) => {
     }
 };
 
+const clearCart = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        const cartItemsRef = db.collection('carts').doc(userId).collection('items');
+        const snapshot = await cartItemsRef.get();
+
+        if (snapshot.empty) {
+            return res.status(200).json({ success: true, message: 'Coșul este deja gol.' });
+        }
+
+        const batch = db.batch();
+        snapshot.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        
+        await batch.commit();
+
+        res.status(200).json({ success: true, message: 'Coșul a fost golit complet de pe server!' });
+    } catch (error) {
+        console.error("Eroare la golirea coșului:", error);
+        res.status(500).json({ success: false, message: 'Eroare la golirea coșului.' });
+    }
+};
+
 module.exports = {
     addToCart,
     removeFromCart,
-    getCart
+    getCart,
+    clearCart
 };
