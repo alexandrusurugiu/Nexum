@@ -126,10 +126,10 @@
                                 
                                 <v-form v-if="isLogin" @submit.prevent="submitLogin" key="login">
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
                                     
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă</div>
-                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
                                     <v-btn type="submit" block color="#059669" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
                                         Intră în Cont
@@ -138,13 +138,13 @@
 
                                 <v-form v-else @submit.prevent="submitRegister" key="register">
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Nume Complet</div>
-                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
 
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
                                     
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă (Minim 6 caractere)</div>
-                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
                                     <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: var(--bg-main) !important; letter-spacing: 1px;" :loading="authStore.isLoading">
                                         Creează Cont
@@ -278,9 +278,10 @@
     }
     
     .auth-card {
-        background-color: #253038 !important;
+        background-color: var(--bg-panel) !important;
         border: 1px solid var(--border-light);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.05) !important;
+        box-shadow: 0 10px 30px var(--shadow-color) !important;
+        transition: all 0.3s ease;
     }
 
     .drop-shadow-cyan {
@@ -290,7 +291,7 @@
     .custom-toggle-wrapper {
         position: relative;
         display: flex;
-        background: rgba(15, 20, 25, 0.6); 
+        background: var(--border-light);
         border-radius: 30px;
         padding: 5px;
         border: 1px solid var(--border-light);

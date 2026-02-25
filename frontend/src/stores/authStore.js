@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { auth } from '../firebase'; 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('nexum_user')) || null);
@@ -100,5 +100,37 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('nexum_user');
     };
 
-    return { user, isAuthenticated, isLoading, errorMsg, login, register, logout, updateProfile };
+    const changeUserPassword = async (currentPassword, newPassword) => {
+        isLoading.value = true;
+        errorMsg.value = '';
+        
+        try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            
+            if (!user) {
+                throw new Error("Nu ești autentificat.");
+            }
+
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+            await reauthenticateWithCredential(user, credential);
+            await updatePassword(user, newPassword);
+            
+            return { success: true };
+        } catch (error) {
+            console.error("Eroare la schimbarea parolei:", error);
+            let message = "A apărut o eroare la schimbarea parolei.";
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                message = "Parola actuală este incorectă.";
+            } else if (error.code === 'auth/weak-password') {
+                message = "Noua parolă este prea slabă. Alege una mai puternică.";
+            }
+
+            return { success: false, message };
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    return { user, isAuthenticated, isLoading, errorMsg, login, register, logout, updateProfile, changeUserPassword };
 });

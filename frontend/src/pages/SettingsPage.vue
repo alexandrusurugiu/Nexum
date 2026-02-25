@@ -52,6 +52,14 @@
                     <v-card v-if="activeTab === 'security'" class="settings-panel rounded-xl pa-6 pa-md-8" elevation="5">
                         <h2 class="text-h5 font-weight-bold cloud-text mb-6">Schimbare Parolă</h2>
                         
+                        <v-alert v-if="passwordSuccess" type="success" variant="tonal" class="mb-6 rounded-lg text-body-2">
+                            Parola a fost actualizată cu succes!
+                        </v-alert>
+
+                        <v-alert v-if="passwordError" type="error" variant="tonal" class="mb-6 rounded-lg text-body-2">
+                            {{ passwordError }}
+                        </v-alert>
+
                         <v-form @submit.prevent="updatePassword">
                             <v-row>
                                 <v-col cols="12" md="8">
@@ -176,6 +184,8 @@
     const authStore = useAuthStore();
     const router = useRouter();
     const themeStore = useThemeStore();
+    const passwordSuccess = ref(false);
+    const passwordError = ref('');
 
     if (!authStore.isAuthenticated) {
         router.push('/profil');
@@ -199,18 +209,37 @@
         language: 'Română'
     });
 
-    const updatePassword = () => {
-        if (passwords.value.new !== passwords.value.confirm) {
-            alert("Parolele noi nu se potrivesc!");
+    const updatePassword = async () => {
+        passwordSuccess.value = false;
+        passwordError.value = '';
+
+        if (!passwords.value.current) {
+            passwordError.value = "Te rugăm să introduci parola actuală!";
             return;
         }
+
+        if (passwords.value.new !== passwords.value.confirm) {
+            passwordError.value = "Parolele noi nu se potrivesc!";
+            return;
+        }
+
         if (passwords.value.new.length < 6) {
-            alert("Parola trebuie să aibă minim 6 caractere!");
+            passwordError.value = "Noua parolă trebuie să aibă minim 6 caractere!";
             return;
         }
         
-        alert("Parola a fost schimbată cu succes!");
-        passwords.value = { current: '', new: '', confirm: '' };
+        const result = await authStore.changeUserPassword(passwords.value.current, passwords.value.new);
+        
+        if (result.success) {
+            passwordSuccess.value = true;
+            passwords.value = { current: '', new: '', confirm: '' };
+            
+            setTimeout(() => {
+                passwordSuccess.value = false;
+            }, 5000);
+        } else {
+            passwordError.value = result.message;
+        }
     };
 
     const savePreferences = (type) => {
