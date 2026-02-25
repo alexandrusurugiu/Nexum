@@ -162,11 +162,11 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #121212 !important; 
+        background-color: var(--bg-main) !important; 
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -182,8 +182,8 @@
     }
 
     .product-card {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
         border-radius: 24px !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
@@ -197,7 +197,7 @@
     }
 
     .img-container {
-        background-color: #F3F4F6; 
+        background-color: #F3F4F6 !important; 
         margin: 12px 12px 0 12px;
         padding: 20px;
         border-radius: 16px;
@@ -235,7 +235,7 @@
 
     .cart-btn:hover {
         background-color: #059669 !important;
-        color: #F3F4F6 !important;
+        color: var(--text-main) !important;
         transform: scale(1.1) rotate(5deg);
         box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
     }

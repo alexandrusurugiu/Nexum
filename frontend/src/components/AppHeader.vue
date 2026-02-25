@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar color="#121212" height="80" extension-height="50" class="border-0" style="border-bottom: 1px solid rgba(243, 244, 246, 0.05) !important;">
+    <v-app-bar color="var(--bg-main)" height="80" extension-height="50" class="border-0" style="border-bottom: 1px solid var(--border-light) !important;">
         
         <div class="d-flex w-100 align-center px-4">
             <v-app-bar-title class="font-weight-black text-h4 cloud-text mr-10" style="cursor: pointer; flex: 0 0 auto; background: transparent;" @click="navigateToHome">
@@ -14,7 +14,7 @@
                 prepend-inner-icon="mdi-magnify"
                 variant="solo-filled"
                 flat
-                bg-color="rgba(243, 244, 246, 0.05)"
+                bg-color="var(--border-light)"
                 color="#10B981"
                 base-color="rgba(243, 244, 246, 0.3)"
                 density="comfortable"
@@ -75,14 +75,14 @@
                 <v-btn icon="mdi-information-outline" class="cloud-text opacity-80 hover-cyan" title="Despre Nexum"></v-btn>
                 <v-btn icon="mdi-cog-outline" class="cloud-text opacity-80 hover-cyan" title="Setări" @click="goToSettings"></v-btn>
                 
-                <v-divider vertical class="mx-3 border-opacity-25" color="#F3F4F6" style="height: 50px;"></v-divider>
+                <v-divider vertical class="mx-3 border-opacity-25" color="var(--text-main)" style="height: 50px;"></v-divider>
 
                 <v-btn icon class="cloud-text hover-cyan" @click="goToProfile" title="Contul Meu">
                     <v-icon size="large">mdi-account-circle-outline</v-icon>
                 </v-btn>
                 
                 <v-btn icon class="cloud-text ml-2" @click="goToCart" title="Cosul tău">
-                    <v-badge :content="cartStore.cartCount" :model-value="cartStore.cartCount > 0" color="#059669" text-color="#F3F4F6" floating>
+                    <v-badge :content="cartStore.cartCount" :model-value="cartStore.cartCount > 0" color="#059669" text-color="var(--text-main)" floating>
                         <v-icon size="large">mdi-cart-outline</v-icon>
                     </v-badge>
                 </v-btn>
@@ -178,13 +178,13 @@
 
 <style scoped>
     .category-wrapper {
-        background-color: #1E1E1E;
+        background-color: var(--bg-panel);
         border-top: 2px solid #10B981;
-        border-bottom: 1px solid rgba(243, 244, 246, 0.05);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -211,11 +211,11 @@
     .search-bar :deep(.v-field--focused) {
         border-color: #10B981; 
         box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
-        background-color: #1E1E1E !important;
+        background-color: var(--bg-panel) !important;
     }
 
     .search-bar :deep(.v-field__input) { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .electric-glow-bg { 
@@ -223,7 +223,7 @@
     }
 
     .live-search-panel {
-        background-color: #1E1E1E !important;
+        background-color: var(--bg-panel) !important;
         border: 1px solid rgba(16, 185, 129, 0.3);
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
     }

@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg">
         <AppHeader />
 
         <v-main class="pb-16 px-4 px-md-10 mt-10">
@@ -137,8 +137,8 @@
                             <v-col cols="12" md="6">
                                 <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Tema Aplicației</div>
                                 <v-select 
-                                    v-model="preferences.theme" 
-                                    :items="['Dark Mode (Implicit)', 'Light Mode', 'Sincronizare cu sistemul']" 
+                                    v-model="themeStore.currentTheme" 
+                                    :items="['Dark Mode (Implicit)', 'Light Mode']" 
                                     variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
                                 ></v-select>
                             </v-col>
@@ -171,9 +171,11 @@
     import { useAuthStore } from '../stores/authStore';
     import { useRouter } from 'vue-router';
     import AppHeader from '../components/AppHeader.vue';
+    import { useThemeStore } from '../stores/themeStore';
 
     const authStore = useAuthStore();
     const router = useRouter();
+    const themeStore = useThemeStore();
 
     if (!authStore.isAuthenticated) {
         router.push('/profil');
@@ -194,7 +196,6 @@
     });
 
     const preferences = ref({
-        theme: 'Dark Mode',
         language: 'Română'
     });
 
@@ -228,11 +229,11 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #121212 !important; 
+        background-color: var(--bg-main) !important; 
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -248,19 +249,19 @@
     }
 
     .settings-panel {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
     }
 
     .menu-item {
-        color: #F3F4F6 !important;
+        color: var(--text-main) !important;
         opacity: 0.7;
         transition: all 0.3s ease;
     }
 
     .menu-item:hover {
         opacity: 1;
-        background-color: rgba(245, 246, 250, 0.05);
+        background-color: var(--border-light);
     }
 
     .active-menu-item {
@@ -280,7 +281,7 @@
     }
 
     .custom-input :deep(.v-field__input) { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .custom-switch :deep(.v-selection-control__wrapper) {
@@ -289,14 +290,14 @@
 
     .neon-btn {
       background-color: #10B981 !important; 
-      color: #121212 !important; 
+      color: var(--bg-main) !important; 
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
       transition: all 0.3s ease;
   }
     
     .neon-btn {
       background-color: #10B981 !important; 
-      color: #121212 !important; 
+      color: var(--bg-main) !important; 
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
       transition: all 0.3s ease;
   }

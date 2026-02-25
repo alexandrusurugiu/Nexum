@@ -146,7 +146,7 @@
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă (Minim 6 caractere)</div>
                                     <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.15)" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                                    <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: #121212 !important; letter-spacing: 1px;" :loading="authStore.isLoading">
+                                    <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: var(--bg-main) !important; letter-spacing: 1px;" :loading="authStore.isLoading">
                                         Creează Cont
                                     </v-btn>
                                 </v-form>
@@ -213,11 +213,11 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #121212 !important; 
+        background-color: var(--bg-main) !important; 
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -233,22 +233,22 @@
     }
 
     .profile-panel {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
     }
     .border-cyan { 
         border: 1px solid rgba(16, 185, 129, 0.5) !important; 
     }
 
     .menu-item { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
         opacity: 0.7; 
         transition: all 0.3s ease; 
     }
 
     .menu-item:hover { 
         opacity: 1; 
-        background-color: rgba(245, 246, 250, 0.05); 
+        background-color: var(--border-light); 
     }
 
     .active-menu-item { 
@@ -279,7 +279,7 @@
     
     .auth-card {
         background-color: #253038 !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        border: 1px solid var(--border-light);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.05) !important;
     }
 
@@ -293,7 +293,7 @@
         background: rgba(15, 20, 25, 0.6); 
         border-radius: 30px;
         padding: 5px;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        border: 1px solid var(--border-light);
     }
 
     .toggle-slider {
@@ -318,7 +318,7 @@
         z-index: 1;
         background: transparent;
         border: none;
-        color: #F3F4F6;
+        color: var(--text-main);
         font-weight: 700;
         font-size: 0.95rem;
         padding: 12px 0;
@@ -344,19 +344,19 @@
     }
     
     .custom-input :deep(.v-field__input) { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .neon-btn {
       background-color: #10B981 !important; 
-      color: #121212 !important; 
+      color: var(--bg-main) !important; 
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
       transition: all 0.3s ease;
   }
 
     .neon-btn:hover {
       background-color: #059669 !important;
-      color: #F3F4F6 !important;
+      color: var(--text-main) !important;
       transform: translateY(-2px); 
       box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25) !important;
   }

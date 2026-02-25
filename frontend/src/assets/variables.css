@@ -1,0 +1,21 @@
+:root {
+  --bg-main: #121212;
+  --bg-panel: #1E1E1E;
+  --text-main: #F3F4F6;
+  --accent-primary: #10B981;
+  --accent-hover: #059669;
+  --border-light: rgba(243, 244, 246, 0.05);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --input-bg: rgba(245, 246, 250, 0.2);
+}
+
+[data-theme="light"] {
+  --bg-main: #F4F7F6;
+  --bg-panel: #FFFFFF;
+  --text-main: #1F2937;
+  --accent-primary: #10B981;
+  --accent-hover: #059669;
+  --border-light: rgba(0, 0, 0, 0.08);
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --input-bg: rgba(0, 0, 0, 0.05);
+}

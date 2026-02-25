@@ -109,7 +109,7 @@
                   :color="isPsuWeak ? '#ff4757' : '#10B981'"
                   height="6"
                   rounded
-                  bg-color="rgba(245, 246, 250, 0.05)"
+                  bg-color="var(--border-light)"
                 ></v-progress-linear>
               </div>
 
@@ -341,11 +341,11 @@
 
 <style scoped>
   .nexum-bg { 
-    background-color: #121212 !important; 
+    background-color: var(--bg-main) !important; 
   }
 
   .cloud-text { 
-    color: #F3F4F6 !important; 
+    color: var(--text-main) !important; 
   }
 
   .cyan-text { 
@@ -380,7 +380,7 @@
   }
 
   .category-wrapper {
-    background-color: #1E1E1E;
+    background-color: var(--bg-panel);
     border-top: 2px solid #10B981;
   }
 
@@ -395,7 +395,7 @@
   }
 
   .step-item:hover { 
-    background: rgba(245, 246, 250, 0.05); 
+    background: var(--border-light); 
   }
 
   .active-step { 
@@ -404,8 +404,8 @@
   }
 
   .product-card {
-    background-color: #1E1E1E !important; 
-    border: 1px solid rgba(245, 246, 250, 0.05);
+    background-color: var(--bg-panel) !important; 
+    border: 1px solid var(--border-light);
     transition: all 0.3s ease;
   }
 
@@ -421,7 +421,7 @@
   }
 
   .img-container {
-    background-color: #F3F4F6; 
+    background-color: #F3F4F6 !important;
     margin: 12px 12px 0 12px;
     padding: 20px; 
     border-radius: 16px; 
@@ -441,7 +441,7 @@
   }
 
   .summary-card {
-    background-color: #1E1E1E !important;
+    background-color: var(--bg-panel) !important;
     border: 1px solid rgba(16, 185, 129, 0.2);
   }
 
@@ -450,7 +450,7 @@
   }
 
   .bg-glass-neutral { 
-    background: rgba(245, 246, 250, 0.05); 
+    background: var(--border-light); 
     border: 1px solid transparent;
   }
 
@@ -478,7 +478,7 @@
 
   .electric-btn {
     background: linear-gradient(45deg, #059669, #10B981) !important; 
-    color: #F3F4F6 !important;
+    color: var(--text-main) !important;
     letter-spacing: 1px; 
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }

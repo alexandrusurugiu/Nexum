@@ -28,7 +28,7 @@
           </v-col>
         </v-row>
 
-        <div style="background-color: #121212;" class="pt-16 pb-16 px-4 px-md-10">
+        <div style="background-color: var(--bg-main);" class="pt-16 pb-16 px-4 px-md-10">
           <div class="d-flex align-center justify-space-between mb-10">
             <div>
               <h2 class="text-h4 font-weight-bold cloud-text">Recomandările noastre bazate pe <span class="cyan-text">selecția</span> ta</h2>
@@ -125,7 +125,7 @@
 
 <style scoped>
   .nexum-bg { 
-    background-color: #121212 !important; 
+    background-color: var(--bg-main) !important; 
   }
 
   .z-index-1 {
@@ -133,7 +133,7 @@
   }
 
   .cloud-text { 
-    color: #F3F4F6 !important; 
+    color: var(--text-main) !important; 
   }
 
   .cyan-text { 
@@ -146,7 +146,7 @@
 
   .premium-btn {
     background-color: #10B981 !important;
-    color: #121212 !important; 
+    color: var(--bg-main) !important; 
     letter-spacing: 1px;
     transition: all 0.3s ease;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
@@ -155,7 +155,7 @@
   .premium-btn:hover {
     transform: translateY(-4px);
     background-color: #059669 !important;
-    color: #F3F4F6 !important;
+    color: var(--text-main) !important;
     box-shadow: 0 12px 25px rgba(16, 185, 129, 0.3) !important;
   }
 
@@ -174,7 +174,7 @@
     left: 0; 
     right: 0; 
     bottom: 0;
-    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.6) 0%, #121212 100%); 
+    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.6) 0%, var(--bg-main) 100%); 
     z-index: 0;
   }
   
@@ -191,8 +191,8 @@
   }
 
   .product-card {
-    background-color: #1E1E1E !important; 
-    border: 1px solid rgba(243, 244, 246, 0.05);
+    background-color: var(--bg-panel) !important; 
+    border: 1px solid var(--border-light);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -205,8 +205,8 @@
   }
 
   .img-container {
-    background-color: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid rgba(243, 244, 246, 0.05);
+    background-color: #F3F4F6 !important;
+    border-bottom: 1px solid var(--border-light);
   }
 
   .product-img {
@@ -246,7 +246,7 @@
   
   .cart-btn:hover {
     background-color: #059669 !important;
-    color: #F3F4F6 !important;
+    color: var(--text-main) !important;
     transform: scale(1.1);
   }
 </style>

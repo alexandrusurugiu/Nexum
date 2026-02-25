@@ -131,7 +131,7 @@
                             <span class="cloud-text opacity-80 mr-3 text-body-2">Sortează:</span>
                             <v-select
                                 v-model="sortOption" :items="sortOptions" variant="outlined" density="compact" hide-details
-                                bg-color="rgba(30, 39, 46, 0.8)" color="#10B981" base-color="rgba(245, 246, 250, 0.2)"
+                                bg-color="var(--bg-main)" color="#10B981" base-color="rgba(245, 246, 250, 0.2)"
                                 class="custom-select"
                             ></v-select>
                         </div>
@@ -366,11 +366,11 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #121212 !important; 
+        background-color: var(--bg-main) !important; 
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -382,19 +382,19 @@
     }
 
     .filter-panel {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
     }
 
     .category-item {
-        color: #F3F4F6 !important;
+        color: var(--text-main) !important;
         transition: all 0.3s ease;
         opacity: 0.7;
     }
 
     .category-item:hover {
         opacity: 1;
-        background-color: rgba(245, 246, 250, 0.05) !important;
+        background-color: var(--border-light) !important;
     }
 
     .active-category {
@@ -417,7 +417,7 @@
         width: 18px; 
         height: 18px; 
         border-radius: 50%; 
-        background-color: #121212; 
+        background-color: var(--bg-main); 
         border: 3px solid #10B981; 
         box-shadow: 0 0 12px rgba(16, 185, 129, 0.8); 
         transition: all 0.3s ease;
@@ -429,7 +429,7 @@
     }
 
     .custom-checkbox :deep(.v-label) {
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
         opacity: 0.85; 
         font-size: 0.9rem;
     }
@@ -444,8 +444,8 @@
     }
 
     .sort-bar {
-        background-color: #1E1E1E; 
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel); 
+        border: 1px solid var(--border-light);
     }
 
     .custom-select :deep(.v-field) { 
@@ -453,12 +453,12 @@
     }
 
     .custom-select :deep(.v-field__input) { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .product-card {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(245, 246, 250, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
         border-radius: 24px !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
@@ -471,7 +471,7 @@
     }
 
     .img-container {
-        background-color: #F3F4F6; 
+        background-color: #F3F4F6 !important; 
         margin: 12px 12px 0 12px; 
         padding: 20px;
         border-radius: 16px;
@@ -521,7 +521,7 @@
 
     .cart-btn:hover {
         background-color: #059669 !important;
-        color: #F3F4F6 !important;
+        color: var(--text-main) !important;
         transform: scale(1.1) rotate(5deg);
         box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
     }

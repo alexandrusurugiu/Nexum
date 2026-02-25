@@ -57,13 +57,13 @@
 
                         <div class="cart-actions pa-4 d-flex flex-row flex-sm-column align-center justify-space-between justify-sm-center flex-shrink-0"> 
                             <div class="d-flex align-center quantity-controls pa-1 rounded-lg mb-sm-4">
-                                <v-btn icon size="small" variant="text" color="#F3F4F6" @click="cartStore.removeFromCart(item.id)">
+                                <v-btn icon size="small" variant="text" color="var(--text-main)" @click="cartStore.removeFromCart(item.id)">
                                     <v-icon>mdi-minus</v-icon>
                                 </v-btn>
 
                                 <span class="cloud-text font-weight-bold px-3 text-h6">{{ item.quantity }}</span>
 
-                                <v-btn icon size="small" variant="text" color="#F3F4F6" @click="cartStore.addToCart(item)">
+                                <v-btn icon size="small" variant="text" color="var(--text-main)" @click="cartStore.addToCart(item)">
                                     <v-icon>mdi-plus</v-icon>
                                 </v-btn>
                             </div>
@@ -129,11 +129,11 @@
 
 <style scoped>
     .nexum-bg { 
-        background-color: #121212 !important; 
+        background-color: var(--bg-main) !important; 
     }
 
     .cloud-text { 
-        color: #F3F4F6 !important; 
+        color: var(--text-main) !important; 
     }
 
     .cyan-text { 
@@ -145,20 +145,20 @@
     }
     
     .cart-panel {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(243, 244, 246, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
     }
     
     .cart-item-card {
-        background-color: #1E1E1E !important;
-        border: 1px solid rgba(243, 244, 246, 0.05);
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
         min-height: 160px; 
     }
 
     .cart-img-box {
         width: 100%;
         min-height: 140px;
-        background-color: #F3F4F6; 
+        background-color: #F3F4F6 !important;
         box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.03);
     }
 
@@ -169,7 +169,7 @@
         }
         .cart-actions {
             min-width: 130px;
-            border-left: 1px solid rgba(243, 244, 246, 0.05);
+            border-left: 1px solid var(--border-light);
         }
     }
 
@@ -179,20 +179,20 @@
     }
 
     .quantity-controls { 
-        background-color: rgba(243, 244, 246, 0.05); 
+        background-color: var(--bg-panel); 
         border: 1px solid rgba(243, 244, 246, 0.1);
     }
 
     .premium-btn {
         background-color: #10B981 !important; 
-        color: #121212 !important; 
+        color: var(--bg-main) !important; 
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
         transition: all 0.3s ease;
     }
 
     .premium-btn:hover {
         background-color: #059669 !important;
-        color: #F3F4F6 !important;
+        color: var(--text-main) !important;
         transform: translateY(-2px); 
         box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25) !important;
     }
