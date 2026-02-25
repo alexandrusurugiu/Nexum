@@ -98,7 +98,7 @@
                     <span class="text-caption cloud-text opacity-80 text-uppercase font-weight-bold" style="letter-spacing: 1px;">Consum Energie</span>
                   </div>
                   <div class="text-right" style="line-height: 1;">
-                    <span class="text-h6 font-weight-black" :class="isPsuWeak ? 'text-red-lighten-1' : 'cloud-text'">{{ totalWattage }}W</span>
+                    <span class="text-h6 font-weight-black" :class="isPsuWeak ? 'text-error' : 'cloud-text'">{{ totalWattage }}W</span>
                     <span v-if="selectedBuild.psu" class="text-caption cloud-text opacity-50 font-weight-medium"> / {{ selectedBuild.psu.psuWattage }}W</span>
                   </div>
                 </div>
@@ -106,7 +106,7 @@
                 <v-progress-linear
                   v-if="selectedBuild.psu"
                   :model-value="(totalWattage / selectedBuild.psu.psuWattage) * 100"
-                  :color="isPsuWeak ? '#ff4757' : '#10B981'"
+                  :color="isPsuWeak ? 'error' : '#10B981'"
                   height="6"
                   rounded
                   bg-color="var(--border-light)"
@@ -318,11 +318,11 @@
     }
 
     if (isPsuWeak.value) {
-      return { message: 'Pericol: Sursă prea slabă!', icon: 'mdi-alert-octagon', colorClass: 'bg-glass-error text-white border-error shadow-error' };
+      return { message: 'Pericol: Sursă prea slabă!', icon: 'mdi-alert-octagon', colorClass: 'bg-glass-error text-error border-error shadow-error' };
     }
 
     if (buildKeys.length === steps.length) {
-      return { message: 'Sistem Complet & Compatibil!', icon: 'mdi-check-decagram', colorClass: 'bg-glass-success text-white' };
+      return { message: 'Sistem Complet & Compatibil!', icon: 'mdi-check-decagram', colorClass: 'bg-glass-success cloud-text border-success' };
     }
 
     return { message: 'Se asamblează. Toate bune.', icon: 'mdi-wrench', colorClass: 'bg-glass-cyan cyan-text' };

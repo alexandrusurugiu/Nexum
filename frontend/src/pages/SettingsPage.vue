@@ -56,17 +56,17 @@
                             <v-row>
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parola Actuală</div>
-                                    <v-text-field v-model="passwords.current" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
+                                    <v-text-field v-model="passwords.current" type="password" variant="outlined" color="#10B981" class="custom-input mb-2"></v-text-field>
                                 </v-col>
                                 
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Parola Nouă</div>
-                                    <v-text-field v-model="passwords.new" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-2"></v-text-field>
+                                    <v-text-field v-model="passwords.new" type="password" variant="outlined" color="#10B981" class="custom-input mb-2"></v-text-field>
                                 </v-col>
 
                                 <v-col cols="12" md="8">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Confirmă Parola Nouă</div>
-                                    <v-text-field v-model="passwords.confirm" type="password" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input mb-4"></v-text-field>
+                                    <v-text-field v-model="passwords.confirm" type="password" variant="outlined" color="#10B981" class="custom-input mb-4"></v-text-field>
                                 </v-col>
                             </v-row>
                             
@@ -139,7 +139,7 @@
                                 <v-select 
                                     v-model="themeStore.currentTheme" 
                                     :items="['Dark Mode (Implicit)', 'Light Mode']" 
-                                    variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
+                                    variant="outlined" color="#10B981" class="custom-input"
                                 ></v-select>
                             </v-col>
                             
@@ -148,7 +148,7 @@
                                 <v-select 
                                     v-model="preferences.language" 
                                     :items="['Română', 'English']" 
-                                    variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"
+                                    variant="outlined" color="#10B981" class="custom-input"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -271,8 +271,8 @@
         border-left: 4px solid #10B981;
     }
 
-    .danger-item {
-        color: #ff7675 !important;
+    .danger-item { 
+        color: rgb(220, 38, 38) !important; 
     }
     
     .danger-item:hover {

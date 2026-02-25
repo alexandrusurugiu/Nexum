@@ -189,7 +189,6 @@
                                 hide-details
                                 bg-color="var(--bg-main)"
                                 color="#10B981"
-                                base-color="rgba(245, 246, 250, 0.2)"
                                 class="custom-select"
                             ></v-select>
                         </div>

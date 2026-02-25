@@ -14,7 +14,7 @@
 
                 <v-btn 
                     v-if="cartStore.items.length > 0"
-                    color="#ef4444" 
+                    color="error"
                     variant="tonal" 
                     class="rounded-lg font-weight-bold mt-4 mt-sm-0 px-6 transition-all" 
                     prepend-icon="mdi-delete-sweep-outline"
@@ -68,7 +68,7 @@
                                 </v-btn>
                             </div>
 
-                            <v-btn icon color="#ef4444" variant="tonal" class="rounded-lg mt-0 mt-sm-auto align-self-end align-self-sm-center" @click="cartStore.removeFromCart(item.id, true)" title="Șterge produsul">
+                            <v-btn icon color="error" variant="tonal" class="rounded-lg mt-0 mt-sm-auto align-self-end align-self-sm-center" @click="cartStore.removeFromCart(item.id, true)" title="Șterge produsul">
                                 <v-icon>mdi-delete-outline</v-icon>
                             </v-btn>
                         </div>

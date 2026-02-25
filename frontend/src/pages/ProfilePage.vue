@@ -56,23 +56,23 @@
                             <v-row>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Nume Complet</div>
-                                    <v-text-field v-model="editForm.name" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.name" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă Email</div>
-                                    <v-text-field :model-value="authStore.user.email" disabled variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input disabled-input"></v-text-field>
+                                    <v-text-field :model-value="authStore.user.email" disabled variant="outlined" color="#10B981" class="custom-input disabled-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Telefon</div>
-                                    <v-text-field v-model="editForm.phone" placeholder="07xx xxx xxx" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.phone" placeholder="07xx xxx xxx" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">URL Avatar (Opțional)</div>
-                                    <v-text-field v-model="editForm.avatar" placeholder="https://..." variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-text-field>
+                                    <v-text-field v-model="editForm.avatar" placeholder="https://..." variant="outlined" color="#10B981" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă de Livrare</div>
-                                    <v-textarea v-model="editForm.address" rows="3" placeholder="Strada, Număr, Oraș, Județ, Cod Poștal" variant="outlined" color="#10B981" base-color="rgba(245, 246, 250, 0.2)" class="custom-input"></v-textarea>
+                                    <v-textarea v-model="editForm.address" rows="3" placeholder="Strada, Număr, Oraș, Județ, Cod Poștal" variant="outlined" color="#10B981" class="custom-input"></v-textarea>
                                 </v-col>
                             </v-row>
                             
@@ -259,7 +259,7 @@
     }
 
     .logout-item { 
-        color: #ff7675 !important; 
+        color: rgb(220, 38, 38) !important; 
     }
 
     .logout-item:hover { 
@@ -375,8 +375,7 @@
         overflow: hidden; 
     }
 
-    .fade-slide-enter-active,
-    .fade-slide-leave-active {
+    .fade-slide-enter-active, .fade-slide-leave-active {
         transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 

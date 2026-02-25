@@ -131,7 +131,7 @@
                             <span class="cloud-text opacity-80 mr-3 text-body-2">Sortează:</span>
                             <v-select
                                 v-model="sortOption" :items="sortOptions" variant="outlined" density="compact" hide-details
-                                bg-color="var(--bg-main)" color="#10B981" base-color="rgba(245, 246, 250, 0.2)"
+                                bg-color="var(--bg-main)" color="#10B981"
                                 class="custom-select"
                             ></v-select>
                         </div>
