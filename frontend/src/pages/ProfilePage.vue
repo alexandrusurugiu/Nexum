@@ -84,13 +84,127 @@
                         </v-form>
                     </v-card>
 
-                    <v-card v-if="activeTab === 'orders'" class="profile-panel rounded-xl pa-16 text-center" elevation="5">
-                        <v-icon size="80" color="rgba(245, 246, 250, 0.1)" class="mb-4">mdi-package-variant-closed</v-icon>
-                        <h2 class="text-h5 cloud-text font-weight-bold">Nu ai plasat nicio comandă</h2>
-                        <p class="cloud-text opacity-80 mt-2 mb-6">Aici vor apărea toate comenzile tale după ce finalizezi cumpărăturile din coș.</p>
-                        <v-btn color="#10B981" variant="tonal" class="rounded-lg" to="/home">
-                            Începe Cumpărăturile
-                        </v-btn>
+                    <v-card v-if="activeTab === 'orders'" class="profile-panel rounded-xl pa-6 pa-md-8" elevation="5">
+                        <div class="d-flex align-center justify-space-between mb-6">
+                            <h2 class="text-h5 font-weight-bold cloud-text">Istoric Comenzi</h2>
+                            <v-btn icon="mdi-refresh" variant="text" color="#10B981" @click="fetchOrders" :loading="isLoadingOrders"></v-btn>
+                        </div>
+                        
+                        <div v-if="isLoadingOrders" class="text-center py-8">
+                            <v-progress-circular indeterminate color="#10B981"></v-progress-circular>
+                        </div>
+
+                        <div v-else-if="userOrders.length === 0" class="text-center py-10">
+                            <v-icon size="80" color="var(--border-light)" class="mb-4">mdi-package-variant-closed</v-icon>
+                            <h2 class="text-h6 cloud-text font-weight-bold">Nu ai plasat nicio comandă</h2>
+                            <v-btn color="#10B981" variant="tonal" class="rounded-lg mt-4" to="/home">Începe Cumpărăturile</v-btn>
+                        </div>
+
+                        <div v-else class="orders-list">
+                            <v-expansion-panels variant="accordion" class="custom-expansion-panels">
+                                <v-expansion-panel v-for="order in userOrders" :key="order.id" class="mb-4 order-card rounded-xl" elevation="2">
+                                    
+                                    <v-expansion-panel-title class="pa-4 pa-sm-5 header-bg">
+                                        <v-row no-gutters align="center" justify="space-between" class="w-100 pr-2 pr-sm-4">
+                                            <v-col cols="12" sm="7" class="d-flex align-center mb-2 mb-sm-0">
+                                                <div class="icon-box mr-4 d-none d-sm-flex align-center justify-center rounded-lg">
+                                                    <v-icon color="#10B981" size="28">mdi-package-variant-closed</v-icon>
+                                                </div>
+                                                <div>
+                                                    <div class="text-subtitle-2 cloud-text opacity-70 mb-1 d-flex align-center">
+                                                        <v-icon size="small" class="mr-1 opacity-70">mdi-calendar-blank</v-icon>
+                                                        {{ formatDate(order.createdAt) }}
+                                                    </div>
+                                                    <div class="font-weight-black cloud-text text-h6" style="letter-spacing: 0.5px;">{{ order.orderNumber }}</div>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="12" sm="5" class="text-sm-right d-flex flex-row flex-sm-column justify-space-between align-sm-end">
+                                                <div class="font-weight-black cyan-text text-h6">{{ order.summary.total }} Lei</div>
+                                                <v-chip 
+                                                    size="small" 
+                                                    :color="order.status === 'În procesare' ? 'warning' : '#10B981'" 
+                                                    variant="tonal" 
+                                                    class="font-weight-bold mt-sm-1 text-uppercase text-caption"
+                                                >
+                                                    <v-icon start size="small">{{ order.status === 'În procesare' ? 'mdi-clock-outline' : 'mdi-check-circle-outline' }}</v-icon>
+                                                    {{ order.status }}
+                                                </v-chip>
+                                            </v-col>
+                                        </v-row>
+                                    </v-expansion-panel-title>
+
+                                    <v-expansion-panel-text class="pa-0 details-bg">
+                                        <div class="pt-4 pb-2 px-2 px-sm-4">
+                                            
+                                            <div class="text-subtitle-2 cyan-text font-weight-bold mb-3 text-uppercase d-flex align-center" style="letter-spacing: 1px;">
+                                                <v-icon size="small" class="mr-2">mdi-cart-outline</v-icon> 
+                                                Produse Comandate ({{ order.items.length }})
+                                            </div>
+                                            
+                                            <div class="products-container mb-6">
+                                                <div v-for="(item, index) in order.items" :key="item.id">
+                                                    <div class="d-flex align-center justify-space-between pa-3 product-row rounded-lg">
+                                                        <div class="d-flex align-center">
+                                                            <div class="avatar-wrapper mr-3 rounded-lg pa-1 d-flex align-center justify-center">
+                                                                <v-img :src="item.image" width="40" height="40" contain class="prod-img-blend"></v-img>
+                                                            </div>
+                                                            <div>
+                                                                <div class="cloud-text font-weight-bold text-body-2 line-clamp-1" style="max-width: 250px;" :title="item.name">{{ item.name }}</div>
+                                                                <div class="cloud-text opacity-70 text-caption mt-1">
+                                                                    <span class="font-weight-bold">{{ item.quantity }} buc</span> x {{ item.price }} Lei
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="cloud-text font-weight-black text-body-2 ml-2 whitespace-nowrap">{{ item.price * item.quantity }} Lei</span>
+                                                    </div>
+                                                    <v-divider v-if="index !== order.items.length - 1" class="border-opacity-10 mx-3" color="var(--text-main)"></v-divider>
+                                                </div>
+                                            </div>
+                                            
+                                            <v-row>
+                                                <v-col cols="12" sm="6">
+                                                    <div class="info-box pa-4 rounded-lg h-100">
+                                                        <div class="d-flex align-center mb-3">
+                                                            <v-icon color="#10B981" size="small" class="mr-2">mdi-truck-delivery-outline</v-icon>
+                                                            <span class="font-weight-bold cloud-text text-body-2 text-uppercase" style="letter-spacing: 0.5px;">Livrare</span>
+                                                        </div>
+                                                        <div class="text-caption cloud-text opacity-80 mb-2">
+                                                            <strong>Curier:</strong> {{ order.deliveryInfo.courierName }}
+                                                        </div>
+                                                        <div class="text-caption cloud-text opacity-80" style="line-height: 1.4;">
+                                                            <strong>Adresă:</strong> {{ order.deliveryInfo.address.street }},<br>
+                                                            {{ order.deliveryInfo.address.city }}, Jud. {{ order.deliveryInfo.address.county }}
+                                                            <span v-if="order.deliveryInfo.address.zip"><br>Cod Poștal: {{ order.deliveryInfo.address.zip }}</span>
+                                                        </div>
+                                                    </div>
+                                                </v-col>
+
+                                                <v-col cols="12" sm="6">
+                                                    <div class="info-box pa-4 rounded-lg h-100">
+                                                        <div class="d-flex align-center mb-3">
+                                                            <v-icon color="#10B981" size="small" class="mr-2">mdi-credit-card-outline</v-icon>
+                                                            <span class="font-weight-bold cloud-text text-body-2 text-uppercase" style="letter-spacing: 0.5px;">Plată & Sumar</span>
+                                                        </div>
+                                                        <div class="text-caption cloud-text opacity-80 mb-3">
+                                                            <strong>Metodă:</strong> {{ order.paymentInfo?.method === 'card' ? 'Online cu Cardul' : 'Ramburs la curier' }}
+                                                        </div>
+                                                        <div class="d-flex justify-space-between text-caption cloud-text opacity-80 mb-1">
+                                                            <span>Subtotal:</span>
+                                                            <span class="font-weight-bold">{{ order.summary.subtotal }} Lei</span>
+                                                        </div>
+                                                        <div class="d-flex justify-space-between text-caption cloud-text opacity-80">
+                                                            <span>Transport:</span>
+                                                            <span class="font-weight-bold">{{ order.summary.shipping === 0 ? 'Gratuit' : order.summary.shipping + ' Lei' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </v-col>
+                                            </v-row>
+
+                                        </div>
+                                    </v-expansion-panel-text>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </div>
                     </v-card>
                 </v-col>
             </v-row>
@@ -179,12 +293,15 @@
     import { ref, watch, onMounted } from 'vue';
     import { useAuthStore } from '../stores/authStore';
     import AppHeader from '../components/AppHeader.vue';
+    import axios from 'axios';
 
     const authStore = useAuthStore();
     const activeTab = ref('profile');
     const isLogin = ref(true); 
     const requires2FA = ref(false);
     const twoFactorCode = ref('');
+    const userOrders = ref([]);
+    const isLoadingOrders = ref(false);
     const loginForm = ref({ 
         email: '', 
         password: '' 
@@ -214,6 +331,12 @@
 
     onMounted(populateEditForm);
     watch(() => authStore.user, populateEditForm);
+
+    watch(activeTab, (newTab) => {
+        if (newTab === 'orders' && userOrders.value.length === 0) {
+            fetchOrders();
+        }
+    });
 
     const submitLogin = async () => {
         const result = await authStore.login(loginForm.value.email, loginForm.value.password);
@@ -248,6 +371,26 @@
             twoFactorCode.value = '';
             loginForm.value = { email: '', password: '' };
         }
+    };
+
+    const fetchOrders = async () => {
+        if (!authStore.user) return;
+        isLoadingOrders.value = true;
+        try {
+            const response = await axios.get(`http://localhost:5000/server/orders/user/${authStore.user.id}`);
+            if (response.data.success) {
+                userOrders.value = response.data.orders;
+            }
+        } catch (error) {
+            console.error("Eroare incarcare comenzi", error);
+        } finally {
+            isLoadingOrders.value = false;
+        }
+    };
+
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        return date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' });
     };
 </script>
 
@@ -428,5 +571,68 @@
     .fade-slide-leave-to {
         opacity: 0;
         transform: translateX(-30px);
+    }
+
+    .order-card {
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .order-card:hover {
+        border-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05) !important; 
+    }
+
+    .header-bg {
+        background-color: transparent !important;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .icon-box {
+        background-color: rgba(16, 185, 129, 0.1);
+        width: 52px;
+        height: 52px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .details-bg {
+        background-color: var(--bg-main) !important; 
+    }
+
+    .products-container {
+        background-color: var(--bg-panel);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+    }
+
+    .product-row {
+        transition: background-color 0.2s ease;
+    }
+
+    .product-row:hover {
+        background-color: rgba(16, 185, 129, 0.05);
+    }
+
+    .avatar-wrapper {
+        background-color: #F3F4F6; 
+        border: 1px solid var(--border-light);
+        width: 48px;
+        height: 48px;
+    }
+
+    .prod-img-blend {
+        mix-blend-mode: multiply;
+        filter: contrast(1.05);
+    }
+
+    .info-box {
+        background-color: var(--bg-panel);
+        border: 1px solid var(--border-light);
+    }
+
+    .whitespace-nowrap {
+        white-space: nowrap;
     }
 </style>

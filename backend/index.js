@@ -13,6 +13,7 @@ const monitorsRoutes = require('./routes/monitorsRouter');
 const configRoutes = require('./routes/configRouter');
 const searchRoutes = require('./routes/searchRouter');
 const couponRouter = require('./routes/couponRouter');
+const orderRouter = require('./routes/orderRouter');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -34,6 +35,7 @@ app.use('/server/monitors', monitorsRoutes);
 app.use('/server/config', configRoutes);
 app.use('/server/search', searchRoutes);
 app.use('/server/coupons', couponRouter);
+app.use('/server/orders', orderRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}...`);

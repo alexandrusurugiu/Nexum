@@ -160,12 +160,17 @@
     import { useCartStore } from '../stores/cartStore';
     import AppHeader from '../components/AppHeader.vue';
     import axios from 'axios';
-
+    import { useRouter } from 'vue-router';
+    
+    const router = useRouter();
     const cartStore = useCartStore();
-
     const couponCode = ref('');
     const couponError = ref('');
-    const appliedDiscount = ref({ type: null, value: 0, code: '' });
+    const appliedDiscount = ref({ 
+        type: null, 
+        value: 0, 
+        code: '' 
+    });
 
     const applyCoupon = async () => {
         couponError.value = '';
@@ -224,7 +229,7 @@
     });
 
     const checkout = () => {
-        alert("Modulul de plată urmează să fie implementat!");
+        router.push('/checkout');
     };
 
     const handleClearCart = () => {
