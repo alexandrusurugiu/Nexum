@@ -21,8 +21,8 @@
               Componente de ultimă generație pentru următorul tău build. Simplu, rapid și mereu compatibil.
             </p>
               
-            <v-btn size="x-large" class="premium-btn font-weight-black px-10 py-6 text-h6 rounded-pill d-flex align-center justify-center">
-              VEZI PRODUSELE
+            <v-btn to="/configurator" size="x-large" class="premium-btn font-weight-black px-10 py-6 text-h6 rounded-pill d-flex align-center justify-center">
+              CONFIGUREAZĂ-ȚI PROPRIUL PC
               <v-icon end icon="mdi-arrow-right" class="ml-2"></v-icon>
             </v-btn>
           </v-col>
