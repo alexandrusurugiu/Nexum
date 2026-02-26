@@ -123,8 +123,22 @@
 
                         <div class="form-container">
                             <transition name="fade-slide" mode="out-in">
-                                
-                                <v-form v-if="isLogin" @submit.prevent="submitLogin" key="login">
+                                <v-form v-if="requires2FA" @submit.prevent="submit2FA" key="2fa">
+                                    <div class="text-center mb-6">
+                                        <v-icon size="40" color="#10B981" class="mb-2">mdi-email-fast-outline</v-icon>
+                                        <h3 class="cloud-text">Verificare Securitate</h3>
+                                        <p class="cloud-text opacity-70 text-body-2 mt-1">Am trimis un cod de 6 cifre pe email-ul tău.</p>
+                                    </div>
+
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Cod format din 6 cifre</div>
+                                    <v-text-field v-model="twoFactorCode" placeholder="123456" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-dialpad"></v-text-field>
+
+                                    <v-btn type="submit" block color="#059669" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
+                                        Verifică Codul
+                                    </v-btn>
+                                </v-form>
+
+                                <v-form v-else-if="isLogin" @submit.prevent="submitLogin" key="login">
                                     <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
                                     <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
                                     
@@ -169,11 +183,23 @@
     const authStore = useAuthStore();
     const activeTab = ref('profile');
     const isLogin = ref(true); 
-
-    const loginForm = ref({ email: '', password: '' });
-    const registerForm = ref({ name: '', email: '', password: '' });
-    
-    const editForm = ref({ name: '', phone: '', address: '', avatar: '' });
+    const requires2FA = ref(false);
+    const twoFactorCode = ref('');
+    const loginForm = ref({ 
+        email: '', 
+        password: '' 
+    });
+    const registerForm = ref({ 
+        name: '', 
+        email: '',
+        password: '' 
+    });
+    const editForm = ref({ 
+        name: '', 
+        phone: '', 
+        address: '', 
+        avatar: '' 
+    });
 
     const populateEditForm = () => {
         if (authStore.user) {
@@ -190,8 +216,13 @@
     watch(() => authStore.user, populateEditForm);
 
     const submitLogin = async () => {
-        const success = await authStore.login(loginForm.value.email, loginForm.value.password);
-        if (success) loginForm.value = { email: '', password: '' }; 
+        const result = await authStore.login(loginForm.value.email, loginForm.value.password);
+        
+        if (result?.requires2FA) {
+            requires2FA.value = true;
+        } else if (result?.success) {
+            loginForm.value = { email: '', password: '' }; 
+        }
     };
 
     const submitRegister = async () => {
@@ -208,6 +239,15 @@
         authStore.logout();
         activeTab.value = 'profile';
         isLogin.value = true;
+    };
+
+    const submit2FA = async () => {
+        const success = await authStore.verify2FA(twoFactorCode.value);
+        if (success) {
+            requires2FA.value = false;
+            twoFactorCode.value = '';
+            loginForm.value = { email: '', password: '' };
+        }
     };
 </script>
 

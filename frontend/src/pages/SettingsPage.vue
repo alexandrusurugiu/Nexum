@@ -88,10 +88,16 @@
                         <h2 class="text-h5 font-weight-bold cloud-text mb-4">Autentificare în doi pași (2FA)</h2>
                         <div class="d-flex align-center justify-space-between flex-wrap">
                             <p class="cloud-text opacity-80 text-body-1 mb-4 mb-sm-0 mr-4">
-                                Adaugă un strat suplimentar de securitate contului tău cerând un cod la logare.
+                                Adaugă un strat suplimentar de securitate contului tău cerând un cod prin email la logare.
                             </p>
-                            <v-btn color="#10B981" variant="tonal" class="rounded-lg font-weight-bold">
-                                Activează 2FA
+                            <v-btn 
+                                :color="authStore.user.is2FAEnabled ? 'error' : '#10B981'" 
+                                variant="tonal" 
+                                class="rounded-lg font-weight-bold"
+                                @click="toggle2FAStatus"
+                                :loading="authStore.isLoading"
+                            >
+                                {{ authStore.user.is2FAEnabled ? 'Dezactivează 2FA' : 'Activează 2FA' }}
                             </v-btn>
                         </div>
                     </v-card>
@@ -252,6 +258,15 @@
             alert("Contul a fost șters.");
             authStore.logout();
             router.push('/');
+        }
+    };
+
+    const toggle2FAStatus = async () => {
+        const newStatus = !authStore.user.is2FAEnabled;
+        const success = await authStore.toggle2FA(newStatus);
+        
+        if (success) {
+            alert(`Autentificarea în 2 pași a fost ${newStatus ? 'activată' : 'dezactivată'}!`);
         }
     };
 </script>

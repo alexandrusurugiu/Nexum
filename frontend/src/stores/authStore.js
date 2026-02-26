@@ -8,8 +8,45 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('nexum_user')) || null);
     const isLoading = ref(false);
     const errorMsg = ref('');
-
+    const tempUser = ref(null);
     const isAuthenticated = computed(() => user.value !== null);
+
+    const toggle2FA = async (isEnabled) => {
+        try {
+            await axios.put(`http://localhost:5000/server/auth/${user.value.id}/toggle-2fa`, { isEnabled });
+            user.value.is2FAEnabled = isEnabled;
+            localStorage.setItem('nexum_user', JSON.stringify(user.value));
+            
+            return true;
+        } catch (error) {
+            return false;
+        }
+    };
+
+    const verify2FA = async (code) => {
+        isLoading.value = true;
+        errorMsg.value = '';
+
+        try {
+            const response = await axios.post('http://localhost:5000/server/auth/verify-2fa', {
+                uid: tempUser.value.id,
+                code: code
+            });
+            if (response.data.success) {
+                user.value = tempUser.value; 
+                localStorage.setItem('nexum_user', JSON.stringify(user.value));
+                tempUser.value = null;
+                
+                return true;
+            }
+        } catch (error) {
+            errorMsg.value = error.response?.data?.message || "Cod invalid.";
+            
+            return false;
+        } finally {
+            isLoading.value = false;
+        }
+    };
 
     const register = async (name, email, password) => {
         isLoading.value = true;
@@ -53,21 +90,27 @@ export const useAuthStore = defineStore('auth', () => {
             const firebaseUser = result.user;
 
             const response = await axios.post('http://localhost:5000/server/auth/sync', {
-                uid: firebaseUser.uid,
-                email: firebaseUser.email,
-                name: '', 
-                avatar: ''
+                uid: firebaseUser.uid, email: firebaseUser.email, name: '', avatar: ''
             });
 
             if (response.data.success) {
-                user.value = response.data.user;
-                localStorage.setItem('nexum_user', JSON.stringify(user.value));
-                return true;
+                const userData = response.data.user;
+                
+                if (userData.is2FAEnabled) {
+                    tempUser.value = userData; 
+                    await axios.post('http://localhost:5000/server/auth/send-2fa', { uid: userData.id, email: userData.email });
+                    
+                    return { success: true, requires2FA: true };
+                } else {
+                    user.value = userData;
+                    localStorage.setItem('nexum_user', JSON.stringify(user.value));
+                    
+                    return { success: true, requires2FA: false };
+                }
             }
         } catch (error) {
-            console.error("Firebase Auth Error:", error);
             errorMsg.value = "Email sau parolă incorecte.";
-            return false;
+            return { success: false };
         } finally {
             isLoading.value = false;
         }
@@ -132,5 +175,5 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    return { user, isAuthenticated, isLoading, errorMsg, login, register, logout, updateProfile, changeUserPassword };
+    return { user, isAuthenticated, isLoading, errorMsg, login, register, logout, updateProfile, changeUserPassword, verify2FA, toggle2FA };
 });
