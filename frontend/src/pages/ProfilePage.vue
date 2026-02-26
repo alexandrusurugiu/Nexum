@@ -71,8 +71,23 @@
                                     <v-text-field v-model="editForm.avatar" placeholder="https://..." variant="outlined" color="#10B981" class="custom-input"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă de Livrare</div>
-                                    <v-textarea v-model="editForm.address" rows="3" placeholder="Strada, Număr, Oraș, Județ, Cod Poștal" variant="outlined" color="#10B981" class="custom-input"></v-textarea>
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 mt-2">Adresă de Livrare Principală</div>
+                                </v-col>
+                                <v-col cols="12" sm="6" class="pt-0">
+                                    <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Județ</div>
+                                    <v-text-field v-model="editForm.address.county" placeholder="Ex: Ilfov" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" class="pt-0">
+                                    <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Localitate / Sector</div>
+                                    <v-text-field v-model="editForm.address.city" placeholder="Ex: București" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="8" class="pt-0">
+                                    <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Adresă</div>
+                                    <v-text-field v-model="editForm.address.street" placeholder="Ex: Str. Florilor, Nr. 15, Bl. A, Ap. 3" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" class="pt-0">
+                                    <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Cod Poștal</div>
+                                    <v-text-field v-model="editForm.address.zip" placeholder="Ex: 012345" variant="outlined" color="#10B981" class="custom-input"></v-text-field>
                                 </v-col>
                             </v-row>
                             
