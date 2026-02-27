@@ -147,6 +147,10 @@
                     <v-card v-if="activeTab === 'preferences'" class="settings-panel rounded-xl pa-6 pa-md-8" elevation="5">
                         <h2 class="text-h5 font-weight-bold cloud-text mb-6">Afișare și Localizare</h2>
                         
+                        <v-alert v-if="preferencesSuccess" type="success" variant="tonal" class="mb-6 rounded-lg text-body-2">
+                            {{ preferencesSuccessMsg }}
+                        </v-alert>
+
                         <v-row>
                             <v-col cols="12" md="6">
                                 <div class="text-subtitle-2 cloud-text opacity-80 mb-2">Tema Aplicației</div>
@@ -192,28 +196,26 @@
     const themeStore = useThemeStore();
     const passwordSuccess = ref(false);
     const passwordError = ref('');
-
-    if (!authStore.isAuthenticated) {
-        router.push('/profil');
-    }
-
     const activeTab = ref('security');
-
+    const preferencesSuccess = ref(false);
+    const preferencesSuccessMsg = ref('');
     const passwords = ref({
         current: '',
         new: '',
         confirm: ''
     });
-
     const notifications = ref({
         orders: true,
         newsletter: false,
         sms: true
     });
-
     const preferences = ref({
         language: 'Română'
-    });
+    });  
+
+    if (!authStore.isAuthenticated) {
+        router.push('/profil');
+    }
 
     const updatePassword = async () => {
         passwordSuccess.value = false;
@@ -249,7 +251,12 @@
     };
 
     const savePreferences = (type) => {
-        alert(`${type} au fost salvate cu succes!`);
+        preferencesSuccessMsg.value = `${type} au fost salvate cu succes!`;
+        preferencesSuccess.value = true;
+        
+        setTimeout(() => {
+            preferencesSuccess.value = false;
+        }, 4000);
     };
 
     const confirmDeleteAccount = () => {
