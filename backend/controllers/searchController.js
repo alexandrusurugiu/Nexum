@@ -8,19 +8,26 @@ const searchProducts = async (req, res) => {
         }
 
         const searchTerm = q.toLowerCase().trim();
-        const snapshot = await db.collection('products').get();
+        const collectionsToSearch = ['products', 'monitors', 'peripherals', 'laptops'];
         
         let results = [];
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const nameMatch = data.name && data.name.toLowerCase().includes(searchTerm);
-            const brandMatch = data.brand && data.brand.toLowerCase().includes(searchTerm);
-            const categoryMatch = data.category && data.category.toLowerCase().includes(searchTerm);
 
-            if (nameMatch || brandMatch || categoryMatch) {
-                results.push({ id: doc.id, ...data });
-            }
+        const searchPromises = collectionsToSearch.map(async (collectionName) => {
+            const snapshot = await db.collection(collectionName).get();
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const nameMatch = data.name && data.name.toLowerCase().includes(searchTerm);
+                const brandMatch = data.brand && data.brand.toLowerCase().includes(searchTerm);
+                const categoryMatch = data.category && data.category.toLowerCase().includes(searchTerm);
+
+                if (nameMatch || brandMatch || categoryMatch) {
+                    results.push({ id: doc.id, ...data });
+                }
+            });
         });
+
+        await Promise.all(searchPromises);
 
         res.status(200).json({ success: true, count: results.length, data: results });
     } catch (error) {
