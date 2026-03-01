@@ -384,7 +384,9 @@
 
     const saveProfile = async () => {
         const success = await authStore.updateProfile(editForm.value);
-        if (success) alert("Datele au fost salvate cu succes!");
+        if (success) {
+            alert("Datele au fost salvate cu succes!");
+        }
     };
 
     const handleLogout = () => {
@@ -395,6 +397,7 @@
 
     const submit2FA = async () => {
         const success = await authStore.verify2FA(twoFactorCode.value);
+        
         if (success) {
             requires2FA.value = false;
             twoFactorCode.value = '';
@@ -407,10 +410,15 @@
     };
 
     const fetchOrders = async () => {
-        if (!authStore.user) return;
+        if (!authStore.user) {
+            return;
+        }
+
         isLoadingOrders.value = true;
+        
         try {
             const response = await axios.get(`http://localhost:5000/server/orders/user/${authStore.user.id}`);
+            
             if (response.data.success) {
                 userOrders.value = response.data.orders;
             }
