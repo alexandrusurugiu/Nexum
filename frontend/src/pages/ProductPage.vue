@@ -177,11 +177,8 @@
     const router = useRouter();
     const cartStore = useCartStore();
     const authStore = useAuthStore();
-
     const product = ref(null);
     const isLoading = ref(true);
-
-    // Review logic
     const reviews = ref([]);
     const averageRating = ref(0);
     const isLoadingReviews = ref(false);
@@ -210,6 +207,7 @@
 
     onMounted(async () => {
         const productId = route.params.id; 
+        
         try {
             const response = await axios.get(`http://localhost:5000/server/products/${productId}`);
             if (response.data.success) {
@@ -225,8 +223,10 @@
 
     const fetchReviews = async (productId) => {
         isLoadingReviews.value = true;
+        
         try {
             const response = await axios.get(`http://localhost:5000/server/reviews/${productId}`);
+            
             if (response.data.success) {
                 reviews.value = response.data.reviews;
                 averageRating.value = response.data.average;
@@ -240,6 +240,7 @@
 
     const submitReview = async () => {
         reviewError.value = '';
+        
         if (!newReview.value.comment.trim()) {
             reviewError.value = "Te rugăm să scrii un scurt comentariu!";
             return;
@@ -259,7 +260,6 @@
             const response = await axios.post('http://localhost:5000/server/reviews', payload);
             
             if (response.data.success) {
-                // Re-încărcăm lista ca să apară instant, calculând și noua medie
                 fetchReviews(product.value.id);
                 newReview.value = { rating: 5, comment: '' };
             }
@@ -271,7 +271,6 @@
     };
 
     const goToLogin = () => {
-        // Punem URL-ul actual ca "redirect", astfel după login se va întoarce fix aici!
         router.push(`/profil?redirect=${route.path}`);
     };
 
@@ -296,15 +295,38 @@
 </script>
 
 <style scoped>
-    .nexum-bg { background-color: var(--bg-main) !important; }
-    .cloud-text { color: var(--text-main) !important; }
-    .cyan-text { color: #10B981 !important; }
-    .opacity-80 { opacity: 0.8; }
-    .opacity-70 { opacity: 0.7; }
-    .opacity-50 { opacity: 0.5; }
+    .nexum-bg { 
+        background-color: var(--bg-main) !important; 
+    }
 
-    .cursor-pointer { cursor: pointer; }
-    .hover-cyan:hover { color: #10B981 !important; transition: 0.2s ease;}
+    .cloud-text { 
+        color: var(--text-main) !important; 
+    }
+
+    .cyan-text { 
+        color: #10B981 !important;
+    }
+
+    .opacity-80 { 
+        opacity: 0.8; 
+    }
+
+    .opacity-70 { 
+        opacity: 0.7; 
+    }
+
+    .opacity-50 { 
+        opacity: 0.5; 
+    }
+
+    .cursor-pointer { 
+        cursor: pointer; 
+    }
+
+    .hover-cyan:hover { 
+        color: #10B981 !important; 
+        transition: 0.2s ease;
+    }
 
     .product-image-panel {
         background-color: #FFFFFF !important;
@@ -322,11 +344,25 @@
         border: 1px solid var(--border-light);
     }
     
-    .bg-row-alt { background-color: rgba(16, 185, 129, 0.03); }
-    .spec-row { border-bottom: 1px solid var(--border-light); }
-    .spec-row:last-child { border-bottom: none; }
-    .w-30 { width: 30%; }
-    .w-70 { width: 70%; }
+    .bg-row-alt { 
+        background-color: rgba(16, 185, 129, 0.03); 
+    }
+
+    .spec-row { 
+        border-bottom: 1px solid var(--border-light); 
+    }
+
+    .spec-row:last-child { 
+        border-bottom: none; 
+    }
+
+    .w-30 { 
+        width: 30%; 
+    }
+
+    .w-70 { 
+        width: 70%; 
+    }
 
     .product-img {
         transition: transform 0.5s ease;
@@ -359,7 +395,6 @@
         box-shadow: 0 12px 25px rgba(16, 185, 129, 0.25) !important;
     }
 
-    /* CSS RECENZII */
     .add-review-box {
         background-color: var(--bg-main);
         border: 1px dashed rgba(16, 185, 129, 0.4);
@@ -375,8 +410,15 @@
         border-color: rgba(16, 185, 129, 0.3);
     }
 
-    .border-cyan { border: 1px solid rgba(16, 185, 129, 0.5); }
+    .border-cyan { 
+        border: 1px solid rgba(16, 185, 129, 0.5); 
+    }
     
-    .custom-input :deep(.v-field__input) { color: var(--text-main) !important; }
-    .custom-input :deep(.v-field) { border-radius: 12px; }
+    .custom-input :deep(.v-field__input) { 
+        color: var(--text-main) !important; 
+    }
+
+    .custom-input :deep(.v-field) { 
+        border-radius: 12px; 
+    }
 </style>
