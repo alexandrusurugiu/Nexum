@@ -309,7 +309,10 @@
     import { useAuthStore } from '../stores/authStore';
     import AppHeader from '../components/AppHeader.vue';
     import axios from 'axios';
+    import { useRoute, useRouter } from 'vue-router';
 
+    const route = useRoute();
+    const router = useRouter();
     const authStore = useAuthStore();
     const activeTab = ref('profile');
     const isLogin = ref(true); 
@@ -360,12 +363,23 @@
             requires2FA.value = true;
         } else if (result?.success) {
             loginForm.value = { email: '', password: '' }; 
+            
+            if (route.query.redirect) {
+                router.push(route.query.redirect);
+            }
         }
     };
 
     const submitRegister = async () => {
         const success = await authStore.register(registerForm.value.name, registerForm.value.email, registerForm.value.password);
-        if (success) registerForm.value = { name: '', email: '', password: '' }; 
+        
+        if (success) {
+            registerForm.value = { name: '', email: '', password: '' }; 
+            
+            if (route.query.redirect) {
+                router.push(route.query.redirect);
+            }
+        }
     };
 
     const saveProfile = async () => {
@@ -385,6 +399,10 @@
             requires2FA.value = false;
             twoFactorCode.value = '';
             loginForm.value = { email: '', password: '' };
+            
+            if (route.query.redirect) {
+                router.push(route.query.redirect);
+            }
         }
     };
 
