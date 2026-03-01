@@ -161,7 +161,7 @@
 
                     <v-row v-else>
                         <v-col v-for="peripheral in filteredPeripherals" :key="peripheral.id" cols="12" sm="6" md="6" lg="4" xl="3">
-                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
+                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0" @click="goToProduct(peripheral.id)" style="cursor: pointer;">
                                 <v-chip v-if="peripheral.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                                 -{{ peripheral.discount }}%
                                 </v-chip>
@@ -202,7 +202,7 @@
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(peripheral)" title="Adaugă în coș">
+                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="cartStore.addToCart(peripheral)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -221,7 +221,9 @@
     import { storeToRefs } from 'pinia';
     import AppHeader from '../components/AppHeader.vue';
     import { useCartStore } from '../stores/cartStore';
+    import { useRouter } from 'vue-router';
 
+    const router = useRouter();
     const cartStore = useCartStore();
     const cartCount = ref(0);
     const addToCart = () => cartCount.value++;
@@ -345,6 +347,10 @@
         
         return result;
     });
+
+    const goToProduct = (id) => {
+        router.push(`/produs/${id}`);
+    };
 </script>
 
 <style scoped>

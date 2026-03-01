@@ -202,7 +202,7 @@
 
                     <v-row v-else>
                         <v-col v-for="component in filteredComponents" :key="component.id" cols="12" sm="6" md="6" lg="4" xl="3">
-                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
+                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0" @click="goToProduct(component.id)" style="cursor: pointer;">
                                 <v-chip v-if="component.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                                 -{{ component.discount }}%
                                 </v-chip>
@@ -240,7 +240,7 @@
                                         {{ component.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                         </div>
                                     </div>
-                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(component)" title="Adaugă în coș">
+                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="cartStore.addToCart(component)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -261,6 +261,7 @@
     import { storeToRefs } from 'pinia';
     import { useCartStore } from '../stores/cartStore';
 
+    const router = useRouter();
     const componentsStore = useComponentsStore();
     const cartStore = useCartStore();
     const { allComponents, isLoading } = storeToRefs(componentsStore);
@@ -441,6 +442,10 @@
         
         return result;
     });
+
+    const goToProduct = (id) => {
+        router.push(`/produs/${id}`);
+    };
 </script>
 
 <style scoped>

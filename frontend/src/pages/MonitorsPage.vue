@@ -129,7 +129,7 @@
 
                     <v-row v-else>
                         <v-col v-for="monitor in filteredMonitors" :key="monitor.id" cols="12" sm="6" md="6" lg="4" xl="3">
-                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
+                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0" @click="goToProduct(monitor.id)" style="cursor: pointer;">
                                 <v-chip v-if="monitor.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                                 -{{ monitor.discount }}%
                                 </v-chip>
@@ -169,7 +169,7 @@
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(monitor)" title="Adaugă în coș">
+                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="cartStore.addToCart(monitor)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -188,7 +188,9 @@
     import AppHeader from '../components/AppHeader.vue';
     import { useCartStore } from '../stores/cartStore';
     import { useMonitorsStore } from '../stores/monitorsStore';
+    import { useRouter } from 'vue-router';
 
+    const router = useRouter();
     const cartStore = useCartStore();
     const monitorsStore = useMonitorsStore();
     const { allMonitors, isLoading } = storeToRefs(monitorsStore);
@@ -287,6 +289,10 @@
         
         return result;
     });
+
+    const goToProduct = (id) => {
+        router.push(`/produs/${id}`);
+    };
 </script>
 
 <style scoped>

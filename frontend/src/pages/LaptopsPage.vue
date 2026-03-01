@@ -145,7 +145,7 @@
 
                     <v-row v-else>
                         <v-col v-for="laptop in filteredLaptops" :key="laptop.id" cols="12" sm="6" md="6" lg="4" xl="3">
-                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
+                            <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0" @click="goToProduct(laptop.id)" style="cursor: pointer;">
                                 <v-chip v-if="laptop.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                                 -{{ laptop.discount }}%
                                 </v-chip>
@@ -186,7 +186,7 @@
                                         </div>
                                     </div>
 
-                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="cartStore.addToCart(laptop)" title="Adaugă în coș">
+                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="cartStore.addToCart(laptop)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -205,7 +205,9 @@
     import { useLaptopsStore } from '../stores/laptopsStore';
     import { storeToRefs } from 'pinia';
     import { useCartStore } from '../stores/cartStore';
+    import { useRouter } from 'vue-router';
 
+    const router = useRouter();
     const cartStore = useCartStore();
     const laptopsStore = useLaptopsStore();
     const { allLaptops, isLoading } = storeToRefs(laptopsStore);
@@ -362,6 +364,10 @@
         
         return result;
     });
+
+    const goToProduct = (id) => {
+        router.push(`/produs/${id}`);
+    };
 </script>
 
 <style scoped>
