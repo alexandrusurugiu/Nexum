@@ -231,10 +231,11 @@
     import { useAuthStore } from '../stores/authStore';
     import axios from 'axios';
     import AppHeader from '../components/AppHeader.vue';
+    import { useRoute } from 'vue-router';
 
     const cartStore = useCartStore();
     const authStore = useAuthStore();
-    
+    const route = useRoute();
     const isProcessing = ref(false);
     const errorMessage = ref('');
     const orderPlacedSuccess = ref(false);
@@ -272,6 +273,19 @@
                 form.value.address.street = authStore.user.address;
             }
         }
+
+        if (route.query.success === 'true' && route.query.orderId) {
+            const orderId = route.query.orderId;
+            generatedOrderNumber.value = route.query.orderNum;
+            orderPlacedSuccess.value = true;
+            cartStore.clearCart(); 
+            
+            axios.post('http://localhost:5000/server/orders/confirm-payment', { orderId });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } 
+        else if (route.query.canceled === 'true') {
+            errorMessage.value = "Plata a fost anulată. Poți relua comanda.";
+        }
     });
 
     const selectedCourier = computed(() => {
@@ -290,19 +304,14 @@
             return;
         }
 
-        if (form.value.paymentMethod === 'card') {
-            errorMessage.value = "Plata cu cardul este temporar indisponibilă. Te rugăm să alegi plata Ramburs.";
+        if (!form.value.courier) {
+            errorMessage.value = "Te rugăm să alegi o metodă de livrare.";
             return;
         }
 
-        if (!form.value.courier) {
-             errorMessage.value = "Te rugăm să alegi o metodă de livrare.";
-             return;
-        }
-
         if (!form.value.paymentMethod) {
-             errorMessage.value = "Te rugăm să alegi o metodă de plată.";
-             return;
+            errorMessage.value = "Te rugăm să alegi o metodă de plată.";
+            return;
         }
 
         isProcessing.value = true;
@@ -329,7 +338,10 @@
                     subtotal: cartStore.cartTotal,
                     shipping: selectedCourier.value.price,
                     total: finalTotal.value
-                }
+                },
+
+                successUrl: `${window.location.origin}/checkout?success=true`,
+                cancelUrl: `${window.location.origin}/checkout?canceled=true`
             };
 
             const response = await axios.post('http://localhost:5000/server/orders', payload);
@@ -341,10 +353,16 @@
                     localStorage.setItem('nexum_user', JSON.stringify(authStore.user));
                 }
 
-                generatedOrderNumber.value = response.data.orderNumber;
-                orderPlacedSuccess.value = true;
-                cartStore.clearCart(); 
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (response.data.isStripe) {
+                    window.location.href = response.data.url;
+                } 
+                
+                else {
+                    generatedOrderNumber.value = response.data.orderNumber;
+                    orderPlacedSuccess.value = true;
+                    cartStore.clearCart(); 
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             }
         } catch (error) {
             errorMessage.value = "A apărut o problemă la server. Încearcă din nou.";
