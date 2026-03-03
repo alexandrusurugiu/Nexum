@@ -16,6 +16,7 @@ const couponRouter = require('./routes/couponRouter');
 const orderRouter = require('./routes/orderRouter');
 const productRouter = require('./routes/productRouter');
 const reviewRouter = require('./routes/reviewRouter');
+const adminRouter = require('./routes/adminPanelRouter');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -40,6 +41,7 @@ app.use('/server/coupons', couponRouter);
 app.use('/server/orders', orderRouter);
 app.use('/server/products', productRouter);
 app.use('/server/reviews', reviewRouter);
+app.use('/server/admin', adminRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}...`);

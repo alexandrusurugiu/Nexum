@@ -66,7 +66,21 @@ const router = createRouter({
       path: '/produs/:id',
       name: 'Product',
       component: () => import('../pages/ProductPage.vue')
-    }
+    },
+    { 
+      path: '/admin', 
+      name: 'Admin', 
+      component: () => import('../pages/AdminPanelPage.vue'),
+      beforeEnter: (to, from, next) => {
+        const user = JSON.parse(localStorage.getItem('nexum_user'));
+            
+        if (user && user.isAdmin === true) {
+          next();
+        } else {
+          next('/home');
+          }
+      }
+    } 
   ],
 })
 

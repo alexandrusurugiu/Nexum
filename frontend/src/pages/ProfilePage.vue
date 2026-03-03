@@ -42,6 +42,18 @@
                                 <v-list-item-title class="font-weight-medium">Comenzile Mele</v-list-item-title>
                             </v-list-item>
 
+                            <v-list-item 
+                                v-if="authStore.user && authStore.user.isAdmin"
+                                class="menu-item rounded-lg flex-shrink-0 mt-md-4" 
+                                @click="router.push('/admin')" 
+                                prepend-icon="mdi-shield-crown-outline"
+                                style="width: auto; min-width: max-content; background: rgba(245, 158, 11, 0.1); border: 1px dashed #F59E0B;"
+                            >
+                                <v-list-item-title class="font-weight-bold" style="color: #F59E0B;">
+                                    Panou Admin
+                                </v-list-item-title>
+                            </v-list-item>
+
                             <v-list-item class="menu-item logout-item rounded-lg mt-8" prepend-icon="mdi-logout" @click="handleLogout">
                                 <v-list-item-title class="font-weight-medium">Deconectare</v-list-item-title>
                             </v-list-item>
