@@ -140,7 +140,7 @@
                 <v-col cols="12" md="9" lg="10">
                     <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between mb-6 pa-4 sort-bar rounded-xl">
                         <div class="cloud-text font-weight-medium mb-4 mb-sm-0">
-                        Afișare <span class="cyan-text font-weight-bold">{{ filteredPeripherals.length }}</span> produse
+                        Afișare <span class="cyan-text font-weight-bold">{{ filteredPeripherals.length }}</span> periferice
                         </div>
                         
                         <div class="d-flex align-center" style="width: 250px;">
