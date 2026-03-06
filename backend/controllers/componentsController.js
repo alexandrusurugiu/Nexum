@@ -78,4 +78,48 @@ const getProducts = async (req, res) => {
     }
 };
 
-module.exports = { getProducts };
+const addProduct = async (req, res) => {
+    try {
+        const productData = req.body;
+        const docRef = await db.collection('products').add(productData);
+
+        res.status(201).json({ success: true, id: docRef.id, message: 'Componentă adăugată.' });
+    } catch (error) {
+        console.error("Eroare la adăugare:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la adăugare.' });
+    }
+};
+
+const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const productData = req.body;
+
+        await db.collection('products').doc(id).update(productData);
+
+        res.status(200).json({ success: true, message: 'Componentă actualizată.' });
+    } catch (error) {
+        console.error("Eroare la actualizare:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la actualizare.' });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await db.collection('products').doc(id).delete();
+
+        res.status(200).json({ success: true, message: 'Componentă ștearsă.' });
+    } catch (error) {
+        console.error("Eroare la ștergere:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la ștergere.' });
+    }
+};
+
+module.exports = { 
+    getProducts, 
+    addProduct, 
+    updateProduct, 
+    deleteProduct 
+};

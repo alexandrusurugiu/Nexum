@@ -78,4 +78,48 @@ const getLaptops = async (req, res) => {
     }
 };
 
-module.exports = { getLaptops };
+const addLaptop = async (req, res) => {
+    try {
+        const laptopData = req.body;
+        const docRef = await db.collection('laptops').add(laptopData);
+
+        res.status(201).json({ success: true, id: docRef.id, message: 'Laptop adăugat.' });
+    } catch (error) {
+        console.error("Eroare la adăugare:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la adăugare.' });
+    }
+};
+
+const updateLaptop = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const laptopData = req.body;
+
+        await db.collection('laptops').doc(id).update(laptopData);
+
+        res.status(200).json({ success: true, message: 'Laptop actualizat.' });
+    } catch (error) {
+        console.error("Eroare la actualizare:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la actualizare.' });
+    }
+};
+
+const deleteLaptop = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await db.collection('laptops').doc(id).delete();
+
+        res.status(200).json({ success: true, message: 'Laptop șters.' });
+    } catch (error) {
+        console.error("Eroare la ștergere:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă la ștergere.' });
+    }
+};
+
+module.exports = { 
+    getLaptops, 
+    addLaptop, 
+    updateLaptop, 
+    deleteLaptop 
+};

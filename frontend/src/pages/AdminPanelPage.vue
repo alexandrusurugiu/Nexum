@@ -66,7 +66,7 @@
                 v-model="isModalOpen" 
                 :mode="modalMode" 
                 :product="selectedProduct" 
-                :collection-name="selectedCollection"
+                :api-endpoint="currentApiEndpoint"
                 @saved="handleProductSaved"
             />
 
@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, computed, onMounted } from 'vue';
     import axios from 'axios';
     import AppHeader from '../components/AppHeader.vue';
     import AdminProductModal from '../components/AdminProductModal.vue';
@@ -88,6 +88,7 @@
     const laptopsStore = useLaptopsStore();
     const monitorsStore = useMonitorsStore();
     const peripheralsStore = usePeripheralsStore();
+    
     const collections = ['Componente', 'Laptopuri', 'Monitoare', 'Periferice'];
     const selectedCollection = ref('Componente');
     const products = ref([]);
@@ -95,6 +96,16 @@
     const isModalOpen = ref(false);
     const modalMode = ref('add');
     const selectedProduct = ref(null);
+
+    const currentApiEndpoint = computed(() => {
+        switch (selectedCollection.value) {
+            case 'Componente': return 'components';
+            case 'Laptopuri': return 'laptops';
+            case 'Monitoare': return 'monitors';
+            case 'Periferice': return 'peripherals';
+            default: return 'components';
+        }
+    });
 
     const loadProducts = async () => {
         isLoading.value = true;
@@ -130,7 +141,6 @@
             products.value.push(savedProduct);
         } else {
             const index = products.value.findIndex(p => p.id === savedProduct.id);
-            
             if (index !== -1) {
                 products.value[index] = { ...products.value[index], ...savedProduct };
             }
@@ -141,7 +151,7 @@
     const deleteProduct = async (id) => {
         if(!confirm("Sigur vrei să ștergi acest produs?")) return;
         try {
-            await axios.delete(`http://localhost:5000/server/admin/product/${id}?collectionName=${selectedCollection.value}`);
+            await axios.delete(`http://localhost:5000/server/${currentApiEndpoint.value}/${id}`);
             products.value = products.value.filter(p => p.id !== id);
             syncStore();
         } catch (e) {
