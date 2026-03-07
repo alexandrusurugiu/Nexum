@@ -112,10 +112,63 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const updatePreferences = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { notifications } = req.body;
+
+        await db.collection('users').doc(id).update({
+            notifications: notifications
+        });
+
+        res.status(200).json({ success: true, message: 'Preferințe actualizate.' });
+    } catch (error) {
+        console.error("Eroare la actualizare preferințe:", error);
+        res.status(500).json({ success: false, message: 'Eroare internă.' });
+    }
+};
+
+const sendOrderUpdate = async (req, res) => {
+    try {
+        const { userEmail, userPreferences, orderNumber, type } = req.body;
+
+        if (userPreferences && userPreferences.orders === false) {
+            console.log("Utilizatorul a dezactivat notificările.");
+            return res.status(200).json({ success: true, message: 'Notificări dezactivate de utilizator.' });
+        }
+
+        let subject = '';
+        let htmlMessage = '';
+
+        if (type === 'plasata') {
+            subject = `Confirmare comandă #${orderNumber}`;
+            htmlMessage = `<h2>Salut!</h2> <p>Îți mulțumim! Comanda ta <b>${orderNumber}</b> a fost înregistrată cu succes și este în procesare.</p>`;
+        } else if (type === 'expediata') {
+            subject = `Comanda ta #${orderNumber} a fost expediată!`;
+            htmlMessage = `<h2>Salut!</h2> <p>Avem vești bune. Comanda ta <b>${orderNumber}</b> a fost predată curierului și este pe drum spre tine.</p>`;
+        }
+
+        const mailOptions = {
+            from: '"Nexum IT" <nexum.noreply@gmail.com>',
+            to: userEmail,
+            subject: subject,
+            html: htmlMessage
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ success: true, message: 'Email trimis cu succes!' });
+    } catch (error) {
+        console.error("Eroare la trimiterea emailului:", error);
+        res.status(500).json({ success: false, message: 'Eroare la trimiterea emailului.' });
+    }
+};
+
 module.exports = { 
     syncUser, 
     updateProfile,
     toggle2FA,
     send2FACode,
-    verify2FACode 
+    verify2FACode,
+    updatePreferences,
+    sendOrderUpdate
 };

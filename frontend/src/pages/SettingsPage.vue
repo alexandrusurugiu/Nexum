@@ -185,11 +185,12 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useAuthStore } from '../stores/authStore';
     import { useRouter } from 'vue-router';
     import AppHeader from '../components/AppHeader.vue';
     import { useThemeStore } from '../stores/themeStore';
+    import axios from 'axios';
 
     const authStore = useAuthStore();
     const router = useRouter();
@@ -211,7 +212,13 @@
     });
     const preferences = ref({
         language: 'Română'
-    });  
+    }); 
+    
+    onMounted(() => {
+        if (authStore.user && authStore.user.notifications) {
+            notifications.value = { ...authStore.user.notifications };
+        }
+    });
 
     if (!authStore.isAuthenticated) {
         router.push('/profil');
@@ -250,9 +257,27 @@
         }
     };
 
-    const savePreferences = (type) => {
-        preferencesSuccessMsg.value = `${type} au fost salvate cu succes!`;
-        preferencesSuccess.value = true;
+    const savePreferences = async (type) => {
+        if (type === 'Notificările') {
+            try {
+                const response = await axios.put(`http://localhost:5000/server/auth/${authStore.user.id}/preferences`, {
+                    notifications: notifications.value
+                });
+
+                if (response.data.success) {
+                    authStore.user.notifications = { ...notifications.value };
+                    
+                    preferencesSuccessMsg.value = `Notificările au fost salvate cu succes!`;
+                    preferencesSuccess.value = true;
+                }
+            } catch (error) {
+                console.error("Eroare la salvare:", error);
+                return;
+            }
+        } else {
+            preferencesSuccessMsg.value = `${type} au fost salvate cu succes!`;
+            preferencesSuccess.value = true;
+        }
         
         setTimeout(() => {
             preferencesSuccess.value = false;

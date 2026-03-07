@@ -281,6 +281,16 @@
             cartStore.clearCart(); 
             
             axios.post('http://localhost:5000/server/orders/confirm-payment', { orderId });
+
+            if (authStore.user) {
+                axios.post('http://localhost:5000/server/auth/send-order-update', {
+                    userEmail: authStore.user.email,
+                    userPreferences: authStore.user.notifications,
+                    orderNumber: generatedOrderNumber.value,
+                    type: 'plasata'
+                }).catch(err => console.error("Eroare email:", err));
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } 
         else if (route.query.canceled === 'true') {
@@ -356,11 +366,20 @@
                 if (response.data.isStripe) {
                     window.location.href = response.data.url;
                 } 
-                
                 else {
                     generatedOrderNumber.value = response.data.orderNumber;
                     orderPlacedSuccess.value = true;
                     cartStore.clearCart(); 
+                    
+                    if (authStore.user) {
+                        axios.post('http://localhost:5000/server/auth/send-order-update', {
+                            userEmail: authStore.user.email,
+                            userPreferences: authStore.user.notifications,
+                            orderNumber: generatedOrderNumber.value,
+                            type: 'plasata'
+                        }).catch(err => console.error("Eroare email:", err));
+                    }
+
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
