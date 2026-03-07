@@ -48,6 +48,11 @@ const router = createRouter({
       component: () => import('../pages/ProfilePage.vue')
     },
     {
+      path: '/despre',
+      name: 'About',
+      component: () => import('../pages/AboutPage.vue')
+    },
+    {
       path: '/setari',
       name: 'setari',
       component: () => import('../pages/SettingsPage.vue')

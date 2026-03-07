@@ -72,7 +72,7 @@
             <v-spacer></v-spacer>
 
             <div class="d-flex align-center mr-2">
-                <v-btn icon="mdi-information-outline" class="cloud-text opacity-80 hover-cyan" title="Despre Nexum"></v-btn>
+                <v-btn icon="mdi-information-outline" class="cloud-text opacity-80 hover-cyan" title="Despre Nexum" @click="goToAbout"></v-btn>
                 <v-btn icon="mdi-cog-outline" class="cloud-text opacity-80 hover-cyan" title="Setări" @click="goToSettings"></v-btn>
                 
                 <v-divider vertical class="mx-3 border-opacity-25" color="var(--text-main)" style="height: 50px;"></v-divider>
@@ -170,10 +170,25 @@
         router.push({ path: '/search', query: { q: product.name } });
     }
 
-    function navigateToHome() { router.push('/home'); }
-    function goToCart() { router.push('/cart'); }
-    function goToProfile() { router.push('/profil'); }
-    function goToSettings() { router.push('/setari'); }
+    function navigateToHome() { 
+        router.push('/home'); 
+    }
+
+    function goToCart() { 
+        router.push('/cart'); 
+    }
+
+    function goToProfile() { 
+        router.push('/profil'); 
+    }
+
+    function goToSettings() { 
+        router.push('/setari'); 
+    }
+
+    function goToAbout() { 
+        router.push('/despre'); 
+    }
 </script>
 
 <style scoped>
