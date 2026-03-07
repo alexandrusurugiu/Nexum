@@ -713,14 +713,15 @@
         box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3) !important;
     }
 
-    /* Asigură tranziția fină între logare și înregistrare */
     .fade-slide-enter-active, .fade-slide-leave-active {
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
+
     .fade-slide-enter-from {
         opacity: 0;
         transform: translateY(10px);
     }
+    
     .fade-slide-leave-to {
         opacity: 0;
         transform: translateY(-10px);
