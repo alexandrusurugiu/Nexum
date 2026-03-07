@@ -236,82 +236,83 @@
                 </v-col>
             </v-row>
 
-            <v-row v-else justify="center" align="center" class="mt-4">
-                <v-col cols="12" md="6" lg="5">
-                    <v-card class="auth-card rounded-xl pa-8 pa-sm-10" elevation="15">
+            <v-row v-else justify="center" align="center" class="mt-8 mb-16">
+                <v-col cols="12" sm="8" md="6" lg="5" xl="4">
+                    <v-card class="bg-panel rounded-xl pa-8 pa-sm-10" elevation="6">
                         
                         <div class="text-center mb-8">
-                            <v-icon size="64" color="#10B981" class="mb-4 drop-shadow-cyan">
-                                {{ isLogin ? 'mdi-shield-account' : 'mdi-account-plus-outline' }}
-                            </v-icon>
                             <h2 class="text-h4 font-weight-black cloud-text mb-2">
-                                {{ isLogin ? 'Bine ai revenit' : 'Creează un cont' }}
+                                {{ requires2FA ? 'Verificare' : (isLogin ? 'Autentificare' : 'Creare Cont') }}
                             </h2>
-                            <p class="cloud-text opacity-50 text-body-2 px-4">
-                                {{ isLogin ? 'Introdu datele pentru a accesa configurațiile și comenzile tale.' : 'Alătură-te comunității și bucură-te de o experiență premium.' }}
-                            </p>
                         </div>
 
-                        <div class="custom-toggle-wrapper mb-8">
-                            <div class="toggle-slider" :class="{ 'is-right': !isLogin }"></div>
-                            <button class="toggle-btn" :class="{ 'active': isLogin }" @click="isLogin = true">Autentificare</button>
-                            <button class="toggle-btn" :class="{ 'active': !isLogin }" @click="isLogin = false">Cont Nou</button>
-                        </div>
-
-                        <v-alert v-if="authStore.errorMsg" type="error" variant="tonal" class="mb-6 rounded-lg text-body-2 auth-alert">
+                        <v-alert v-if="authStore.errorMsg" type="error" variant="tonal" class="mb-6 rounded-lg text-body-2 border-error">
                             {{ authStore.errorMsg }}
                         </v-alert>
 
-                        <div class="form-container">
-                            <transition name="fade-slide" mode="out-in">
-                                <v-form v-if="requires2FA" @submit.prevent="submit2FA" key="2fa">
-                                    <div class="text-center mb-6">
-                                        <v-icon size="40" color="#10B981" class="mb-2">mdi-email-fast-outline</v-icon>
-                                        <h3 class="cloud-text">Verificare Securitate</h3>
-                                        <p class="cloud-text opacity-70 text-body-2 mt-1">Am trimis un cod de 6 cifre pe email-ul tău.</p>
-                                    </div>
+                        <transition name="fade-slide" mode="out-in">
+                            
+                            <v-form v-if="requires2FA" @submit.prevent="submit2FA" key="2fa">
+                                <div class="text-subtitle-2 cloud-text font-weight-bold mb-2">Cod din email</div>
+                                <v-text-field v-model="twoFactorCode" placeholder="123456" required variant="outlined" color="#10B981" class="custom-input mb-8" prepend-inner-icon="mdi-dialpad"></v-text-field>
+                                
+                                <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-lg font-weight-bold text-white custom-btn-shadow" :loading="authStore.isLoading">
+                                    Verifică
+                                </v-btn>
+                            </v-form>
 
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Cod format din 6 cifre</div>
-                                    <v-text-field v-model="twoFactorCode" placeholder="123456" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-dialpad"></v-text-field>
+                            <v-form v-else-if="isLogin" @submit.prevent="submitLogin" key="login">
+                                <div class="text-subtitle-2 cloud-text font-weight-bold mb-2">Email</div>
+                                <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-4" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                
+                                <div class="d-flex justify-space-between align-center mb-2">
+                                    <div class="text-subtitle-2 cloud-text font-weight-bold">Parolă</div>
+                                    <a href="#" class="text-caption cyan-text text-decoration-none hover-underline">Ai uitat parola?</a>
+                                </div>
+                                <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" class="custom-input mb-8" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                                    <v-btn type="submit" block color="#059669" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
-                                        Verifică Codul
-                                    </v-btn>
-                                </v-form>
+                                <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-lg font-weight-bold text-white mb-6 custom-btn-shadow" :loading="authStore.isLoading">
+                                    Intră în Cont
+                                </v-btn>
 
-                                <v-form v-else-if="isLogin" @submit.prevent="submitLogin" key="login">
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="loginForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
-                                    
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă</div>
-                                    <v-text-field v-model="loginForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                <v-divider class="border-opacity-25 mb-6" color="#10B981"></v-divider>
 
-                                    <v-btn type="submit" block color="#059669" size="x-large" class="rounded-xl neon-btn font-weight-black text-uppercase" style="letter-spacing: 1px;" :loading="authStore.isLoading">
-                                        Intră în Cont
-                                    </v-btn>
-                                </v-form>
+                                <div class="text-center cloud-text opacity-80 text-body-2">
+                                    Nu ai cont? 
+                                    <a href="#" @click.prevent="isLogin = false" class="cyan-text font-weight-bold text-decoration-none hover-underline">
+                                        Creează unul aici
+                                    </a>
+                                </div>
+                            </v-form>
 
-                                <v-form v-else @submit.prevent="submitRegister" key="register">
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Nume Complet</div>
-                                    <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-account-outline"></v-text-field>
+                            <v-form v-else @submit.prevent="submitRegister" key="register">
+                                <div class="text-subtitle-2 cloud-text font-weight-bold mb-2">Nume Complet</div>
+                                <v-text-field v-model="registerForm.name" placeholder="Popescu Ion" required variant="outlined" color="#10B981" class="custom-input mb-4" prepend-inner-icon="mdi-account-outline"></v-text-field>
 
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Adresă Email</div>
-                                    <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-2" prepend-inner-icon="mdi-email-outline"></v-text-field>
-                                    
-                                    <div class="text-subtitle-2 cloud-text font-weight-bold mb-2 ml-1">Parolă (Minim 6 caractere)</div>
-                                    <v-text-field v-model="registerForm.password" type="password" placeholder="••••••••" required variant="outlined" color="#10B981" class="custom-input mb-6" prepend-inner-icon="mdi-lock-outline"></v-text-field>
+                                <div class="text-subtitle-2 cloud-text font-weight-bold mb-2">Email</div>
+                                <v-text-field v-model="registerForm.email" type="email" placeholder="nume@email.com" required variant="outlined" color="#10B981" class="custom-input mb-4" prepend-inner-icon="mdi-email-outline"></v-text-field>
+                                
+                                <div class="text-subtitle-2 cloud-text font-weight-bold mb-2">Parolă</div>
+                                <v-text-field v-model="registerForm.password" type="password" placeholder="Minim 6 caractere" required variant="outlined" color="#10B981" class="custom-input mb-8" prepend-inner-icon="mdi-lock-outline"></v-text-field>
 
-                                    <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-xl font-weight-black text-uppercase auth-register-btn" style="color: var(--bg-main) !important; letter-spacing: 1px;" :loading="authStore.isLoading">
-                                        Creează Cont
-                                    </v-btn>
-                                </v-form>
+                                <v-btn type="submit" block color="#10B981" size="x-large" class="rounded-lg font-weight-bold text-white mb-6 custom-btn-shadow" :loading="authStore.isLoading">
+                                    Creează Contul
+                                </v-btn>
 
-                            </transition>
-                        </div>
+                                <v-divider class="border-opacity-25 mb-6" color="#10B981"></v-divider>
+
+                                <div class="text-center cloud-text opacity-80 text-body-2">
+                                    Ai deja cont? 
+                                    <a href="#" @click.prevent="isLogin = true" class="cyan-text font-weight-bold text-decoration-none hover-underline">
+                                        Autentifică-te
+                                    </a>
+                                </div>
+                            </v-form>
+
+                        </transition>
                     </v-card>
                 </v-col>
             </v-row>
-
         </v-main>
     </v-app>
 </template>
@@ -687,5 +688,41 @@
 
     .whitespace-nowrap {
         white-space: nowrap;
+    }
+
+    .bg-panel {
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-light);
+    }
+
+    .hover-underline:hover {
+        text-decoration: underline !important;
+    }
+
+    .border-error {
+        border: 1px solid rgba(220, 38, 38, 0.3);
+    }
+
+    .custom-btn-shadow {
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .custom-btn-shadow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3) !important;
+    }
+
+    /* Asigură tranziția fină între logare și înregistrare */
+    .fade-slide-enter-active, .fade-slide-leave-active {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .fade-slide-enter-from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    .fade-slide-leave-to {
+        opacity: 0;
+        transform: translateY(-10px);
     }
 </style>
