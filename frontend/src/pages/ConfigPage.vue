@@ -36,11 +36,15 @@
 
           <h2 class="text-h5 font-weight-bold cloud-text mb-4">Alege {{ steps[currentStep].name }}</h2>
           
-          <v-alert v-if="currentAvailableParts.length === 0" color="warning" variant="tonal" class="rounded-xl mt-4">
-            <v-icon start>mdi-alert-circle</v-icon>
-            Nu există componente compatibile cu restul sistemului tău în această categorie. Te rugăm să verifici alegerile anterioare.
+          <v-alert v-if="allCategoryParts.length === 0" color="error" variant="tonal" class="rounded-xl mt-4 border-error">
+            <v-icon start>mdi-database-alert</v-icon>
+            <strong>Eroare Date:</strong> Nu există nicio componentă salvată / încărcată în categoria "{{ steps[currentStep].name }}". (Verifică dacă au fost aduse din baza de date).
           </v-alert>
 
+          <v-alert v-else-if="currentAvailableParts.length === 0" color="warning" variant="tonal" class="rounded-xl mt-4">
+            <v-icon start>mdi-alert-circle</v-icon>
+            Avem <strong>{{ allCategoryParts.length }} componente</strong> în magazin pentru această categorie, dar NICIUNA nu se potrivește cu socketul sau specificațiile pieselor alese anterior!
+          </v-alert>
           <v-row v-else>
             <v-col v-for="part in currentAvailableParts" :key="part.id" cols="12" sm="6" lg="4">
               <v-card 
@@ -132,7 +136,7 @@
                 @click="addBuildToCart"
               >
                 <v-icon start>{{ isPsuWeak ? 'mdi-power-plug-off' : 'mdi-cart-plus' }}</v-icon> 
-                {{ isPsuWeak ? 'Alege o sursă mai puternică' : 'Adaugă Configurația' }}
+                {{ isPsuWeak ? 'Sursă prea slabă' : 'Adaugă Configurația' }}
               </v-btn>
             </v-card>
           </div>
@@ -160,6 +164,7 @@
   const steps = [
     { id: 'cpu', name: 'Procesor', icon: 'mdi-cpu-64-bit' },
     { id: 'mb', name: 'Placă de Bază', icon: 'mdi-developer-board' },
+    { id: 'cooler', name: 'Cooler', icon: 'mdi-fan' },
     { id: 'ram', name: 'Memorie RAM', icon: 'mdi-memory' },
     { id: 'gpu', name: 'Placă Video', icon: 'mdi-expansion-card-variant' },
     { id: 'storage', name: 'Stocare', icon: 'mdi-harddisk' },
@@ -172,58 +177,135 @@
 
   const groupedParts = computed(() => {
     const groups = { 
-      cpu: [], mb: [], ram: [], gpu: [], storage: [], psu: [], case: [] 
+      cpu: [], 
+      mb: [], 
+      cooler: [], 
+      ram: [], 
+      gpu: [], 
+      storage: [], 
+      psu: [], 
+      case: [] 
     };
     
     allParts.value.forEach(p => {
-      const getNum = (str) => str ? parseInt(str.replace(/[^0-9]/g, '')) : 0;
+      const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
       
       let shortDesc = '';
-      if (p.category === 'procesoare') shortDesc = `${p.specs?.cores || ''} Nuclee, ${p.specs?.frequency || ''}`;
-      else if (p.category === 'placi_de_baza') shortDesc = `Socket ${p.specs?.socket}, ${p.specs?.memory_support || p.specs?.memory_type || 'DDR4/DDR5'}`;
-      else if (p.category === 'memorie_ram') shortDesc = `${p.specs?.memory || p.specs?.capacity}, ${p.specs?.memory_type || ''}`;
-      else if (p.category === 'placi_video') shortDesc = `${p.specs?.memory}, ${p.specs?.memory_type || ''}`;
-      else if (p.category === 'stocare') shortDesc = `${p.specs?.capacity || p.specs?.memory}, ${p.specs?.type || ''}`;
-      else if (p.category === 'surse') shortDesc = `${p.specs?.putere || 'N/A'}, ${p.specs?.certificare || ''}`;
-      else if (p.category === 'carcase') shortDesc = `${p.specs?.format || 'N/A'}, ${p.specs?.sidePanel || ''}`;
+      if (p.category === 'procesoare') {
+        shortDesc = `${p.specs?.cores || ''} Nuclee, ${p.specs?.frequency || ''}`;
+      } else if (p.category === 'placi_de_baza') {
+        shortDesc = `Socket ${p.specs?.socket}, ${p.specs?.memory_support || p.specs?.memory_type || 'DDR4/DDR5'}`;
+      } else if (p.category === 'coolere') {
+        shortDesc = `${p.specs?.type || 'Aer'}, ${p.specs?.fan_size || p.specs?.radiator || ''}`;
+      } else if (p.category === 'memorie_ram') {
+        shortDesc = `${p.specs?.memory || p.specs?.capacity}, ${p.specs?.memory_type || p.specs?.type || ''}`;
+      } else if (p.category === 'placi_video') {
+        shortDesc = `${p.specs?.memory}, ${p.specs?.memory_type || ''}`;
+      } else if (p.category === 'stocare') {
+        shortDesc = `${p.specs?.capacity || p.specs?.memory}, ${p.specs?.type || ''}`;
+      } else if (p.category === 'surse') {
+        shortDesc = `${p.specs?.putere || 'N/A'}, ${p.specs?.certificare || ''}`;
+      } else if (p.category === 'carcase') {
+        shortDesc = `${p.specs?.format || 'N/A'}, ${p.specs?.sidePanel || ''}`;
+      }
+
+      let parsedWattage = getNum(p.specs?.tdp) || getNum(p.specs?.consum) || 45;
+      if (p.category === 'coolere') parsedWattage = 15;
 
       const formattedPart = {
         ...p,
         image: p.specs?.image || p.image || '',
-        socket: p.specs?.socket,
-        ramType: p.specs?.memory_type || p.specs?.memory_support || '',
-        wattage: getNum(p.specs?.tdp) || getNum(p.specs?.consum) || 45, 
+        socket: p.specs?.socket || p.socket || '',
+        socket_support: p.specs?.socket_support || p.socket_support || '',
+        ramType: p.specs?.memory_type || p.specs?.memory_support || p.specs?.type || '',
+        wattage: parsedWattage, 
         psuWattage: getNum(p.specs?.putere) || 650, 
         shortSpec: shortDesc
       };
 
-      if (p.category === 'procesoare') groups.cpu.push(formattedPart);
-      else if (p.category === 'placi_de_baza') groups.mb.push(formattedPart);
-      else if (p.category === 'memorie_ram') groups.ram.push(formattedPart);
-      else if (p.category === 'placi_video') groups.gpu.push(formattedPart);
-      else if (p.category === 'stocare') groups.storage.push(formattedPart);
-      else if (p.category === 'surse') groups.psu.push(formattedPart);
-      else if (p.category === 'carcase') groups.case.push(formattedPart);
+      if (p.category === 'procesoare') {
+        groups.cpu.push(formattedPart);
+      } else if (p.category === 'placi_de_baza') {
+        groups.mb.push(formattedPart);
+      } else if (p.category === 'coolere') {
+        groups.cooler.push(formattedPart);
+      } else if (p.category === 'memorie_ram') {
+        groups.ram.push(formattedPart);
+      } else if (p.category === 'placi_video') {
+        groups.gpu.push(formattedPart);
+      } else if (p.category === 'stocare') {
+        groups.storage.push(formattedPart);
+      }
+      else if (p.category === 'surse') {
+        groups.psu.push(formattedPart);
+      }
+      else if (p.category === 'carcase') {
+        groups.case.push(formattedPart);
+      }
     });
     
     return groups;
   });
 
-  const isFormatCompatible = (mbFormat, caseSupportStr) => {
-    if (!mbFormat || !caseSupportStr) return true; 
+  const isSocketCompatible = (sock1, sock2) => {
+    if (!sock1 || !sock2) return true;
     
-    let mb = mbFormat.toLowerCase().replace(/[^a-z]/g, ''); 
-    if (mb.includes('micro') || mb === 'matx') mb = 'microatx';
-    else if (mb.includes('mini') || mb === 'mitx') mb = 'miniitx';
-    else if (mb.includes('extended') || mb === 'eatx') mb = 'eatx';
-    else if (mb === 'atx') mb = 'atx';
+    const clean1 = String(sock1).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
+    const clean2 = String(sock2).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
+    
+    const arr1 = clean1.split(',').filter(Boolean);
+    const arr2 = clean2.split(',').filter(Boolean);
+    
+    for (const s1 of arr1) {
+        for (const s2 of arr2) {
+            if (s1 === s2 || s1.includes(s2) || s2.includes(s1)) {
+                return true;
+            }
+        }
+    }
+    return false;
+  };
 
-    const supports = caseSupportStr.toLowerCase().split(',').map(s => {
-        let form = s.replace(/[^a-z]/g, '');
-        if (form.includes('micro') || form === 'matx') return 'microatx';
-        if (form.includes('mini') || form === 'mitx') return 'miniitx';
-        if (form.includes('extended') || form === 'eatx') return 'eatx';
-        if (form === 'atx') return 'atx';
+  const isRamCompatible = (ram1, ram2) => {
+    if (!ram1 || !ram2) return true;
+    const r1 = String(ram1).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const r2 = String(ram2).toLowerCase().replace(/[^a-z0-9]/g, '');
+    return r1.includes(r2) || r2.includes(r1);
+  };
+
+  const isFormatCompatible = (mbFormat, caseSupportStr) => {
+    if (!mbFormat || !caseSupportStr) {
+      return true; 
+    }
+
+    let mb = String(mbFormat).toLowerCase().replace(/[^a-z]/g, ''); 
+
+    if (mb.includes('micro') || mb === 'matx') {
+      mb = 'microatx';
+    } else if (mb.includes('mini') || mb === 'mitx') {
+      mb = 'miniitx';
+    } else if (mb.includes('extended') || mb === 'eatx') {
+      mb = 'eatx';
+    } else if (mb === 'atx') {
+      mb = 'atx';
+    }
+
+    const supports = String(caseSupportStr).toLowerCase().replace(/[^a-z,]/g, '').split(',').map(s => {
+        let form = s;
+        
+        if (form.includes('micro') || form === 'matx') {
+          return 'microatx';
+        }
+        if (form.includes('mini') || form === 'mitx') {
+          return 'miniitx';
+        }
+        if (form.includes('extended') || form === 'eatx') {
+          return 'eatx';
+        }
+        if (form === 'atx') {
+          return 'atx';
+        }
+
         return form;
     });
 
@@ -234,56 +316,75 @@
     const category = steps[currentStep.value].id;
     
     if (category === 'mb' && selectedBuild.value.cpu) {
-      if (part.socket && selectedBuild.value.cpu.socket && !part.socket.includes(selectedBuild.value.cpu.socket)) {
+      if (!isSocketCompatible(selectedBuild.value.cpu.socket, part.socket)) {
         return { isCompatible: false };
       }
     }
     if (category === 'cpu' && selectedBuild.value.mb) {
-      if (part.socket && selectedBuild.value.mb.socket && !selectedBuild.value.mb.socket.includes(part.socket)) {
+      if (!isSocketCompatible(part.socket, selectedBuild.value.mb.socket)) {
+        return { isCompatible: false };
+      }
+    }
+
+    if (category === 'cooler') {
+      if (selectedBuild.value.cpu && !isSocketCompatible(selectedBuild.value.cpu.socket, part.socket_support)) {
+        return { isCompatible: false };
+      }
+      if (selectedBuild.value.mb && !isSocketCompatible(selectedBuild.value.mb.socket, part.socket_support)) {
+        return { isCompatible: false };
+      }
+    }
+    if (category === 'cpu' && selectedBuild.value.cooler) {
+      if (!isSocketCompatible(part.socket, selectedBuild.value.cooler.socket_support)) {
+        return { isCompatible: false };
+      }
+    }
+    if (category === 'mb' && selectedBuild.value.cooler) {
+      if (!isSocketCompatible(part.socket, selectedBuild.value.cooler.socket_support)) {
         return { isCompatible: false };
       }
     }
 
     if (category === 'ram' && selectedBuild.value.mb) {
-      if (part.ramType && selectedBuild.value.mb.ramType && !selectedBuild.value.mb.ramType.includes(part.ramType)) {
+      if (!isRamCompatible(part.ramType, selectedBuild.value.mb.ramType)) {
         return { isCompatible: false };
       }
     }
     if (category === 'mb' && selectedBuild.value.ram) {
-      if (part.ramType && selectedBuild.value.ram.ramType && !part.ramType.includes(selectedBuild.value.ram.ramType)) {
+      if (!isRamCompatible(part.ramType, selectedBuild.value.ram.ramType)) {
         return { isCompatible: false };
       }
     }
 
     if (category === 'case' && selectedBuild.value.mb) {
       const mbFormat = selectedBuild.value.mb.specs?.type || selectedBuild.value.mb.specs?.format; 
-      const caseSupport = part.specs?.motherboardSupport; 
-      
-      if (mbFormat && caseSupport && !isFormatCompatible(mbFormat, caseSupport)) {
-         return { isCompatible: false };
+      if (!isFormatCompatible(mbFormat, part.specs?.motherboardSupport)) {
+        return { isCompatible: false };
       }
     }
     if (category === 'mb' && selectedBuild.value.case) {
       const mbFormat = part.specs?.type || part.specs?.format; 
-      const caseSupport = selectedBuild.value.case.specs?.motherboardSupport; 
-      
-      if (mbFormat && caseSupport && !isFormatCompatible(mbFormat, caseSupport)) {
-         return { isCompatible: false };
+      if (!isFormatCompatible(mbFormat, selectedBuild.value.case.specs?.motherboardSupport)) {
+        return { isCompatible: false };
       }
     }
 
     return { isCompatible: true };
   };
 
-  const currentAvailableParts = computed(() => {
+  const allCategoryParts = computed(() => {
     const currentCategory = steps[currentStep.value].id;
-    const parts = groupedParts.value[currentCategory] || [];
-    
-    return parts.filter(part => checkCompatibility(part).isCompatible);
+
+    return groupedParts.value[currentCategory] || [];
+  });
+
+  const currentAvailableParts = computed(() => {
+    return allCategoryParts.value.filter(part => checkCompatibility(part).isCompatible);
   });
 
   const selectPart = (categoryId, part) => {
     selectedBuild.value[categoryId] = part;
+    
     if (currentStep.value < steps.length - 1) {
       currentStep.value++;
     }
@@ -294,6 +395,7 @@
     Object.values(selectedBuild.value).forEach(part => {
       total += part.price;
     });
+
     return total.toLocaleString('ro-RO'); 
   });
 
@@ -316,11 +418,9 @@
     if (buildKeys.length === 0) {
       return { message: 'Sistem Gol', icon: 'mdi-information', colorClass: 'bg-glass-neutral cloud-text' };
     }
-
     if (isPsuWeak.value) {
       return { message: 'Pericol: Sursă prea slabă!', icon: 'mdi-alert-octagon', colorClass: 'bg-glass-error text-error border-error shadow-error' };
     }
-
     if (buildKeys.length === steps.length) {
       return { message: 'Sistem Complet & Compatibil!', icon: 'mdi-check-decagram', colorClass: 'bg-glass-success cloud-text border-success' };
     }
@@ -330,10 +430,9 @@
 
   const addBuildToCart = () => {
     const parts = Object.values(selectedBuild.value);
+
     if(parts.length > 0) {
-      parts.forEach(part => {
-          cartStore.addToCart(part);
-      });
+      parts.forEach(part => cartStore.addToCart(part));
       alert(`Am adăugat ${parts.length} componente în coșul tău!`);
     }
   };
@@ -372,26 +471,26 @@
     position: absolute; 
     top: 10px; 
     right: 10px; 
-    z-index: 2;
+    z-index: 2; 
   }
 
   .whitespace-nowrap { 
     white-space: nowrap; 
   }
 
-  .category-wrapper {
-    background-color: var(--bg-panel);
-    border-top: 2px solid #10B981;
+  .category-wrapper { 
+    background-color: var(--bg-panel); 
+    border-top: 2px solid #10B981; 
   }
 
   .hide-scrollbar::-webkit-scrollbar { 
     display: none; 
   }
-
-  .step-item {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+  
+  .step-item { 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    white-space: nowrap; 
   }
 
   .step-item:hover { 
@@ -402,59 +501,59 @@
     background: rgba(16, 185, 129, 0.1) !important; 
     border: 1px solid rgba(16, 185, 129, 0.3); 
   }
-
-  .product-card {
+  
+  .product-card { 
     background-color: var(--bg-panel) !important; 
-    border: 1px solid var(--border-light);
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-light); 
+    transition: all 0.3s ease; 
   }
 
-  .product-card:hover {
+  .product-card:hover { 
     transform: translateY(-5px); 
-    border-color: rgba(16, 185, 129, 0.3);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(16, 185, 129, 0.3); 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; 
   }
 
   .selected-card {
-    border-color: #10B981 !important;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+    border-color: #10B981 !important; 
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important; 
   }
-
-  .img-container {
-    background-color: #F3F4F6 !important;
-    margin: 12px 12px 0 12px;
-    padding: 20px; 
+  
+  .img-container { 
+    background-color: #F3F4F6 !important; 
+    margin: 12px 12px 0 12px; 
+    padding: 20px;
     border-radius: 16px; 
-    position: relative;
+    position: relative; 
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
   }
 
-  .product-img {
-        transition: all 0.5s ease;
-        mix-blend-mode: multiply; 
-        filter: contrast(1.05);
-    }
-
-  .sticky-summary {
-    position: sticky;
+  .product-img { 
+    transition: all 0.5s ease; 
+    mix-blend-mode: multiply; 
+    filter: contrast(1.05); 
+  }
+  
+  .sticky-summary { 
+    position: sticky; 
     top: 100px; 
   }
 
-  .summary-card {
-    background-color: var(--bg-panel) !important;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+  .summary-card { 
+    background-color: var(--bg-panel) !important; 
+    border: 1px solid rgba(16, 185, 129, 0.2); 
   }
 
-  .transition-all {
-    transition: all 0.3s ease;
+  .transition-all { 
+    transition: all 0.3s ease; 
   }
-
+  
   .bg-glass-neutral { 
     background: var(--border-light); 
-    border: 1px solid transparent;
+    border: 1px solid transparent; 
   }
 
-  .bg-glass-cyan {
+  .bg-glass-cyan { 
     background: rgba(16, 185, 129, 0.1); 
     border: 1px solid rgba(16, 185, 129, 0.3); 
   }
@@ -465,26 +564,26 @@
 
   .bg-glass-success { 
     background: rgba(46, 213, 115, 0.2); 
-    border: 1px solid rgba(46, 213, 115, 0.5); 
+    border: 1px solid rgba(46, 213, 115, 0.5);
+  }
+  
+  .border-error { 
+    border: 1px solid #ff4757 !important; 
   }
 
-  .border-error {
-    border: 1px solid #ff4757 !important;
+  .shadow-error { 
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); 
   }
-
-  .shadow-error {
-    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
-  }
-
-  .electric-btn {
+  
+  .electric-btn { 
     background: linear-gradient(45deg, #059669, #10B981) !important; 
-    color: var(--text-main) !important;
+    color: var(--text-main) !important; 
     letter-spacing: 1px; 
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
   }
 
-  .electric-btn:hover {
+  .electric-btn:hover { 
     transform: translateY(-2px); 
-    box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.6) !important; 
   }
 </style>

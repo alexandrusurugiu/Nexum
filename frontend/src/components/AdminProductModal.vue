@@ -90,6 +90,17 @@
                         <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.includedFans" label="Număr ventilatoare incluse" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
                     </template>
 
+                    <template v-if="formData.category === 'coolere'">
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.type" label="Tip (Aer / Lichid AIO)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.socket_support" label="Socket-uri suportate" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.fan_size" label="Ventilatoare (ex: 2 x 120mm)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.radiator" label="Radiator (doar pt AIO - 240mm/360mm)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.rpm" label="Viteză Max (RPM)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.noise_level" label="Nivel Zgomot (dB)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.tdp" label="Răcire TDP (W)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                        <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.lighting" label="Iluminare (RGB / Fără)" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
+                    </template>
+
                     <template v-if="formData.category === 'laptopuri'">
                         <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.cpu" label="Procesor" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
                         <v-col cols="12" sm="6"><v-text-field v-model="formData.specs.gpu" label="Placă Video" variant="outlined" color="#10B981" class="custom-input" hide-details></v-text-field></v-col>
@@ -175,6 +186,7 @@
         switch(props.apiEndpoint) {
             case 'components': return [
                 { title: 'Procesoare', value: 'procesoare' },
+                { title: 'Coolere Procesor', value: 'coolere' },
                 { title: 'Plăci Video', value: 'placi_video' },
                 { title: 'Plăci de Bază', value: 'placi_de_baza' },
                 { title: 'Memorii RAM', value: 'memorie_ram' },

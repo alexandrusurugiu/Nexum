@@ -267,44 +267,54 @@
     const priceRange = ref([0, 10000]);
 
     const selectedFilters = ref({
-        brands: [],
-        sockets: [],
-        memory: [],
-        types: [],
-        cores: [],
-        chipsets: [],
-        series: [],
-        models: [],
-        memoryTypes: [],
-        interfaces: [],
-        puteri: [],
-        certificari: [],
-        modularitati: [],
-        formate: [],
-        motherboardSupport: [],
-        sidePanels: [],
-        includedFans: []
+        brands: [], 
+        sockets: [], 
+        memory: [], 
+        types: [], 
+        cores: [], 
+        chipsets: [], 
+        series: [], 
+        models: [], 
+        memoryTypes: [], 
+        interfaces: [], 
+        puteri: [], 
+        certificari: [], 
+        modularitati: [], 
+        formate: [], 
+        motherboardSupport: [], 
+        sidePanels: [], 
+        includedFans: [], 
+        coolingTypes: [], 
+        fanSizes: []
     });
 
     const specLabels = {
-        socket: 'Socket',
-        memory: 'Capacitate memorie',
-        memory_type: 'Tip Memorie',
-        max_memory: 'Memorie maximă',
-        memory_frequency: 'Frecvență memorie',
-        type: 'Tip / Format',
-        cores: 'Număr nuclee',
-        threads: 'Fire de execuție',
+        socket: 'Socket', 
+        socket_support: 'Socket-uri Suportate',
+         memory: 'Capacitate memorie', 
+        memory_type: 'Tip Memorie', 
+        max_memory: 'Memorie maximă', 
+        memory_frequency: 'Frecvență memorie', 
+        type: 'Tip / Format', 
+        cores: 'Număr nuclee', 
+        threads: 'Fire de execuție', 
         frequency: 'Frecvență',
-        boost_frequency: 'Frecvență maximă',
-        tdp: 'Consum (TDP)',
-        putere: 'Putere',
-        certificare: 'Certificare 80+',
-        modular: 'Modularitate',
+        boost_frequency: 'Frecvență maximă', 
+        tdp: 'Consum (TDP)', 
+        putere: 'Putere', 
+        certificare: 'Certificare 80+', 
+        modular: 'Modularitate', 
         format: 'Format',
-        motherboardSupport: 'Plăci de bază suportate',
-        sidePanel: 'Panou lateral',
-        includedFans: 'Ventilatoare incluse'
+        motherboardSupport: 'Plăci suportate', 
+        sidePanel: 'Panou lateral', 
+        includedFans: 'Ventilatoare incluse', 
+        rpm: 'Viteză (RPM)', 
+        noise_level: 'Nivel Zgomot',
+        radiator: 'Dimensiune Radiator', 
+        fan_size: 'Ventilatoare', 
+        lighting: 'Iluminare',
+        cache: 'Memorie Cache', 
+        integrated_graphics: 'Grafică Integrată'
     };
 
     watch(activeCategory, () => {
@@ -318,15 +328,31 @@
     const resetFilters = () => {
         priceRange.value = [0, 10000];
         selectedFilters.value = { 
-            brands: [], series: [], models: [], sockets: [], memory: [], 
-            types: [], cores: [], chipsets: [], memoryTypes: [], interfaces: [],
-            puteri: [], certificari: [], modularitati: [], formate: [],
-            motherboardSupport: [], sidePanels: [], includedFans: []
+            brands: [], 
+            series: [], 
+            models: [], 
+            sockets: [], 
+            memory: [], 
+            types: [], 
+            cores: [], 
+            chipsets: [], 
+            memoryTypes: [], 
+            interfaces: [],
+            puteri: [], 
+            certificari: [], 
+            modularitati: [], 
+            formate: [],
+            motherboardSupport: [], 
+            sidePanels: [], 
+            includedFans: [], 
+            coolingTypes: [], 
+            fanSizes: []
         };
     };
 
     const categories = [
         { id: 'procesoare', name: 'Procesoare', icon: 'mdi-cpu-64-bit' },
+        { id: 'coolere', name: 'Coolere Procesor', icon: 'mdi-fan' },
         { id: 'placi_video', name: 'Plăci video', icon: 'mdi-expansion-card-variant' },
         { id: 'placi_de_baza', name: 'Plăci de bază', icon: 'mdi-developer-board' },
         { id: 'memorie_ram', name: 'Memorii RAM', icon: 'mdi-memory' },
@@ -379,9 +405,11 @@
         
         return {
             brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            sockets: [...new Set(currentProducts.map(p => p.specs?.socket).filter(Boolean))],
+            sockets: [...new Set(currentProducts.map(p => p.specs?.socket || p.specs?.socket_support).filter(Boolean))],
             memory: [...new Set(currentProducts.map(p => p.specs?.memory || p.specs?.capacity).filter(Boolean))],
             types: [...new Set(currentProducts.map(p => p.specs?.type).filter(Boolean))],
+            coolingTypes: [...new Set(currentProducts.map(p => p.specs?.type).filter(Boolean))],
+            fanSizes: [...new Set(currentProducts.map(p => p.specs?.fan_size).filter(Boolean))],
             cores: [...new Set(currentProducts.map(p => p.specs?.cores).filter(Boolean))].sort((a,b) => a - b),
             series: [...new Set(currentProducts.map(p => getSeries(p.name, p.category)).filter(Boolean))].sort(),
             models: [...new Set(currentProducts.map(p => getModel(p.name, p.category)).filter(Boolean))].sort(),
@@ -404,22 +432,54 @@
         
         const f = selectedFilters.value;
 
-        if (f.series.length > 0) result = result.filter(p => f.series.includes(getSeries(p.name, p.category)));
-        if (f.models.length > 0) result = result.filter(p => f.models.includes(getModel(p.name, p.category)));
-        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
-        if (f.sockets.length > 0) result = result.filter(p => f.sockets.includes(p.specs?.socket));
-        if (f.memory.length > 0) result = result.filter(p => f.memory.includes(p.specs?.memory) || f.memory.includes(p.specs?.capacity));
-        if (f.types.length > 0) result = result.filter(p => f.types.includes(p.specs?.type));
-        if (f.cores.length > 0) result = result.filter(p => f.cores.includes(p.specs?.cores));
-        if (f.chipsets.length > 0) result = result.filter(p => f.chipsets.includes(p.specs?.chipset));
-        if (f.memoryTypes.length > 0) result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
-        if (f.interfaces.length > 0) result = result.filter(p => f.interfaces.includes(p.specs?.interface));
-        
-        if (f.puteri.length > 0) result = result.filter(p => f.puteri.includes(p.specs?.putere));
-        if (f.certificari.length > 0) result = result.filter(p => f.certificari.includes(p.specs?.certificare));
-        if (f.modularitati.length > 0) result = result.filter(p => f.modularitati.includes(p.specs?.modular));
-        if (f.formate.length > 0) result = result.filter(p => f.formate.includes(p.specs?.format));
-
+        if (f.series.length > 0) {
+            result = result.filter(p => f.series.includes(getSeries(p.name, p.category)));
+        }
+        if (f.models.length > 0) {
+            result = result.filter(p => f.models.includes(getModel(p.name, p.category)));
+        }
+        if (f.brands.length > 0) {
+            result = result.filter(p => f.brands.includes(p.brand));
+        }
+        if (f.sockets.length > 0) {
+            result = result.filter(p => f.sockets.includes(p.specs?.socket));
+        }
+        if (f.memory.length > 0) {
+            result = result.filter(p => f.memory.includes(p.specs?.memory) || f.memory.includes(p.specs?.capacity));
+        }
+        if (f.types.length > 0) {
+            result = result.filter(p => f.types.includes(p.specs?.type));
+        }
+        if (f.cores.length > 0) {
+            result = result.filter(p => f.cores.includes(p.specs?.cores));
+        }
+        if (f.chipsets.length > 0) {
+            result = result.filter(p => f.chipsets.includes(p.specs?.chipset));
+        }
+        if (f.memoryTypes.length > 0) {
+            result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
+        }
+        if (f.interfaces.length > 0) {
+            result = result.filter(p => f.interfaces.includes(p.specs?.interface));
+        }
+        if (f.coolingTypes.length > 0) {
+            result = result.filter(p => f.coolingTypes.includes(p.specs?.type));
+        }
+        if (f.fanSizes.length > 0) {
+            result = result.filter(p => f.fanSizes.includes(p.specs?.fan_size));
+        }
+        if (f.puteri.length > 0) {
+            result = result.filter(p => f.puteri.includes(p.specs?.putere));
+        }
+        if (f.certificari.length > 0) {
+            result = result.filter(p => f.certificari.includes(p.specs?.certificare));
+        }
+        if (f.modularitati.length > 0) {
+            result = result.filter(p => f.modularitati.includes(p.specs?.modular));
+        }
+        if (f.formate.length > 0) {
+            result = result.filter(p => f.formate.includes(p.specs?.format));
+        }
         if (f.motherboardSupport.length > 0) {
             result = result.filter(p => {
                 if (!p.specs?.motherboardSupport) return false;
@@ -428,8 +488,12 @@
                 return f.motherboardSupport.some(selectedFormat => supportedFormats.includes(selectedFormat));
             });
         }
-        if (f.sidePanels.length > 0) result = result.filter(p => f.sidePanels.includes(p.specs?.sidePanel));
-        if (f.includedFans.length > 0) result = result.filter(p => f.includedFans.includes(p.specs?.includedFans));
+        if (f.sidePanels.length > 0) {
+            result = result.filter(p => f.sidePanels.includes(p.specs?.sidePanel));
+        }
+        if (f.includedFans.length > 0) {
+            result = result.filter(p => f.includedFans.includes(p.specs?.includedFans));
+        }
 
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);

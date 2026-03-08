@@ -49,7 +49,7 @@ const getProducts = async (req, res) => {
             });
         });
 
-        const { sockets, memory, types } = req.query;
+        const { sockets, memory, types, cooling_types, fan_sizes } = req.query;
         
         if (sockets) {
             const socketList = sockets.split(',');
@@ -62,6 +62,14 @@ const getProducts = async (req, res) => {
         if (types) {
             const typesList = types.split(',');
             productsList = productsList.filter(p => typesList.includes(p.type));
+        }
+        if (cooling_types) {
+            const coolList = cooling_types.split(',');
+            productsList = productsList.filter(p => coolList.includes(p.specs?.type));
+        }
+        if (fan_sizes) {
+            const fansList = fan_sizes.split(',');
+            productsList = productsList.filter(p => fansList.includes(p.specs?.fan_size));
         }
 
         res.status(200).json({

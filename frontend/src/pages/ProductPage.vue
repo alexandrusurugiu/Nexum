@@ -190,12 +190,37 @@
     });
 
     const specLabels = {
-        socket: 'Socket', memory: 'Capacitate', memory_type: 'Tip Memorie', type: 'Tip',
-        cores: 'Nuclee', threads: 'Fire execuție', frequency: 'Frecvență', putere: 'Putere (W)',
-        format: 'Format', resolution: 'Rezoluție', refreshRate: 'Rată de Refresh',
-        cpu: 'Procesor', gpu: 'Placă Video', ram: 'Memorie RAM', storage: 'Stocare',
-        display: 'Ecran', weight: 'Greutate', connectivity: 'Conectivitate',
-        lighting: 'Iluminare', dpi: 'DPI', techType: 'Tehnologie', switches: 'Switch-uri'
+        socket: 'Socket', 
+        socket_support: 'Socket-uri Suportate', 
+        memory: 'Capacitate', 
+        memory_type: 'Tip Memorie', 
+        type: 'Tip / Format', 
+        cores: 'Nuclee', 
+        threads: 'Fire execuție', 
+        frequency: 'Frecvență de bază', 
+        boost_frequency: 'Frecvență Boost', 
+        putere: 'Putere (W)', 
+        format: 'Format', 
+        resolution: 'Rezoluție', 
+        refreshRate: 'Rată de Refresh', 
+        cpu: 'Procesor', 
+        gpu: 'Placă Video', 
+        ram: 'Memorie RAM', 
+        storage: 'Stocare', 
+        display: 'Ecran', 
+        weight: 'Greutate', 
+        connectivity: 'Conectivitate', 
+        lighting: 'Iluminare', 
+        dpi: 'DPI', 
+        techType: 'Tehnologie', 
+        switches: 'Switch-uri', 
+        tdp: 'Consum (TDP)',
+        fan_size: 'Ventilatoare', 
+        rpm: 'Viteză Maximă', 
+        noise_level: 'Zgomot Maxim',
+        radiator: 'Dimensiune Radiator', 
+        cache: 'Memorie Cache', 
+        integrated_graphics: 'Grafică Integrată'
     };
 
     const formatSpecLabel = (key) => specLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
