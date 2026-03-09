@@ -31,7 +31,7 @@
         <div style="background-color: var(--bg-main);" class="pt-16 pb-16 px-4 px-md-10">
           <div class="d-flex align-center justify-space-between mb-10">
             <div>
-              <h2 class="text-h4 font-weight-bold cloud-text">Recomandările noastre bazate pe <span class="cyan-text">selecția</span> ta</h2>
+              <h2 class="text-h4 font-weight-bold cloud-text">Construiește cu stil: <span class="cyan-text">Baza</span> unui sistem premium</h2>
               <div class="title-underline mt-2"></div>
             </div>
 
@@ -40,15 +40,20 @@
             </v-btn>
           </div>
 
-          <v-row>
+          <div v-if="isLoading" class="text-center py-10">
+              <v-progress-circular indeterminate color="#10B981" size="50"></v-progress-circular>
+          </div>
+
+          <v-row v-else>
             <v-col v-for="product in recommendedProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
-              <v-card class="product-card h-100 d-flex flex-column rounded-xl" elevation="0">
+              <v-card class="product-card h-100 d-flex flex-column rounded-xl cursor-pointer" elevation="0" @click="goToProduct(product.id)">
+                
                 <v-chip v-if="product.discount" color="#059669" class="discount-badge font-weight-bold" size="small">
                   -{{ product.discount }}%
                 </v-chip>
 
                 <div class="img-container pa-4 text-center">
-                  <v-img :src="product.image" height="200" contain class="product-img mx-auto"></v-img>
+                  <v-img :src="product.displayImage" height="200" contain class="product-img mx-auto"></v-img>
                 </div>
                   
                 <v-card-text class="flex-grow-1 pt-4">
@@ -60,7 +65,7 @@
                   </h3>
                     
                   <div class="quick-specs">
-                    <div v-for="(spec, index) in product.specs" :key="index" class="d-flex align-center mb-1">
+                    <div v-for="(spec, index) in product.displaySpecs" :key="index" class="d-flex align-center mb-1">
                       <v-icon size="small" color="#10B981" class="mr-2 opacity-80">mdi-circle-small</v-icon>
                       <span class="cloud-text opacity-80 text-body-2">{{ spec }}</span>
                     </div>
@@ -77,7 +82,7 @@
                     </div>
                   </div>
                     
-                  <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click="addToCart" title="Adaugă în coș">
+                  <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg z-index-2" @click.stop="addToCart(product)" title="Adaugă în coș">
                     <v-icon>mdi-cart-plus</v-icon>
                   </v-btn>
                 </v-card-actions>
@@ -91,36 +96,72 @@
 </template>
 
 <script setup>
-  import AppHeader from '@/components/AppHeader.vue';
-  import { ref } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
+  import { storeToRefs } from 'pinia';
+  import AppHeader from '../components/AppHeader.vue';
+  import { useComponentsStore } from '../stores/componentsStore';
+  import { useCartStore } from '../stores/cartStore';
 
   const router = useRouter();
-  const cartCount = ref(0);
-  const addToCart = () => { cartCount.value++; };
+  const componentsStore = useComponentsStore();
+  const cartStore = useCartStore();
+  const { allComponents, isLoading } = storeToRefs(componentsStore);
 
-  const recommendedProducts = ref([
-    {
-      id: 1, name: 'Placă Video GIGABYTE GeForce RTX 4080 SUPER WINDFORCE', brand: 'NVIDIA', price: '5.299', oldPrice: '5.899', discount: 10,
-      image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 
-      specs: ['Memorie: 16GB GDDR6X', 'Răcire: 3 Ventilatoare', 'Interfață: PCI Express 4.0']
-    },
-    {
-      id: 2, name: 'Procesor AMD Ryzen 7 7800X3D, 4.2GHz/5.0GHz', brand: 'AMD', price: '1.950', oldPrice: null, discount: null,
-      image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      specs: ['Socket: AM5', 'Nuclee: 8 Cores / 16 Threads', 'Tehnologie: 3D V-Cache']
-    },
-    {
-      id: 3, name: 'Placă de bază ASUS ROG STRIX B650E-F GAMING WIFI', brand: 'ASUS', price: '1.420', oldPrice: '1.550', discount: 8,
-      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      specs: ['Socket: AM5', 'Chipset: B650E', 'Format: ATX']
-    },
-    {
-      id: 4, name: 'Memorie Corsair Dominator Platinum RGB 32GB DDR5', brand: 'CORSAIR', price: '850', oldPrice: null, discount: null,
-      image: 'https://images.unsplash.com/photo-1562976540-1502f75a6109?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      specs: ['Tip memorie: DDR5', 'Capacitate: 2x 16GB', 'Iluminare: A-RGB']
+  onMounted(() => {
+    componentsStore.fetchComponents();
+  });
+
+  const targetNames = [
+    "Carcasa NZXT H9 Flow",
+    "Cooler Procesor NZXT Kraken Elite 360 RGB",
+    "Sursa be quiet! Dark Power Pro 13",
+    "Cooler Procesor Noctua NH-D15 chromax.black"
+  ];
+
+  const getPromoData = (name) => {
+    if (name === "Carcasa NZXT H9 Flow") {
+      return { oldPrice: 950, discount: 10 };
     }
-  ]);
+
+    if (name === "Cooler Procesor Noctua NH-D15 chromax.black") {
+      return { oldPrice: 690, discount: 10 };
+    }
+
+    return { oldPrice: null, discount: null };
+  };
+
+  const recommendedProducts = computed(() => {
+    return allComponents.value.filter(p => targetNames.includes(p.name)).map(p => {
+      let customSpecs = [];
+        
+      if (p.category === 'carcase') {
+        customSpecs = [`Format: ${p.specs?.format || 'N/A'}`, `Panou: ${p.specs?.sidePanel || 'N/A'}`, `Ventilatoare: ${p.specs?.includedFans || '0'}`];
+      } else if (p.category === 'coolere') {
+        customSpecs = [`Tip: ${p.specs?.type || 'N/A'}`, `Răcire/TDP: ${p.specs?.tdp || 'N/A'}`, `Iluminare: ${p.specs?.lighting || 'N/A'}`];
+      } else if (p.category === 'surse') {
+        customSpecs = [`Putere: ${p.specs?.putere || 'N/A'}`, `Certificare: ${p.specs?.certificare || 'N/A'}`, `Modular: ${p.specs?.modular || 'N/A'}`];
+      }
+
+      const promo = getPromoData(p.name);
+
+      return {
+        ...p,
+        displaySpecs: customSpecs,
+        displayImage: p.specs?.image || p.image || '',
+        oldPrice: promo.oldPrice,
+        discount: promo.discount
+      };
+    });
+  });
+
+  const goToProduct = (id) => {
+    router.push(`/produs/${id}`);
+  };
+
+  const addToCart = (product) => {
+    cartStore.addToCart(product);
+  };
 </script>
 
 <style scoped>
@@ -209,9 +250,10 @@
     border-bottom: 1px solid var(--border-light);
   }
 
-  .product-img {
-    transition: transform 0.5s ease;
-    mix-blend-mode: screen; 
+  .product-img { 
+    transition: all 0.5s ease; 
+    mix-blend-mode: multiply;
+    filter: contrast(1.1) brightness(1.02);
   }
 
   .product-card:hover .product-img {
