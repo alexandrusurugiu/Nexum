@@ -25,7 +25,7 @@
                 clearable
                 @click:clear="clearSearch"
             >
-                <v-menu v-model="showDropdown" activator="parent" location="bottom" :offset="10" transition="slide-y-transition" :close-on-content-click="false">
+                <v-menu v-model="showDropdown" activator="parent" :disabled="!searchQuery || searchQuery.trim() === ''" location="bottom" :offset="10" transition="slide-y-transition" :close-on-content-click="false">
                     <v-card class="live-search-panel rounded-xl overflow-hidden" width="600" max-height="450">
                         
                         <div v-if="isSearching" class="pa-6 text-center">

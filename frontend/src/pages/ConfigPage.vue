@@ -23,12 +23,18 @@
                 class="step-item d-flex align-center px-4 py-2 mx-1 rounded-lg"
                 :class="{ 'active-step': currentStep === index, 'completed-step': selectedBuild[step.id] }"
               >
-                <v-icon :color="currentStep === index ? '#10B981' : (selectedBuild[step.id] ? '#059669' : 'rgba(245,246,250,0.5)')" class="mr-2">
+                <v-icon 
+                  :color="currentStep === index ? '#10B981' : (selectedBuild[step.id] ? '#059669' : undefined)" 
+                  class="mr-2"
+                  :class="currentStep !== index && !selectedBuild[step.id] ? 'cloud-text opacity-50' : ''"
+                >
                   {{ step.icon }}
                 </v-icon>
+
                 <span class="font-weight-bold" :class="currentStep === index ? 'cyan-text' : 'cloud-text opacity-80'">
                   {{ step.name }}
                 </span>
+                
                 <v-icon v-if="selectedBuild[step.id]" color="#059669" size="small" class="ml-2">mdi-check-circle</v-icon>
               </div>
             </div>
