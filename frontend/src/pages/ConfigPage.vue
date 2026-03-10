@@ -3,14 +3,66 @@
     <AppHeader></AppHeader>
 
     <v-main class="pb-16 px-4 px-md-10 mt-16">
-      <div class="mb-8 d-flex justify-space-between align-end">
-        <div>
+      <div class="mb-8 d-flex flex-column flex-md-row justify-space-between align-md-end">
+        <div class="mb-4 mb-md-0">
           <h1 class="text-h3 font-weight-black cloud-text">Configurator <span class="cyan-text">Sistem</span></h1>
           <p class="text-body-1 cloud-text opacity-80 mt-2">
             Construiește-ți setup-ul perfect. Verificăm noi compatibilitatea pentru tine.
           </p>
         </div>
+        
+        <v-btn 
+          size="x-large" 
+          class="ai-magic-btn font-weight-bold rounded-pill" 
+          @click="aiDialog = true"
+        >
+          <v-icon start size="large">mdi-creation</v-icon>
+          Nexum AI Builder
+        </v-btn>
       </div>
+
+      <v-dialog v-model="aiDialog" max-width="600" persistent>
+        <v-card class="bg-panel rounded-xl ai-dialog-border pa-2">
+          <v-card-title class="d-flex justify-space-between align-center pt-4 px-6">
+            <div class="d-flex align-center">
+              <v-icon color="#10B981" size="32" class="mr-3">mdi-robot-outline</v-icon>
+              <h3 class="text-h5 font-weight-black cloud-text m-0">Asistent AI</h3>
+            </div>
+            <v-btn icon="mdi-close" variant="text" color="var(--text-main)" class="opacity-70" @click="aiDialog = false" :disabled="isGenerating"></v-btn>
+          </v-card-title>
+          
+          <v-card-text class="px-6 py-4">
+            <p class="cloud-text opacity-80 mb-6">
+              Descrie-mi PC-ul visurilor tale. Specifică bugetul, jocurile preferate, tabăra (AMD/Intel) și preferințele de design. Mă voi ocupa de asamblare și compatibilitate instant!
+            </p>
+
+            <v-textarea
+              v-model="aiPrompt"
+              placeholder="Ex: Vreau un PC de maxim 6000 lei pentru a juca Counter-Strike 2 la minim 240 fps. Prefer procesoare AMD și vreau o carcasă panoramică."
+              variant="outlined"
+              color="#10B981"
+              base-color="var(--border-light)"
+              rows="4"
+              hide-details
+              class="custom-input mb-4"
+              :disabled="isGenerating"
+            ></v-textarea>
+            
+            <div v-if="isGenerating" class="d-flex flex-column align-center justify-center py-6 mt-4">
+              <v-progress-circular indeterminate color="#10B981" size="50" width="4" class="mb-4"></v-progress-circular>
+              <h4 class="cyan-text text-h6 font-weight-bold typing-animation">Analizăm stocul și asamblăm piesele...</h4>
+            </div>
+          </v-card-text>
+
+          <v-card-actions class="px-6 pb-6 pt-0" v-if="!isGenerating">
+            <v-spacer></v-spacer>
+            <v-btn variant="text" class="cloud-text opacity-70 font-weight-bold" @click="aiDialog = false">Anulează</v-btn>
+            <v-btn color="#10B981" variant="elevated" class="rounded-lg font-weight-bold px-6 ml-3 text-white" @click="generateWithAI" :disabled="!aiPrompt.trim()">
+              Generează Sistemul
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-row>
         <v-col cols="12" md="8" lg="9">
@@ -30,11 +82,9 @@
                 >
                   {{ step.icon }}
                 </v-icon>
-
                 <span class="font-weight-bold" :class="currentStep === index ? 'cyan-text' : 'cloud-text opacity-80'">
                   {{ step.name }}
                 </span>
-                
                 <v-icon v-if="selectedBuild[step.id]" color="#059669" size="small" class="ml-2">mdi-check-circle</v-icon>
               </div>
             </div>
@@ -51,6 +101,7 @@
             <v-icon start>mdi-alert-circle</v-icon>
             Avem <strong>{{ allCategoryParts.length }} componente</strong> în magazin pentru această categorie, dar NICIUNA nu se potrivește cu socketul sau specificațiile pieselor alese anterior!
           </v-alert>
+
           <v-row v-else>
             <v-col v-for="part in currentAvailableParts" :key="part.id" cols="12" sm="6" lg="4">
               <v-card 
@@ -86,7 +137,10 @@
         <v-col cols="12" md="4" lg="3">
           <div class="sticky-summary">
             <v-card class="summary-card pa-5 rounded-xl" elevation="10">
-              <h3 class="text-h5 font-weight-black cloud-text mb-4">Sistemul Tău</h3>
+              <div class="d-flex justify-space-between align-center mb-4">
+                <h3 class="text-h5 font-weight-black cloud-text">Sistemul Tău</h3>
+                <v-btn icon="mdi-delete-sweep-outline" variant="text" color="error" title="Golește configurația" @click="selectedBuild = {}"></v-btn>
+              </div>
               
               <div class="build-list mb-6">
                 <div v-for="step in steps" :key="'summary-'+step.id" class="mb-3">
@@ -155,16 +209,20 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue';
   import { storeToRefs } from 'pinia';
+  import axios from 'axios';
   import AppHeader from '../components/AppHeader.vue';
-  import { useConfiguratorStore } from '../stores/configStore';
+  import { useComponentsStore } from '../stores/componentsStore';
   import { useCartStore } from '../stores/cartStore';
 
-  const configuratorStore = useConfiguratorStore();
+  const componentsStore = useComponentsStore();
   const cartStore = useCartStore();
-  const { allParts } = storeToRefs(configuratorStore);
+  const { allComponents: allParts } = storeToRefs(componentsStore);
+  const aiDialog = ref(false);
+  const aiPrompt = ref('');
+  const isGenerating = ref(false);
 
   onMounted(() => {
-    configuratorStore.fetchParts();
+    componentsStore.fetchComponents();
   });
 
   const steps = [
@@ -181,22 +239,65 @@
   const currentStep = ref(0);
   const selectedBuild = ref({}); 
 
-  const groupedParts = computed(() => {
-    const groups = { 
-      cpu: [], 
-      mb: [], 
-      cooler: [], 
-      ram: [], 
-      gpu: [], 
-      storage: [], 
-      psu: [], 
-      case: [] 
-    };
+  const generateWithAI = async () => {
+    if (!aiPrompt.value.trim()) {
+      return;
+    }
     
+    isGenerating.value = true;
+    
+    try {
+      const response = await axios.post('http://localhost:5000/server/ai/ai-build', { prompt: aiPrompt.value });
+      
+      if (response.data.success) {
+        const aiBuildData = response.data.build;
+        selectedBuild.value = {}; 
+        
+        for (const [category, id] of Object.entries(aiBuildData)) {
+          if (id && id !== 'null') {
+            const partMatch = allParts.value.find(p => p.id === id);
+               
+            if (partMatch) {
+              const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
+              let parsedWattage = getNum(partMatch.specs?.tdp) || getNum(partMatch.specs?.consum) || 45;
+
+              if (partMatch.category === 'coolere') {
+                parsedWattage = 15;
+              }
+
+              const formattedAIpart = {
+                ...partMatch,
+                image: partMatch.specs?.image || partMatch.image || '',
+                socket: partMatch.specs?.socket || partMatch.socket || '',
+                socket_support: partMatch.specs?.socket_support || partMatch.socket_support || '',
+                ramType: partMatch.specs?.memory_type || partMatch.specs?.memory_support || partMatch.specs?.type || '',
+                wattage: parsedWattage, 
+                psuWattage: getNum(partMatch.specs?.putere) || 650
+              };
+
+              selectedBuild.value[category] = formattedAIpart;
+            }
+          }
+        }
+        
+        aiDialog.value = false;
+        aiPrompt.value = '';
+        currentStep.value = 7;
+      }
+    } catch (error) {
+      console.error("Eroare generare AI:", error);
+      alert("A apărut o eroare la generarea asistentului AI. Te rog încearcă o formulare diferită.");
+    } finally {
+      isGenerating.value = false;
+    }
+  };
+
+  const groupedParts = computed(() => {
+    const groups = { cpu: [], mb: [], cooler: [], ram: [], gpu: [], storage: [], psu: [], case: [] };
     allParts.value.forEach(p => {
       const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
-      
       let shortDesc = '';
+
       if (p.category === 'procesoare') {
         shortDesc = `${p.specs?.cores || ''} Nuclee, ${p.specs?.frequency || ''}`;
       } else if (p.category === 'placi_de_baza') {
@@ -216,7 +317,10 @@
       }
 
       let parsedWattage = getNum(p.specs?.tdp) || getNum(p.specs?.consum) || 45;
-      if (p.category === 'coolere') parsedWattage = 15;
+
+      if (p.category === 'coolere') {
+        parsedWattage = 15;
+      }
 
       const formattedPart = {
         ...p,
@@ -249,33 +353,38 @@
         groups.case.push(formattedPart);
       }
     });
-    
     return groups;
   });
 
-  const isSocketCompatible = (sock1, sock2) => {
-    if (!sock1 || !sock2) return true;
-    
-    const clean1 = String(sock1).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
-    const clean2 = String(sock2).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
-    
-    const arr1 = clean1.split(',').filter(Boolean);
-    const arr2 = clean2.split(',').filter(Boolean);
-    
-    for (const s1 of arr1) {
-        for (const s2 of arr2) {
-            if (s1 === s2 || s1.includes(s2) || s2.includes(s1)) {
-                return true;
-            }
-        }
+  const checkSocket = (partA, partB) => {
+    if (!partA || !partB) {
+      return true;
     }
+
+    const strA = (partA.socket + ',' + partA.socket_support).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
+    const strB = (partB.socket + ',' + partB.socket_support).toLowerCase().replace(/socket/g, '').replace(/[^a-z0-9,]/g, '');
+    const arrA = strA.split(',').filter(Boolean);
+    const arrB = strB.split(',').filter(Boolean);
+
+    for (const a of arrA) {
+      for (const b of arrB) {
+        if (a === b || a.includes(b) || b.includes(a)) {
+          return true;
+        }
+      }
+    }
+
     return false;
   };
 
   const isRamCompatible = (ram1, ram2) => {
-    if (!ram1 || !ram2) return true;
+    if (!ram1 || !ram2) {
+      return true;
+    }
+
     const r1 = String(ram1).toLowerCase().replace(/[^a-z0-9]/g, '');
     const r2 = String(ram2).toLowerCase().replace(/[^a-z0-9]/g, '');
+
     return r1.includes(r2) || r2.includes(r1);
   };
 
@@ -298,7 +407,7 @@
 
     const supports = String(caseSupportStr).toLowerCase().replace(/[^a-z,]/g, '').split(',').map(s => {
         let form = s;
-        
+
         if (form.includes('micro') || form === 'matx') {
           return 'microatx';
         }
@@ -314,39 +423,42 @@
 
         return form;
     });
-
     return supports.includes(mb);
   };
 
   const checkCompatibility = (part) => {
     const category = steps[currentStep.value].id;
-    
+
     if (category === 'mb' && selectedBuild.value.cpu) {
-      if (!isSocketCompatible(selectedBuild.value.cpu.socket, part.socket)) {
+      if (!checkSocket(selectedBuild.value.cpu, part)) {
         return { isCompatible: false };
       }
     }
+    
     if (category === 'cpu' && selectedBuild.value.mb) {
-      if (!isSocketCompatible(part.socket, selectedBuild.value.mb.socket)) {
+      if (!checkSocket(part, selectedBuild.value.mb)) {
         return { isCompatible: false };
       }
     }
 
     if (category === 'cooler') {
-      if (selectedBuild.value.cpu && !isSocketCompatible(selectedBuild.value.cpu.socket, part.socket_support)) {
+      if (selectedBuild.value.cpu && !checkSocket(selectedBuild.value.cpu, part)) {
         return { isCompatible: false };
       }
-      if (selectedBuild.value.mb && !isSocketCompatible(selectedBuild.value.mb.socket, part.socket_support)) {
+
+      if (selectedBuild.value.mb && !checkSocket(selectedBuild.value.mb, part)) {
         return { isCompatible: false };
       }
     }
+
     if (category === 'cpu' && selectedBuild.value.cooler) {
-      if (!isSocketCompatible(part.socket, selectedBuild.value.cooler.socket_support)) {
+      if (!checkSocket(part, selectedBuild.value.cooler)) {
         return { isCompatible: false };
       }
     }
+
     if (category === 'mb' && selectedBuild.value.cooler) {
-      if (!isSocketCompatible(part.socket, selectedBuild.value.cooler.socket_support)) {
+      if (!checkSocket(part, selectedBuild.value.cooler)) {
         return { isCompatible: false };
       }
     }
@@ -356,6 +468,7 @@
         return { isCompatible: false };
       }
     }
+
     if (category === 'mb' && selectedBuild.value.ram) {
       if (!isRamCompatible(part.ramType, selectedBuild.value.ram.ramType)) {
         return { isCompatible: false };
@@ -368,6 +481,7 @@
         return { isCompatible: false };
       }
     }
+
     if (category === 'mb' && selectedBuild.value.case) {
       const mbFormat = part.specs?.type || part.specs?.format; 
       if (!isFormatCompatible(mbFormat, selectedBuild.value.case.specs?.motherboardSupport)) {
@@ -390,7 +504,7 @@
 
   const selectPart = (categoryId, part) => {
     selectedBuild.value[categoryId] = part;
-    
+
     if (currentStep.value < steps.length - 1) {
       currentStep.value++;
     }
@@ -420,13 +534,15 @@
 
   const compatibilityStatus = computed(() => {
     const buildKeys = Object.keys(selectedBuild.value);
-    
+
     if (buildKeys.length === 0) {
       return { message: 'Sistem Gol', icon: 'mdi-information', colorClass: 'bg-glass-neutral cloud-text' };
     }
+
     if (isPsuWeak.value) {
       return { message: 'Pericol: Sursă prea slabă!', icon: 'mdi-alert-octagon', colorClass: 'bg-glass-error text-error border-error shadow-error' };
     }
+
     if (buildKeys.length === steps.length) {
       return { message: 'Sistem Complet & Compatibil!', icon: 'mdi-check-decagram', colorClass: 'bg-glass-success cloud-text border-success' };
     }
@@ -460,11 +576,11 @@
   .opacity-50 { 
     opacity: 0.5; 
   }
-
+  
   .opacity-80 { 
     opacity: 0.8; 
   }
-
+  
   .cursor-pointer { 
     cursor: pointer; 
   }
@@ -520,7 +636,7 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; 
   }
 
-  .selected-card {
+  .selected-card { 
     border-color: #10B981 !important; 
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important; 
   }
@@ -528,7 +644,7 @@
   .img-container { 
     background-color: #F3F4F6 !important; 
     margin: 12px 12px 0 12px; 
-    padding: 20px;
+    padding: 20px; 
     border-radius: 16px; 
     position: relative; 
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
@@ -570,7 +686,7 @@
 
   .bg-glass-success { 
     background: rgba(46, 213, 115, 0.2); 
-    border: 1px solid rgba(46, 213, 115, 0.5);
+    border: 1px solid rgba(46, 213, 115, 0.5); 
   }
   
   .border-error { 
@@ -591,5 +707,55 @@
   .electric-btn:hover { 
     transform: translateY(-2px); 
     box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.6) !important; 
+  }
+
+  .ai-magic-btn {
+    background: linear-gradient(270deg, #10B981, #00d2ff, #3a7bd5, #10B981);
+    background-size: 400% 400%;
+    color: white !important;
+    animation: gradientGlow 10s ease infinite;
+    border: none;
+  }
+
+  .ai-magic-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
+  }
+
+  @keyframes gradientGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .ai-dialog-border {
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--bg-panel), var(--bg-panel)), linear-gradient(90deg, #10B981, #00d2ff);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.3) !important;
+  }
+
+  .custom-input :deep(.v-field__input) { 
+    color: var(--text-main) !important; 
+  }
+
+  .typing-animation {
+    overflow: hidden;
+    border-right: .15em solid #10B981;
+    white-space: nowrap;
+    margin: 0 auto;
+    letter-spacing: .05em;
+    animation: typing 2.5s steps(40, end) infinite, blink-caret .75s step-end infinite;
+  }
+
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #10B981; }
   }
 </style>

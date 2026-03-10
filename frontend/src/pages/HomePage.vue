@@ -116,7 +116,7 @@
     "Carcasa NZXT H9 Flow",
     "Cooler Procesor NZXT Kraken Elite 360 RGB",
     "Sursa be quiet! Dark Power Pro 13",
-    "Cooler Procesor Noctua NH-D15 chromax.black"
+    "Placa de baza ASUS ROG STRIX Z790-F GAMING WIFI"
   ];
 
   const getPromoData = (name) => {
@@ -124,8 +124,8 @@
       return { oldPrice: 950, discount: 10 };
     }
 
-    if (name === "Cooler Procesor Noctua NH-D15 chromax.black") {
-      return { oldPrice: 690, discount: 10 };
+    if (name === "Placa de baza ASUS ROG STRIX Z790-F GAMING WIFI") {
+      return { oldPrice: 2350, discount: 11 }; 
     }
 
     return { oldPrice: null, discount: null };
@@ -141,6 +141,8 @@
         customSpecs = [`Tip: ${p.specs?.type || 'N/A'}`, `Răcire/TDP: ${p.specs?.tdp || 'N/A'}`, `Iluminare: ${p.specs?.lighting || 'N/A'}`];
       } else if (p.category === 'surse') {
         customSpecs = [`Putere: ${p.specs?.putere || 'N/A'}`, `Certificare: ${p.specs?.certificare || 'N/A'}`, `Modular: ${p.specs?.modular || 'N/A'}`];
+      } else if (p.category === 'placi_de_baza') {
+        customSpecs = [`Socket: ${p.specs?.socket || 'N/A'}`, `Chipset: ${p.specs?.chipset || 'N/A'}`, `Suport RAM: ${p.specs?.memory_support || 'N/A'}`];
       }
 
       const promo = getPromoData(p.name);
