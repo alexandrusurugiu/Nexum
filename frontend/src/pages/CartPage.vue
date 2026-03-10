@@ -12,16 +12,29 @@
                     </p>
                 </div>
 
-                <v-btn 
-                    v-if="cartStore.items.length > 0"
-                    color="error"
-                    variant="tonal" 
-                    class="rounded-lg font-weight-bold mt-4 mt-sm-0 px-6 transition-all" 
-                    prepend-icon="mdi-delete-sweep-outline"
-                    @click="handleClearCart"
-                >
-                    Golește Coșul
-                </v-btn>
+                <div class="d-flex flex-column flex-sm-row gap-2 mt-4 mt-sm-0">
+                    <v-btn 
+                        v-if="cartStore.items.length > 0"
+                        color="info"
+                        variant="tonal" 
+                        class="rounded-lg font-weight-bold px-6 transition-all" 
+                        prepend-icon="mdi-heart-outline"
+                        @click="saveWishlist"
+                    >
+                        Salvează Wishlist
+                    </v-btn>
+
+                    <v-btn 
+                        v-if="cartStore.items.length > 0"
+                        color="error"
+                        variant="tonal" 
+                        class="rounded-lg font-weight-bold px-6 transition-all" 
+                        prepend-icon="mdi-delete-sweep-outline"
+                        @click="handleClearCart"
+                    >
+                        Golește Coșul
+                    </v-btn>
+                </div>
             </div>
 
             <v-row v-if="cartStore.items.length === 0">
@@ -161,7 +174,9 @@
     import AppHeader from '../components/AppHeader.vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
-    
+    import { useAuthStore } from '../stores/authStore';
+
+    const authStore = useAuthStore();
     const router = useRouter();
     const cartStore = useCartStore();
     const couponCode = ref('');
@@ -236,6 +251,33 @@
         if(confirm("Ești sigur că vrei să ștergi absolut toate produsele din coș?")) {
             cartStore.clearCart();
             removeCoupon();
+        }
+    };
+
+    const saveWishlist = async () => {
+        if (!authStore.isAuthenticated) {
+            alert("Trebuie să fii autentificat pentru a salva un sistem!");
+            router.push('/profil'); 
+            return;
+        }
+
+        const name = prompt("Cum vrei să numești acest sistem salvat?", "PC-ul Meu Custom");
+        if (!name) return; 
+
+        try {
+            const response = await axios.post('http://localhost:5000/server/wishlist/save', {
+                userId: authStore.user.id,
+                name: name,
+                items: cartStore.items,
+                total: finalTotal.value
+            });
+            
+            if (response.data.success) {
+                alert(`Sistem salvat cu succes în contul tău!\n\nCodul tău unic de share este: ${response.data.shareCode}`);
+            }
+        } catch (error) {
+            console.error("Eroare la salvare:", error);
+            alert("A apărut o eroare la salvarea sistemului.");
         }
     };
 </script>

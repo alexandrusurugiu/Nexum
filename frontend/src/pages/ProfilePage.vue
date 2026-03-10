@@ -43,6 +43,14 @@
                             </v-list-item>
 
                             <v-list-item 
+                                :class="['menu-item rounded-lg mb-2', { 'active-menu-item': activeTab === 'wishlists' }]" 
+                                @click="activeTab = 'wishlists'" 
+                                prepend-icon="mdi-heart-multiple-outline"
+                            >
+                                <v-list-item-title class="font-weight-medium">Sisteme Salvate</v-list-item-title>
+                            </v-list-item>
+
+                            <v-list-item 
                                 v-if="authStore.user && authStore.user.isAdmin"
                                 class="menu-item rounded-lg flex-shrink-0 mt-md-4" 
                                 @click="router.push('/admin')" 
@@ -233,6 +241,82 @@
                             </v-expansion-panels>
                         </div>
                     </v-card>
+
+                    <v-card v-if="activeTab === 'wishlists'" class="profile-panel rounded-xl pa-6 pa-md-8" elevation="5">
+                        <div class="d-flex align-center justify-space-between mb-6">
+                            <h2 class="text-h5 font-weight-bold cloud-text">Sisteme Salvate (Wishlist)</h2>
+                            <v-btn icon="mdi-refresh" variant="text" color="#10B981" @click="fetchWishlists" :loading="isLoadingWishlists"></v-btn>
+                        </div>
+                        
+                        <div v-if="isLoadingWishlists" class="text-center py-8">
+                            <v-progress-circular indeterminate color="#10B981"></v-progress-circular>
+                        </div>
+
+                        <div v-else-if="userWishlists.length === 0" class="text-center py-10">
+                            <v-icon size="80" color="var(--border-light)" class="mb-4">mdi-heart-broken-outline</v-icon>
+                            <h2 class="text-h6 cloud-text font-weight-bold">Nu ai niciun sistem salvat</h2>
+                            <v-btn color="#10B981" variant="tonal" class="rounded-lg mt-4" to="/configurator">Creează un PC</v-btn>
+                        </div>
+
+                        <div v-else class="orders-list">
+                            <v-expansion-panels variant="accordion" class="custom-expansion-panels">
+                                <v-expansion-panel v-for="wishlist in userWishlists" :key="wishlist.id" class="mb-4 order-card rounded-xl" elevation="2">
+                                    
+                                    <v-expansion-panel-title class="pa-4 pa-sm-5 header-bg">
+                                        <v-row no-gutters align="center" justify="space-between" class="w-100 pr-2 pr-sm-4">
+                                            <v-col cols="12" sm="7" class="d-flex align-center mb-2 mb-sm-0">
+                                                <div class="icon-box mr-4 d-none d-sm-flex align-center justify-center rounded-lg" style="background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2);">
+                                                    <v-icon color="#38BDF8" size="28">mdi-heart-outline</v-icon>
+                                                </div>
+                                                <div>
+                                                    <div class="text-subtitle-2 cloud-text opacity-70 mb-1 d-flex align-center">
+                                                        <v-icon size="small" class="mr-1 opacity-70">mdi-calendar-blank</v-icon>
+                                                        {{ formatDate(wishlist.createdAt) }}
+                                                    </div>
+                                                    <div class="font-weight-black cloud-text text-h6">{{ wishlist.name }}</div>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="12" sm="5" class="text-sm-right d-flex flex-row flex-sm-column justify-space-between align-sm-end">
+                                                <div class="font-weight-black cyan-text text-h6">{{ wishlist.total }} Lei</div>
+                                                <v-chip size="small" color="info" variant="tonal" class="font-weight-bold mt-sm-1">
+                                                    <v-icon start size="small">mdi-share-variant</v-icon>
+                                                    Cod: {{ wishlist.shareCode }}
+                                                </v-chip>
+                                            </v-col>
+                                        </v-row>
+                                    </v-expansion-panel-title>
+
+                                    <v-expansion-panel-text class="pa-0 details-bg">
+                                        <div class="pt-4 pb-2 px-2 px-sm-4">
+                                            <div class="products-container mb-4">
+                                                <div v-for="(item, index) in wishlist.items" :key="item.id">
+                                                    <div class="d-flex align-center justify-space-between pa-3 product-row rounded-lg">
+                                                        <div class="d-flex align-center">
+                                                            <div class="avatar-wrapper mr-3 rounded-lg pa-1 d-flex align-center justify-center">
+                                                                <v-img :src="item.image" width="40" height="40" contain class="prod-img-blend"></v-img>
+                                                            </div>
+                                                            <div>
+                                                                <div class="cloud-text font-weight-bold text-body-2 line-clamp-1" style="max-width: 250px;">{{ item.name }}</div>
+                                                                <div class="cloud-text opacity-70 text-caption mt-1">
+                                                                    <span class="font-weight-bold">{{ item.quantity }} buc</span> x {{ item.price }} Lei
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <v-divider v-if="index !== wishlist.items.length - 1" class="border-opacity-10 mx-3" color="var(--text-main)"></v-divider>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-end">
+                                                <v-btn color="#10B981" variant="elevated" class="rounded-lg font-weight-bold text-white custom-btn-shadow" @click="loadWishlistToCart(wishlist.items)">
+                                                    Încarcă sistemul în Coș
+                                                </v-btn>
+                                            </div>
+                                        </div>
+                                    </v-expansion-panel-text>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </div>
+                    </v-card>
                 </v-col>
             </v-row>
 
@@ -323,7 +407,11 @@
     import AppHeader from '../components/AppHeader.vue';
     import axios from 'axios';
     import { useRoute, useRouter } from 'vue-router';
+    import { useCartStore } from '../stores/cartStore';
 
+    const cartStore = useCartStore();
+    const userWishlists = ref([]);
+    const isLoadingWishlists = ref(false);
     const route = useRoute();
     const router = useRouter();
     const authStore = useAuthStore();
@@ -366,6 +454,10 @@
     watch(activeTab, (newTab) => {
         if (newTab === 'orders' && userOrders.value.length === 0) {
             fetchOrders();
+        }
+
+        if (newTab === 'wishlists' && userWishlists.value.length === 0) {
+            fetchWishlists();
         }
     });
 
@@ -445,6 +537,37 @@
     const formatDate = (isoString) => {
         const date = new Date(isoString);
         return date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+
+    const fetchWishlists = async () => {
+        if (!authStore.user) {
+            return;
+        }
+
+        isLoadingWishlists.value = true;
+
+        try {
+            const response = await axios.get(`http://localhost:5000/server/wishlist/user/${authStore.user.id}`);
+            
+            if (response.data.success) {
+                userWishlists.value = response.data.data;
+            }
+        } catch (error) {
+            console.error("Eroare incarcare wishlist-uri", error);
+        } finally {
+            isLoadingWishlists.value = false;
+        }
+    };
+
+    const loadWishlistToCart = (items) => {
+        if(confirm("Acest lucru va adăuga piesele din wishlist în coșul tău actual. Ești de acord?")) {
+            items.forEach(item => {
+                cartStore.addToCart(item);
+            });
+
+            alert("Sistemul a fost reîncărcat în coș!");
+            router.push('/cart');
+        }
     };
 </script>
 

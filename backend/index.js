@@ -18,6 +18,7 @@ const productRouter = require('./routes/productRouter');
 const reviewRouter = require('./routes/reviewRouter');
 const adminRouter = require('./routes/adminPanelRouter');
 const aiRouter = require('./routes/aiRouter');
+const wishlistRouter = require('./routes/wishlistRouter');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -44,6 +45,7 @@ app.use('/server/products', productRouter);
 app.use('/server/reviews', reviewRouter);
 app.use('/server/admin', adminRouter);
 app.use('/server/ai', aiRouter);
+app.use('/server/wishlist', wishlistRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}...`);
