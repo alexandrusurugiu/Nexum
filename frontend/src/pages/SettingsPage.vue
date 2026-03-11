@@ -327,7 +327,7 @@
         const success = await authStore.toggle2FA(newStatus);
         
         if (success) {
-            trigg(`Autentificarea în 2 pași a fost ${newStatus ? 'activată' : 'dezactivată'}!`);
+            triggerSnackbar(`Autentificarea în 2 pași a fost ${newStatus ? 'activată' : 'dezactivată'}!`, "success");
         }
     };
 </script>
