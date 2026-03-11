@@ -54,7 +54,26 @@ const getUserWishlists = async (req, res) => {
     }
 };
 
+const getWishlistByCode = async (req, res) => {
+    try {
+        const { shareCode } = req.params;
+        const snapshot = await db.collection('wishlists').where('shareCode', '==', shareCode.toUpperCase()).get();
+
+        if (snapshot.empty) {
+            return res.status(404).json({ success: false, message: 'Nu am găsit niciun sistem cu acest cod.' });
+        }
+
+        const wishlist = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+
+        res.status(200).json({ success: true, data: wishlist });
+    } catch (error) {
+        console.error("Eroare preluare wishlist după cod:", error);
+        res.status(500).json({ success: false, message: 'Eroare la preluarea sistemului.' });
+    }
+};
+
 module.exports = { 
     saveWishlist, 
-    getUserWishlists 
+    getUserWishlists,
+    getWishlistByCode
 };

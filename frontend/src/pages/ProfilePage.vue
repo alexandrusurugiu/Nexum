@@ -278,9 +278,17 @@
                                             </v-col>
                                             <v-col cols="12" sm="5" class="text-sm-right d-flex flex-row flex-sm-column justify-space-between align-sm-end">
                                                 <div class="font-weight-black cyan-text text-h6">{{ wishlist.total }} Lei</div>
-                                                <v-chip size="small" color="info" variant="tonal" class="font-weight-bold mt-sm-1">
-                                                    <v-icon start size="small">mdi-share-variant</v-icon>
-                                                    Cod: {{ wishlist.shareCode }}
+                                                <v-chip 
+                                                    size="small" 
+                                                    color="info" 
+                                                    variant="tonal" 
+                                                    class="font-weight-bold mt-sm-1"
+                                                    style="cursor: pointer;"
+                                                    @click.stop="copyShareLink(wishlist.shareCode)"
+                                                    title="Apasă pentru a copia link-ul de Share"
+                                                >
+                                                    <v-icon start size="small">mdi-link-variant</v-icon>
+                                                    Copiază Link-ul
                                                 </v-chip>
                                             </v-col>
                                         </v-row>
@@ -397,6 +405,22 @@
                     </v-card>
                 </v-col>
             </v-row>
+
+            <v-snackbar 
+                v-model="showSnackbar" 
+                :timeout="3500" 
+                color="#10B981" 
+                elevation="10" 
+                rounded="pill"
+            >
+                <div class="d-flex align-center font-weight-bold">
+                    <v-icon start class="mr-2">mdi-check-circle-outline</v-icon>
+                    {{ snackbarMessage }}
+                </div>
+                <template v-slot:actions>
+                    <v-btn icon="mdi-close" variant="text" color="white" @click="showSnackbar = false"></v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -420,6 +444,8 @@
     const requires2FA = ref(false);
     const twoFactorCode = ref('');
     const userOrders = ref([]);
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
     const isLoadingOrders = ref(false);
     const loginForm = ref({ 
         email: '', 
@@ -568,6 +594,13 @@
             alert("Sistemul a fost reîncărcat în coș!");
             router.push('/cart');
         }
+    };
+
+    const copyShareLink = (code) => {
+        const link = `${window.location.origin}/build/${code}`;
+        navigator.clipboard.writeText(link);
+        snackbarMessage.value = "Link-ul a fost copiat cu succes!";
+        showSnackbar.value = true;
     };
 </script>
 

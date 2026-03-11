@@ -72,6 +72,11 @@ const router = createRouter({
       name: 'Product',
       component: () => import('../pages/ProductPage.vue')
     },
+    {
+      path: '/build/:code',
+      name: 'ShareBuild',
+      component: () => import('../pages/ShareBuildPage.vue')
+    },
     { 
       path: '/admin', 
       name: 'Admin', 
