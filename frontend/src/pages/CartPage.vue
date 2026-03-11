@@ -164,6 +164,16 @@
                     </v-card>
                 </v-col>
             </v-row>
+
+            <v-snackbar v-model="showSnackbar" :timeout="3500" :color="snackbarColor" elevation="10" rounded="pill">
+                <div class="d-flex align-center font-weight-bold text-white">
+                    <v-icon start class="mr-2">{{ snackbarIcon }}</v-icon>
+                    {{ snackbarMessage }}
+                </div>
+                <template v-slot:actions>
+                    <v-btn icon="mdi-close" variant="text" color="white" @click="showSnackbar = false"></v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -186,6 +196,25 @@
         value: 0, 
         code: '' 
     });
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
+    const snackbarColor = ref('#10B981');
+    const snackbarIcon = ref('mdi-check-circle-outline');
+
+    const triggerSnackbar = (message, type = 'success') => {
+        snackbarMessage.value = message;
+        if (type === 'success') {
+            snackbarColor.value = '#10B981';
+            snackbarIcon.value = 'mdi-check-circle-outline';
+        } else if (type === 'error') {
+            snackbarColor.value = '#EF4444';
+            snackbarIcon.value = 'mdi-alert-circle-outline';
+        } else if (type === 'info') {
+            snackbarColor.value = '#3B82F6';
+            snackbarIcon.value = 'mdi-information-outline';
+        }
+        showSnackbar.value = true;
+    };
 
     const applyCoupon = async () => {
         couponError.value = '';
@@ -248,21 +277,22 @@
     };
 
     const handleClearCart = () => {
-        if(confirm("Ești sigur că vrei să ștergi absolut toate produsele din coș?")) {
-            cartStore.clearCart();
-            removeCoupon();
-        }
+        cartStore.clearCart();
+        removeCoupon();
+        triggerSnackbar("Coșul a fost golit cu succes!", "success");
     };
 
     const saveWishlist = async () => {
         if (!authStore.isAuthenticated) {
-            alert("Trebuie să fii autentificat pentru a salva un sistem!");
-            router.push('/profil'); 
+            triggerSnackbar("Trebuie să fii autentificat pentru a salva un sistem!", "error");
+            setTimeout(() => { router.push('/profil'); }, 1500); 
             return;
         }
 
         const name = prompt("Cum vrei să numești acest sistem salvat?", "PC-ul Meu Custom");
-        if (!name) return; 
+        if (!name) {
+            return; 
+        }
 
         try {
             const response = await axios.post('http://localhost:5000/server/wishlist/save', {
@@ -273,11 +303,11 @@
             });
             
             if (response.data.success) {
-                alert(`Sistem salvat cu succes în contul tău!\n\nCodul tău unic de share este: ${response.data.shareCode}`);
+                triggerSnackbar(`Sistem salvat! Cod de Share unic: ${response.data.shareCode}`, "success");
             }
         } catch (error) {
             console.error("Eroare la salvare:", error);
-            alert("A apărut o eroare la salvarea sistemului.");
+            triggerSnackbar("A apărut o eroare la salvarea sistemului.", "error");        
         }
     };
 </script>

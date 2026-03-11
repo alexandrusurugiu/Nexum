@@ -444,8 +444,6 @@
     const requires2FA = ref(false);
     const twoFactorCode = ref('');
     const userOrders = ref([]);
-    const showSnackbar = ref(false);
-    const snackbarMessage = ref('');
     const isLoadingOrders = ref(false);
     const loginForm = ref({ 
         email: '', 
@@ -462,6 +460,25 @@
         address: '', 
         avatar: '' 
     });
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
+    const snackbarColor = ref('#10B981');
+    const snackbarIcon = ref('mdi-check-circle-outline');
+
+    const triggerSnackbar = (message, type = 'success') => {
+        snackbarMessage.value = message;
+        if (type === 'success') {
+            snackbarColor.value = '#10B981';
+            snackbarIcon.value = 'mdi-check-circle-outline';
+        } else if (type === 'error') {
+            snackbarColor.value = '#EF4444';
+            snackbarIcon.value = 'mdi-alert-circle-outline';
+        } else if (type === 'info') {
+            snackbarColor.value = '#3B82F6';
+            snackbarIcon.value = 'mdi-information-outline';
+        }
+        showSnackbar.value = true;
+    }; 
 
     const populateEditForm = () => {
         if (authStore.user) {
@@ -516,7 +533,7 @@
     const saveProfile = async () => {
         const success = await authStore.updateProfile(editForm.value);
         if (success) {
-            alert("Datele au fost salvate cu succes!");
+            triggerSnackbar("Profilul a fost actualizat cu succes!", "success");
         }
     };
 
@@ -586,14 +603,12 @@
     };
 
     const loadWishlistToCart = (items) => {
-        if(confirm("Acest lucru va adăuga piesele din wishlist în coșul tău actual. Ești de acord?")) {
-            items.forEach(item => {
-                cartStore.addToCart(item);
-            });
+        items.forEach(item => {
+            cartStore.addToCart(item);
+        });
 
-            alert("Sistemul a fost reîncărcat în coș!");
-            router.push('/cart');
-        }
+        triggerSnackbar("Sistemul a fost reîncărcat în coș!", "success");
+        router.push('/cart');
     };
 
     const copyShareLink = (code) => {

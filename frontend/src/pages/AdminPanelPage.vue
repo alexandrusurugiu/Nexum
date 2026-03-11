@@ -70,6 +70,15 @@
                 @saved="handleProductSaved"
             />
 
+            <v-snackbar v-model="showSnackbar" :timeout="3500" :color="snackbarColor" elevation="10" rounded="pill">
+                <div class="d-flex align-center font-weight-bold text-white">
+                    <v-icon start class="mr-2">{{ snackbarIcon }}</v-icon>
+                    {{ snackbarMessage }}
+                </div>
+                <template v-slot:actions>
+                    <v-btn icon="mdi-close" variant="text" color="white" @click="showSnackbar = false"></v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -88,7 +97,6 @@
     const laptopsStore = useLaptopsStore();
     const monitorsStore = useMonitorsStore();
     const peripheralsStore = usePeripheralsStore();
-    
     const collections = ['Componente', 'Laptopuri', 'Monitoare', 'Periferice'];
     const selectedCollection = ref('Componente');
     const products = ref([]);
@@ -96,6 +104,22 @@
     const isModalOpen = ref(false);
     const modalMode = ref('add');
     const selectedProduct = ref(null);
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
+    const snackbarColor = ref('#10B981');
+    const snackbarIcon = ref('mdi-check-circle-outline');
+
+    const triggerSnackbar = (message, type = 'success') => {
+        snackbarMessage.value = message;
+        if (type === 'success') {
+            snackbarColor.value = '#10B981';
+            snackbarIcon.value = 'mdi-check-circle-outline';
+        } else if (type === 'error') {
+            snackbarColor.value = '#EF4444';
+            snackbarIcon.value = 'mdi-alert-circle-outline';
+        }
+        showSnackbar.value = true;
+    };
 
     const currentApiEndpoint = computed(() => {
         switch (selectedCollection.value) {
@@ -125,6 +149,7 @@
             }
         } catch (e) {
             console.error("Eroare la încărcarea produselor", e);
+            triggerSnackbar("A apărut o eroare la încărcarea listei de produse.", "error");
         } finally {
             isLoading.value = false;
         }
@@ -146,16 +171,18 @@
             }
         }
         syncStore();
+        triggerSnackbar("Produsul a fost salvat cu succes!", "success");
     };
 
     const deleteProduct = async (id) => {
-        if(!confirm("Sigur vrei să ștergi acest produs?")) return;
         try {
             await axios.delete(`http://localhost:5000/server/${currentApiEndpoint.value}/${id}`);
             products.value = products.value.filter(p => p.id !== id);
             syncStore();
+            triggerSnackbar("Produsul a fost șters definitiv!", "success");
         } catch (e) {
             console.error(e);
+            triggerSnackbar("A apărut o eroare la ștergerea produsului.", "error");
         }
     };
 

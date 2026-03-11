@@ -180,6 +180,16 @@
 
                 </v-col>
             </v-row>
+
+            <v-snackbar v-model="showSnackbar" :timeout="3500" :color="snackbarColor" elevation="10" rounded="pill">
+                <div class="d-flex align-center font-weight-bold text-white">
+                    <v-icon start class="mr-2">{{ snackbarIcon }}</v-icon>
+                    {{ snackbarMessage }}
+                </div>
+                <template v-slot:actions>
+                    <v-btn icon="mdi-close" variant="text" color="white" @click="showSnackbar = false"></v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -212,7 +222,26 @@
     });
     const preferences = ref({
         language: 'Română'
-    }); 
+    });
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
+    const snackbarColor = ref('#10B981');
+    const snackbarIcon = ref('mdi-check-circle-outline');
+
+    const triggerSnackbar = (message, type = 'success') => {
+        snackbarMessage.value = message;
+        if (type === 'success') {
+            snackbarColor.value = '#10B981';
+            snackbarIcon.value = 'mdi-check-circle-outline';
+        } else if (type === 'error') {
+            snackbarColor.value = '#EF4444';
+            snackbarIcon.value = 'mdi-alert-circle-outline';
+        } else if (type === 'info') {
+            snackbarColor.value = '#3B82F6';
+            snackbarIcon.value = 'mdi-information-outline';
+        }
+        showSnackbar.value = true;
+    }; 
     
     onMounted(() => {
         if (authStore.user && authStore.user.notifications) {
@@ -287,7 +316,7 @@
     const confirmDeleteAccount = () => {
         const confirmed = confirm("Ești sigur că vrei să ștergi definitiv contul? Această acțiune este ireversibilă și vei pierde tot istoricul comenzilor.");
         if (confirmed) {
-            alert("Contul a fost șters.");
+            triggerSnackbar("Contul tău a fost șters cu succes. ", "success");
             authStore.logout();
             router.push('/');
         }
@@ -298,7 +327,7 @@
         const success = await authStore.toggle2FA(newStatus);
         
         if (success) {
-            alert(`Autentificarea în 2 pași a fost ${newStatus ? 'activată' : 'dezactivată'}!`);
+            trigg(`Autentificarea în 2 pași a fost ${newStatus ? 'activată' : 'dezactivată'}!`);
         }
     };
 </script>
