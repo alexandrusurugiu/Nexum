@@ -34,7 +34,7 @@ const send2FACode = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: '"Nexum Security" <adresa.ta@gmail.com>',
+            from: '"Nexum IT" <nexum.noreply@gmail.com>',
             to: email,
             subject: 'Codul tău de autentificare Nexum',
             html: `<h2>Codul tău de acces este: <span style="color: #10B981;">${code}</span></h2><p>Acest cod expiră în 10 minute.</p>`
