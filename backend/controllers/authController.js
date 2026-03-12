@@ -2,15 +2,12 @@ const { db } = require('../database/db');
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    host: 'smtp-relay.brevo.com',
+    port: 2525,
+    secure: false, 
     auth: {
-        user: process.env.GOOGLE_ACCOUNT,
-        pass: process.env.GOOGLE_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
+        user: process.env.BREVO_USER,
+        pass: process.env.BREVO_PASS
     }
 });
 
