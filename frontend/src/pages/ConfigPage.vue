@@ -276,7 +276,7 @@
     isGenerating.value = true;
     
     try {
-      const response = await axios.post('http://localhost:5000/server/ai/ai-build', { prompt: aiPrompt.value });
+      const response = await axios.post('https://nexum-elbk.onrender.com//server/ai/ai-build', { prompt: aiPrompt.value });
       
       if (response.data.success) {
         const aiBuildData = response.data.build;

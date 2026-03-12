@@ -139,7 +139,7 @@
         
         debounceTimer = setTimeout(async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/server/search?q=${encodeURIComponent(newVal)}`);
+                const response = await axios.get(`https://nexum-elbk.onrender.com//server/search?q=${encodeURIComponent(newVal)}`);
                 if (response.data.success) {
                     liveResults.value = response.data.data;
                 }

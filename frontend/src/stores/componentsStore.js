@@ -13,7 +13,7 @@ export const useComponentsStore = defineStore('components', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('http://localhost:5000/server/components');
+      const response = await axios.get('https://nexum-elbk.onrender.com//server/components');
       
       if (response.data.success) {
         allComponents.value = response.data.data;

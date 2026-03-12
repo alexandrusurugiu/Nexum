@@ -113,7 +113,7 @@
         const code = route.params.code; 
         
         try {
-            const response = await axios.get(`http://localhost:5000/server/wishlist/code/${code}`);
+            const response = await axios.get(`https://nexum-elbk.onrender.com//server/wishlist/code/${code}`);
         
         if (response.data.success) {
             sharedBuild.value = response.data.data;

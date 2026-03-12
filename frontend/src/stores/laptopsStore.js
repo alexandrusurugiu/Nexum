@@ -11,7 +11,7 @@ export const useLaptopsStore = defineStore('laptops', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('http://localhost:5000/server/laptops');
+      const response = await axios.get('https://nexum-elbk.onrender.com//server/laptops');
       
       if (response.data.success) {
         allLaptops.value = response.data.data;

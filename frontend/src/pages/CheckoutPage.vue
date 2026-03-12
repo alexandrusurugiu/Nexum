@@ -280,7 +280,7 @@
             orderPlacedSuccess.value = true;
             cartStore.clearCart(); 
             
-            axios.post('http://localhost:5000/server/orders/confirm-payment', { orderId });
+            axios.post('https://nexum-elbk.onrender.com//server/orders/confirm-payment', { orderId });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } 
         else if (route.query.canceled === 'true') {
@@ -344,7 +344,7 @@
                 cancelUrl: `${window.location.origin}/checkout?canceled=true`
             };
 
-            const response = await axios.post('http://localhost:5000/server/orders', payload);
+            const response = await axios.post('https://nexum-elbk.onrender.com//server/orders', payload);
 
             if (response.data.success) {
                 if (authStore.user && form.value.saveDetails) {

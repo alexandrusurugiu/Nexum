@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const toggle2FA = async (isEnabled) => {
         try {
-            await axios.put(`http://localhost:5000/server/auth/${user.value.id}/toggle-2fa`, { isEnabled });
+            await axios.put(`https://nexum-elbk.onrender.com//server/auth/${user.value.id}/toggle-2fa`, { isEnabled });
             user.value.is2FAEnabled = isEnabled;
             localStorage.setItem('nexum_user', JSON.stringify(user.value));
             
@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
         errorMsg.value = '';
 
         try {
-            const response = await axios.post('http://localhost:5000/server/auth/verify-2fa', {
+            const response = await axios.post('https://nexum-elbk.onrender.com//server/auth/verify-2fa', {
                 uid: tempUser.value.id,
                 code: code
             });
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
             const result = await createUserWithEmailAndPassword(auth, email, password);
             const firebaseUser = result.user;
 
-            const response = await axios.post('http://localhost:5000/server/auth/sync', {
+            const response = await axios.post('https://nexum-elbk.onrender.com//server/auth/sync', {
                 uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 name: name,
@@ -89,7 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
             const result = await signInWithEmailAndPassword(auth, email, password);
             const firebaseUser = result.user;
 
-            const response = await axios.post('http://localhost:5000/server/auth/sync', {
+            const response = await axios.post('https://nexum-elbk.onrender.com//server/auth/sync', {
                 uid: firebaseUser.uid, email: firebaseUser.email, name: '', avatar: ''
             });
 
@@ -98,7 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
                 
                 if (userData.is2FAEnabled) {
                     tempUser.value = userData; 
-                    await axios.post('http://localhost:5000/server/auth/send-2fa', { uid: userData.id, email: userData.email });
+                    await axios.post('https://nexum-elbk.onrender.com//server/auth/send-2fa', { uid: userData.id, email: userData.email });
                     
                     return { success: true, requires2FA: true };
                 } else {
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth', () => {
     const updateProfile = async (updates) => {
         isLoading.value = true;
         try {
-            const response = await axios.put(`http://localhost:5000/server/auth/${user.value.id}/update`, updates);
+            const response = await axios.put(`https://nexum-elbk.onrender.com//server/auth/${user.value.id}/update`, updates);
             if (response.data.success) {
                 user.value = response.data.user;
                 localStorage.setItem('nexum_user', JSON.stringify(user.value));
