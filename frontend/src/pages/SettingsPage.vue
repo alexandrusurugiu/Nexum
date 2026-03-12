@@ -289,7 +289,7 @@
     const savePreferences = async (type) => {
         if (type === 'Notificările') {
             try {
-                const response = await axios.put(`https://nexum-elbk.onrender.com//server/auth/${authStore.user.id}/preferences`, {
+                const response = await axios.put(`https://nexum-elbk.onrender.com/server/auth/${authStore.user.id}/preferences`, {
                     notifications: notifications.value
                 });
 

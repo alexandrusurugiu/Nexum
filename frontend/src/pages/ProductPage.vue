@@ -234,7 +234,7 @@
         const productId = route.params.id; 
         
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com//server/products/${productId}`);
+            const response = await axios.get(`https://nexum-elbk.onrender.com/server/products/${productId}`);
             if (response.data.success) {
                 product.value = response.data.product;
                 fetchReviews(productId);
@@ -250,7 +250,7 @@
         isLoadingReviews.value = true;
         
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com//server/reviews/${productId}`);
+            const response = await axios.get(`https://nexum-elbk.onrender.com/server/reviews/${productId}`);
             
             if (response.data.success) {
                 reviews.value = response.data.reviews;
@@ -282,7 +282,7 @@
                 comment: newReview.value.comment
             };
 
-            const response = await axios.post('https://nexum-elbk.onrender.com//server/reviews', payload);
+            const response = await axios.post('https://nexum-elbk.onrender.com/server/reviews', payload);
             
             if (response.data.success) {
                 fetchReviews(product.value.id);

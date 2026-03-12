@@ -14,7 +14,7 @@ export const useConfiguratorStore = defineStore('configurator', () => {
         isLoading.value = true;
 
         try {
-            const response = await axios.get('https://nexum-elbk.onrender.com//server/config');
+            const response = await axios.get('https://nexum-elbk.onrender.com/server/config');
             if (response.data.success) {
                 allParts.value = response.data.data;
             }

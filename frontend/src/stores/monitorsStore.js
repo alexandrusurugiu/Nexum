@@ -11,7 +11,7 @@ export const useMonitorsStore = defineStore('monitors', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('https://nexum-elbk.onrender.com//server/monitors');
+      const response = await axios.get('https://nexum-elbk.onrender.com/server/monitors');
       
       if (response.data.success) {
         allMonitors.value = response.data.data;
