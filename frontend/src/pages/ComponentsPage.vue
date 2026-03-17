@@ -237,7 +237,7 @@
                                         {{ component.price }} <span class="text-body-1 cyan-text font-weight-bold">Lei</span>
                                         </div>
                                     </div>
-                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="cartStore.addToCart(component)" title="Adaugă în coș">
+                                    <v-btn icon color="#059669" variant="tonal" class="cart-btn rounded-lg" @click.stop="handleAddToCart(component)" title="Adaugă în coș">
                                         <v-icon>mdi-cart-plus</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -246,6 +246,16 @@
                     </v-row>
                 </v-col>
             </v-row>
+
+            <v-snackbar v-model="showSnackbar" :timeout="3500" :color="snackbarColor" elevation="10" rounded="pill">
+                <div class="d-flex align-center font-weight-bold text-white">
+                    <v-icon start class="mr-2">{{ snackbarIcon }}</v-icon>
+                    {{ snackbarMessage }}
+                </div>
+                <template v-slot:actions>
+                    <v-btn icon="mdi-close" variant="text" color="white" @click="showSnackbar = false"></v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -265,6 +275,22 @@
     const activeCategory = ref('procesoare');
     const sortOption = ref('popular');
     const priceRange = ref([0, 10000]);
+    const showSnackbar = ref(false);
+    const snackbarMessage = ref('');
+    const snackbarColor = ref('#10B981');
+    const snackbarIcon = ref('mdi-check-circle-outline');
+
+    const triggerSnackbar = (message, type = 'success') => {
+        snackbarMessage.value = message;
+        if (type === 'success') {
+            snackbarColor.value = '#10B981';
+            snackbarIcon.value = 'mdi-check-circle-outline';
+        } else if (type === 'error') {
+            snackbarColor.value = '#EF4444';
+            snackbarIcon.value = 'mdi-alert-circle-outline';
+        }
+        showSnackbar.value = true;
+    };
 
     const selectedFilters = ref({
         brands: [], 
@@ -506,6 +532,11 @@
 
     const goToProduct = (id) => {
         router.push(`/produs/${id}`);
+    };
+
+    const handleAddToCart = (product) => {
+        cartStore.addToCart(product);
+        triggerSnackbar(`Ai adăugat ${product.name} în coș!`, 'success');
     };
 </script>
 
