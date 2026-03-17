@@ -19,7 +19,7 @@ export const useCartStore = defineStore('cart', () => {
     const fetchCart = async () => {
         isLoading.value = true;
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com/server/cart/${userId}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/cart/${userId}`);
             if (response.data.success) {
                 items.value = response.data.data;
             }
@@ -43,7 +43,7 @@ export const useCartStore = defineStore('cart', () => {
         }
 
         try {
-            await axios.post(`https://nexum-elbk.onrender.com/server/cart/${userId}/add`, product);
+            await axios.post(`${import.meta.env.VITE_API_URL}/server/cart/${userId}/add`, product);
         } catch (error) {
             console.error("Eroare la salvarea în coș:", error);
             fetchCart(); 
@@ -61,7 +61,7 @@ export const useCartStore = defineStore('cart', () => {
         }
 
         try {
-            const url = `https://nexum-elbk.onrender.com/server/cart/${userId}/remove/${productId}${removeAll ? '?removeAll=true' : ''}`;
+            const url = `${import.meta.env.VITE_API_URL}/server/cart/${userId}/remove/${productId}${removeAll ? '?removeAll=true' : ''}`;
             await axios.delete(url);
         } catch (error) {
             console.error("Eroare la ștergerea din coș:", error);
@@ -75,7 +75,7 @@ export const useCartStore = defineStore('cart', () => {
             items.value = [];
             localStorage.removeItem('cartItems');
             
-            await axios.delete(`https://nexum-elbk.onrender.com/server/cart/${userId}/clear`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/server/cart/${userId}/clear`);
             
         } catch (error) {
             console.error("Eroare la golirea coșului pe server:", error);

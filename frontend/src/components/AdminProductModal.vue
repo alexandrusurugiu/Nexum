@@ -292,10 +292,10 @@
         try {
             let savedProduct = null;
             if (props.mode === 'add') {
-                const response = await axios.post(`https://nexum-elbk.onrender.com//server/${props.apiEndpoint}`, payload);
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}//server/${props.apiEndpoint}`, payload);
                 savedProduct = { id: response.data.id, ...payload };
             } else {
-                await axios.put(`https://nexum-elbk.onrender.com//server/${props.apiEndpoint}/${props.product.id}`, payload);
+                await axios.put(`${import.meta.env.VITE_API_URL}//server/${props.apiEndpoint}/${props.product.id}`, payload);
                 savedProduct = { id: props.product.id, ...payload };
             }
             

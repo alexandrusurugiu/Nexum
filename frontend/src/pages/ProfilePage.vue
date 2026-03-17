@@ -565,7 +565,7 @@
         isLoadingOrders.value = true;
         
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com/server/orders/user/${authStore.user.id}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/orders/user/${authStore.user.id}`);
             
             if (response.data.success) {
                 userOrders.value = response.data.orders;
@@ -590,7 +590,7 @@
         isLoadingWishlists.value = true;
 
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com/server/wishlist/user/${authStore.user.id}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/wishlist/user/${authStore.user.id}`);
             
             if (response.data.success) {
                 userWishlists.value = response.data.data;

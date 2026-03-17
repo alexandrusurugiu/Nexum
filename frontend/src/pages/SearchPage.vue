@@ -140,7 +140,7 @@
         searchQuery.value = queryStr;
         isLoading.value = true;
         try {
-            const response = await axios.get(`https://nexum-elbk.onrender.com/server/search?q=${encodeURIComponent(queryStr)}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/search?q=${encodeURIComponent(queryStr)}`);
             if (response.data.success) {
                 searchResults.value = response.data.data;
             }

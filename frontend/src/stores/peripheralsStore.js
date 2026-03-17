@@ -11,7 +11,7 @@ export const usePeripheralsStore = defineStore('peripherals', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('https://nexum-elbk.onrender.com/server/peripherals');
+      const response = await axios.get('${import.meta.env.VITE_API_URL}/server/peripherals');
       
       if (response.data.success) {
         allPeripherals.value = response.data.data;

@@ -226,7 +226,7 @@
         }
 
         try {
-            const response = await axios.post('https://nexum-elbk.onrender.com/server/coupons/validate', { code });
+            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/coupons/validate', { code });
 
             if (response.data.success) {
                 appliedDiscount.value = response.data.discount;
@@ -295,7 +295,7 @@
         }
 
         try {
-            const response = await axios.post('https://nexum-elbk.onrender.com/server/wishlist/save', {
+            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/wishlist/save', {
                 userId: authStore.user.id,
                 name: name,
                 items: cartStore.items,

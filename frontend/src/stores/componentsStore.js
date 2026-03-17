@@ -13,7 +13,7 @@ export const useComponentsStore = defineStore('components', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('https://nexum-elbk.onrender.com/server/components');
+      const response = await axios.get('${import.meta.env.VITE_API_URL}/server/components');
       
       if (response.data.success) {
         allComponents.value = response.data.data;

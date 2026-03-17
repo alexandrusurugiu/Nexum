@@ -176,7 +176,7 @@
 
     const deleteProduct = async (id) => {
         try {
-            await axios.delete(`https://nexum-elbk.onrender.com/server/${currentApiEndpoint.value}/${id}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/server/${currentApiEndpoint.value}/${id}`);
             products.value = products.value.filter(p => p.id !== id);
             syncStore();
             triggerSnackbar("Produsul a fost șters definitiv!", "success");
