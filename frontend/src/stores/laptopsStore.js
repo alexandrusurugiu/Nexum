@@ -11,7 +11,7 @@ export const useLaptopsStore = defineStore('laptops', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('${import.meta.env.VITE_API_URL}/server/laptops');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/laptops`);
       
       if (response.data.success) {
         allLaptops.value = response.data.data;

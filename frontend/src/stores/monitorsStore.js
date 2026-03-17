@@ -11,7 +11,7 @@ export const useMonitorsStore = defineStore('monitors', () => {
 
     isLoading.value = true;
     try {
-      const response = await axios.get('${import.meta.env.VITE_API_URL}/server/monitors');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/monitors`);
       
       if (response.data.success) {
         allMonitors.value = response.data.data;

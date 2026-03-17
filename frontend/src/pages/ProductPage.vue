@@ -282,7 +282,7 @@
                 comment: newReview.value.comment
             };
 
-            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/reviews', payload);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/reviews`, payload);
             
             if (response.data.success) {
                 fetchReviews(product.value.id);

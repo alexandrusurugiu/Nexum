@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
         errorMsg.value = '';
 
         try {
-            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/auth/verify-2fa', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/auth/verify-2fa`, {
                 uid: tempUser.value.id,
                 code: code
             });
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
             const result = await createUserWithEmailAndPassword(auth, email, password);
             const firebaseUser = result.user;
 
-            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/auth/sync', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/auth/sync`, {
                 uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 name: name,
@@ -89,7 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
             const result = await signInWithEmailAndPassword(auth, email, password);
             const firebaseUser = result.user;
 
-            const response = await axios.post('${import.meta.env.VITE_API_URL}/server/auth/sync', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/auth/sync`, {
                 uid: firebaseUser.uid, email: firebaseUser.email, name: '', avatar: ''
             });
 
@@ -98,7 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
                 
                 if (userData.is2FAEnabled) {
                     tempUser.value = userData; 
-                    await axios.post('${import.meta.env.VITE_API_URL}/server/auth/send-2fa', { uid: userData.id, email: userData.email });
+                    await axios.post(`${import.meta.env.VITE_API_URL}/server/auth/send-2fa`, { uid: userData.id, email: userData.email });
                     
                     return { success: true, requires2FA: true };
                 } else {
