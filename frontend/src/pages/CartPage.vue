@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
         <AppHeader />
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
@@ -185,12 +185,14 @@
     import axios from 'axios';
     import { useRouter } from 'vue-router';
     import { useAuthStore } from '../stores/authStore';
+    import { useThemeStore } from '../stores/themeStore';
 
     const authStore = useAuthStore();
     const router = useRouter();
     const cartStore = useCartStore();
     const couponCode = ref('');
     const couponError = ref('');
+    const themeStore = useThemeStore();
     const appliedDiscount = ref({ 
         type: null, 
         value: 0, 

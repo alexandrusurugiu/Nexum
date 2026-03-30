@@ -1,5 +1,5 @@
 <template>
-  <v-app class="nexum-bg">
+  <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
     <AppHeader></AppHeader>
 
     <v-main>
@@ -97,8 +97,10 @@
   import AppHeader from '../components/AppHeader.vue';
   import { useComponentsStore } from '../stores/componentsStore';
   import { useCartStore } from '../stores/cartStore';
+  import { useThemeStore } from '../stores/themeStore';
 
   const router = useRouter();
+  const themeStore = useThemeStore();
   const componentsStore = useComponentsStore();
   const cartStore = useCartStore();
   const { allComponents, isLoading } = storeToRefs(componentsStore);
@@ -199,7 +201,7 @@
 
   .hero-section {
     position: relative;
-    background-image: url('https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-image: var(--hero-bg);
     background-size: cover; 
     background-position: center;
     background-attachment: fixed; 
@@ -212,7 +214,7 @@
     left: 0; 
     right: 0; 
     bottom: 0;
-    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.6) 0%, var(--bg-main) 100%); 
+    background: var(--hero-overlay); 
     z-index: 0;
   }
   

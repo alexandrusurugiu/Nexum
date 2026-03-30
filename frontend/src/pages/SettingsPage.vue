@@ -1,5 +1,5 @@
 <template>
-    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
         <AppHeader />
 
         <v-main class="pb-16 px-4 px-md-10 mt-10">

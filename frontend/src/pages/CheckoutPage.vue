@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
         <AppHeader />
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
@@ -232,6 +232,7 @@
     import axios from 'axios';
     import AppHeader from '../components/AppHeader.vue';
     import { useRoute } from 'vue-router';
+    import { useThemeStore } from '../stores/themeStore';
 
     const cartStore = useCartStore();
     const authStore = useAuthStore();
@@ -240,6 +241,7 @@
     const errorMessage = ref('');
     const orderPlacedSuccess = ref(false);
     const generatedOrderNumber = ref('');
+    const themeStore = useThemeStore();
 
     const couriers = [
         { id: 'sameday', name: 'Sameday Easybox / Curier', desc: 'Livrare 24-48h', price: 30 },

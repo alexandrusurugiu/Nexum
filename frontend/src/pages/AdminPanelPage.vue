@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
         <AppHeader />
 
         <v-main class="pb-16 px-4 px-md-10 mt-10">
@@ -92,6 +92,7 @@
     import { useLaptopsStore } from '../stores/laptopsStore';
     import { useMonitorsStore } from '../stores/monitorsStore';
     import { usePeripheralsStore } from '../stores/peripheralsStore';
+    import { useThemeStore } from '../stores/themeStore';
 
     const componentsStore = useComponentsStore();
     const laptopsStore = useLaptopsStore();
@@ -108,6 +109,7 @@
     const snackbarMessage = ref('');
     const snackbarColor = ref('#10B981');
     const snackbarIcon = ref('mdi-check-circle-outline');
+    const themeStore = useThemeStore();
 
     const triggerSnackbar = (message, type = 'success') => {
         snackbarMessage.value = message;
