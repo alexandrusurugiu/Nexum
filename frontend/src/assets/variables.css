@@ -9,7 +9,7 @@
   --input-bg: rgba(245, 246, 250, 0.2);
 }
 
-[data-theme="light"] {
+.v-theme--light {
   --bg-main: #F4F7F6;
   --bg-panel: #FFFFFF;
   --text-main: #1F2937;
