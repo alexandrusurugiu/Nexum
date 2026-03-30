@@ -122,12 +122,23 @@
 
                 <v-card-actions class="pa-4 pt-0 d-flex justify-space-between align-end">
                   <div class="text-h6 font-weight-black cloud-text">{{ part.price }} <span class="text-body-2 cyan-text">Lei</span></div>
-                  <v-btn 
-                    :color="selectedBuild[steps[currentStep].id]?.id === part.id ? '#10B981' : '#059669'" 
-                    variant="tonal" class="rounded-lg font-weight-bold"
-                  >
-                    {{ selectedBuild[steps[currentStep].id]?.id === part.id ? 'Selectat' : 'Alege' }}
-                  </v-btn>
+                  
+                  <div class="d-flex align-center">
+                    <v-btn 
+                      variant="text" 
+                      class="font-weight-bold cloud-text opacity-80 mr-2 text-caption" 
+                      @click.stop="goToProduct(part.id)"
+                    >
+                      Detalii
+                    </v-btn>
+
+                    <v-btn 
+                      :color="selectedBuild[steps[currentStep].id]?.id === part.id ? '#10B981' : '#059669'" 
+                      variant="tonal" class="rounded-lg font-weight-bold"
+                    >
+                      {{ selectedBuild[steps[currentStep].id]?.id === part.id ? 'Selectat' : 'Alege' }}
+                    </v-btn>
+                  </div>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -223,8 +234,10 @@
   import AppHeader from '../components/AppHeader.vue';
   import { useComponentsStore } from '../stores/componentsStore';
   import { useCartStore } from '../stores/cartStore';
+  import { useRouter } from 'vue-router';
 
   const componentsStore = useComponentsStore();
+  const router = useRouter();
   const cartStore = useCartStore();
   const { allComponents: allParts } = storeToRefs(componentsStore);
   const aiDialog = ref(false);
@@ -253,6 +266,31 @@
   onMounted(() => {
     componentsStore.fetchComponents();
   });
+
+  const goToProduct = (id) => {
+    router.push({ path: `/produs/${id}` });
+  };
+
+  const calculateWattage = (part) => {
+    const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
+    const dbWattage = getNum(part.specs?.tdp) || getNum(part.specs?.consum) || 0;
+
+    if (dbWattage > 0) {
+      return dbWattage;
+    }
+
+    switch (part.category) {
+      case 'procesoare': return 105;
+      case 'placi_video': return 250;
+      case 'placi_de_baza': return 40;
+      case 'memorie_ram': return 10;
+      case 'stocare': return 8;
+      case 'coolere': return 20;
+      case 'carcase': return 15;
+      case 'surse': return 0;
+      default: return 15;
+    }
+  };
 
   const steps = [
     { id: 'cpu', name: 'Procesor', icon: 'mdi-cpu-64-bit' },
@@ -288,11 +326,6 @@
                
             if (partMatch) {
               const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
-              let parsedWattage = getNum(partMatch.specs?.tdp) || getNum(partMatch.specs?.consum) || 45;
-
-              if (partMatch.category === 'coolere') {
-                parsedWattage = 15;
-              }
 
               const formattedAIpart = {
                 ...partMatch,
@@ -300,7 +333,7 @@
                 socket: partMatch.specs?.socket || partMatch.socket || '',
                 socket_support: partMatch.specs?.socket_support || partMatch.socket_support || '',
                 ramType: partMatch.specs?.memory_type || partMatch.specs?.memory_support || partMatch.specs?.type || '',
-                wattage: parsedWattage, 
+                wattage: calculateWattage(partMatch),
                 psuWattage: getNum(partMatch.specs?.putere) || 650
               };
 
@@ -357,7 +390,7 @@
         socket: p.specs?.socket || p.socket || '',
         socket_support: p.specs?.socket_support || p.socket_support || '',
         ramType: p.specs?.memory_type || p.specs?.memory_support || p.specs?.type || '',
-        wattage: parsedWattage, 
+        wattage: calculateWattage(p),
         psuWattage: getNum(p.specs?.putere) || 650, 
         shortSpec: shortDesc
       };
