@@ -8,11 +8,6 @@
           <div class="hero-overlay"></div>
             
           <v-col cols="12" md="8" class="z-index-1 px-4 text-center d-flex flex-column align-center">
-            <v-chip color="#10B981" variant="outlined" class="mb-6 font-weight-bold px-5 py-3 custom-chip text-body-1">
-              <v-icon start icon="mdi-lightning-bolt" color="#10B981"></v-icon> 
-              SĂPTĂMÂNA HARDCORE: PÂNĂ LA -25% LA PLĂCI VIDEO
-            </v-chip>
-              
             <h1 class="text-h3 text-md-h2 font-weight-black cloud-text mb-4">
               Setup-ul tău, <span class="cyan-text">piesă cu piesă</span>
             </h1>
@@ -35,7 +30,7 @@
               <div class="title-underline mt-2"></div>
             </div>
 
-            <v-btn variant="text" color="#10B981" class="font-weight-bold text-body-1">
+            <v-btn variant="text" color="#10B981" class="font-weight-bold text-body-1" to="/componente">
               Vezi toate <v-icon end icon="mdi-chevron-right"></v-icon>
             </v-btn>
           </div>
