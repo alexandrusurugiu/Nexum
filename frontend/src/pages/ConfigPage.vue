@@ -65,6 +65,7 @@
       </v-dialog>
 
       <v-row>
+        <!-- Coloana Stângă (Piese) -->
         <v-col cols="12" md="8" lg="9">
           <v-card class="pa-4 rounded-xl mb-6 category-wrapper" elevation="10">
             <div class="d-flex overflow-x-auto hide-scrollbar">
@@ -134,8 +135,10 @@
           </v-row>
         </v-col>
 
+        <!-- Coloana Dreaptă (Rezumat + AI Predictor) -->
         <v-col cols="12" md="4" lg="3">
           <div class="sticky-summary">
+            <!-- Card 1: Rezumatul Sistemului -->
             <v-card class="summary-card pa-5 rounded-xl" elevation="10">
               <div class="d-flex justify-space-between align-center mb-4">
                 <h3 class="text-h5 font-weight-black cloud-text">Sistemul Tău</h3>
@@ -199,6 +202,90 @@
                 {{ isPsuWeak ? 'Sursă prea slabă' : 'Adaugă Configurația' }}
               </v-btn>
             </v-card>
+
+            <!-- Card 2: AI Predictor Compact -->
+            <v-card class="summary-card mt-4 pa-4 rounded-xl" elevation="10">
+              <div class="d-flex align-center mb-3">
+                <v-icon color="#10B981" size="24" class="mr-2">mdi-brain</v-icon>
+                <h4 class="text-h6 font-weight-black cloud-text m-0">Predictor <span class="cyan-text">AI</span></h4>
+              </div>
+
+              <!-- Starea când lipsesc piesele esențiale -->
+              <div v-if="!selectedBuild.cpu || !selectedBuild.gpu" class="text-caption cloud-text opacity-70 font-italic text-center py-2">
+                *Alege un Procesor și o Placă Video pentru a debloca estimarea FPS-ului.
+              </div>
+
+              <!-- Starea activă -->
+              <div v-else>
+                <v-select
+                  v-model="selectedGames"
+                  :items="availableGames"
+                  label="Alege jocuri (Max 3)"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  color="#10B981"
+                  base-color="var(--border-light)"
+                  :rules="[v => v.length <= 3 || 'Maxim 3']"
+                  hide-details
+                  class="mb-3 custom-input"
+                ></v-select>
+
+                <v-select
+                  v-model="selectedResolution"
+                  :items="['1080p (FHD)', '1440p (QHD)', '2160p (4K)']"
+                  label="Rezoluție"
+                  density="compact"
+                  variant="outlined"
+                  color="#10B981"
+                  base-color="var(--border-light)"
+                  hide-details
+                  class="mb-3 custom-input"
+                ></v-select>
+
+                <v-btn 
+                  block 
+                  color="#10B981" 
+                  variant="tonal" 
+                  class="rounded-lg font-weight-bold" 
+                  :loading="isAnalyzing"
+                  :disabled="selectedGames.length > 3"
+                  @click="analyzePerformance"
+                >
+                  Estimează Performanța
+                </v-btn>
+
+                <!-- Rezultatele Compacte -->
+                <v-expand-transition>
+                  <div v-if="buildAnalysis" class="mt-4">
+                    <v-divider class="mb-3 border-opacity-25" color="#10B981"></v-divider>
+                    
+                    <div v-if="buildAnalysis.bottleneck?.has_bottleneck" class="text-caption text-error font-weight-bold mb-3 lh-sm">
+                      <v-icon size="small" color="error" class="mr-1">mdi-alert-octagon</v-icon>
+                      Bottleneck: {{ buildAnalysis.bottleneck.component }}
+                    </div>
+                    <div v-else class="text-caption text-success font-weight-bold mb-3">
+                      <v-icon size="small" color="success" class="mr-1">mdi-check-decagram</v-icon>
+                      Sistem perfect echilibrat
+                    </div>
+
+                    <div class="text-caption cloud-text opacity-80 mb-2 font-italic lh-sm">
+                      "{{ buildAnalysis.general_verdict }}"
+                    </div>
+
+                    <div class="bg-glass-neutral rounded-lg pa-2">
+                      <div v-for="fps in buildAnalysis.fps_estimates" :key="fps.game" class="d-flex justify-space-between align-center mb-1 text-caption">
+                        <span class="cloud-text text-truncate pr-2 font-weight-medium" style="max-width: 140px;" :title="fps.game">{{ fps.game }}</span>
+                        <span class="cyan-text font-weight-black">{{ fps.estimated_fps }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </v-expand-transition>
+              </div>
+            </v-card>
+            <!-- Sfârșit Card AI Predictor -->
           </div>
         </v-col>
       </v-row>
@@ -234,6 +321,10 @@
   const snackbarMessage = ref('');
   const snackbarColor = ref('#10B981');
   const snackbarIcon = ref('mdi-check-circle-outline');
+  const selectedGames = ref([]);
+  const selectedResolution = ref('1440p (QHD)');
+  const isAnalyzing = ref(false);
+  const buildAnalysis = ref(null);
 
   const triggerSnackbar = (message, type = 'success') => {
       snackbarMessage.value = message;
@@ -587,6 +678,38 @@
       triggerSnackbar(`Am adăugat ${parts.length} componente în coșul tău!`, "success");
     }
   };
+
+  const availableGames = ref([
+    'Cyberpunk 2077', 'Counter-Strike 2', 'Valorant', 
+    'Call of Duty: Warzone', 'Red Dead Redemption 2', 
+    'Grand Theft Auto V', 'Hogwarts Legacy', 'Elden Ring'
+  ]);
+
+  const analyzePerformance = async () => {
+    if (!selectedBuild.value.cpu || !selectedBuild.value.gpu) {
+      triggerSnackbar("Ai nevoie de un Procesor și o Placă Video pentru analiză!", "error");
+      return;
+    }
+
+    isAnalyzing.value = true;
+    buildAnalysis.value = null;
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/ai/analyze-build`, {
+        buildComponents: selectedBuild.value,
+        targetGames: selectedGames.value,
+        targetResolution: selectedResolution.value
+      });
+      
+      buildAnalysis.value = response.data;
+      triggerSnackbar("Analiza a fost completată cu succes!", "success");
+    } catch (error) {
+      console.error("Eroare la analiza AI:", error);
+      triggerSnackbar("Eroare la comunicarea cu asistentul AI.", "error");
+    } finally {
+      isAnalyzing.value = false;
+    }
+  };
 </script>
 
 <style scoped>
@@ -608,6 +731,10 @@
   
   .opacity-80 { 
     opacity: 0.8; 
+  }
+
+  .lh-sm {
+    line-height: 1.25 !important;
   }
   
   .cursor-pointer { 
@@ -765,7 +892,7 @@
     box-shadow: 0 0 40px rgba(16, 185, 129, 0.3) !important;
   }
 
-  .custom-input :deep(.v-field__input) { 
+  .custom-input :deep(.v-field__input), custom-input :deep(.v-select__selection-text) { 
     color: var(--text-main) !important; 
   }
 
@@ -786,5 +913,26 @@
   @keyframes blink-caret {
     from, to { border-color: transparent }
     50% { border-color: #10B981; }
+  }
+
+  .custom-input :deep(.v-label) {
+    color: var(--text-main) !important;
+    opacity: 0.7;
+  }
+
+  .custom-input :deep(.v-icon) {
+    color: var(--text-main) !important;
+    opacity: 0.6;
+  }
+
+  .custom-input :deep(.v-field__outline) {
+    color: var(--border-light) !important;
+  }
+
+  .custom-input :deep(.v-chip) {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    font-weight: 600;
   }
 </style>

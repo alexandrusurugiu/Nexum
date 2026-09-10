@@ -35,7 +35,7 @@ const generateAiBuild = async (req, res) => {
         });
 
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-2.5-flash"
+            model: "gemini-3.6-flash"
         });
 
         const systemPrompt = `
@@ -85,4 +85,65 @@ const generateAiBuild = async (req, res) => {
     }
 };
 
-module.exports = { generateAiBuild };
+const analyzeBuild = async (req, res) => {
+    try {
+        const { buildComponents, targetGames, targetResolution } = req.body;
+
+        if (!buildComponents || !buildComponents.cpu || !buildComponents.gpu) {
+            return res.status(400).json({ error: "Sistemul trebuie să conțină cel puțin un procesor (CPU) și o placă video (GPU)." });
+        }
+
+        const gamesToAnalyze = targetGames && targetGames.length > 0 
+            ? targetGames.join(", ") 
+            : "Cyberpunk 2077, Counter-Strike 2, Call of Duty: Warzone";
+            
+        const resolution = targetResolution || "1440p (QHD)";
+
+        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+
+        const prompt = `
+            Ești un expert în hardware PC. Analizează următoarea configurație PC:
+            ${JSON.stringify(buildComponents)}
+            
+            Estimează performanța specific pentru aceste jocuri: ${gamesToAnalyze}.
+            IMPORTANT: Rezoluția țintă pentru care faci estimările este ${resolution}.
+            
+            Returnează răspunsul STRICT în următorul format JSON, fără text adițional sau block-uri markdown:
+            {
+                "fps_estimates": [
+                    {"game": "Numele Jocului 1", "resolution": "${resolution}", "estimated_fps": "65-75"},
+                    {"game": "Numele Jocului 2", "resolution": "${resolution}", "estimated_fps": "120+"}
+                ],
+                "bottleneck": {
+                    "has_bottleneck": true/false,
+                    "component": "Numele componentei (ex. Intel Core i3-12100F) sau null",
+                    "explanation": "Explicație scurtă a limitării (ex: Procesorul este prea slab pentru RTX 4080)."
+                },
+                "general_verdict": "O propoziție scurtă despre performanța generală a sistemului."
+            }
+        `;
+
+        const result = await model.generateContent(prompt);
+        let aiResponseText = result.response.text();
+        
+        aiResponseText = aiResponseText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+        const jsonMatch = aiResponseText.match(/\{[\s\S]*\}/);
+
+        if (!jsonMatch) {
+            throw new Error("AI-ul nu a generat un JSON valid la analiză.");
+        }
+
+        res.status(200).json(JSON.parse(jsonMatch[0]));
+    } catch (error) {
+        console.error("=====================================");
+        console.error("EROARE CRITICĂ LA ANALIZA AI:");
+        console.error(error.message || error);
+        console.error("=====================================");
+        res.status(500).json({ error: 'Eroare la analiza configurației folosind AI.' });
+    }
+};
+
+module.exports = { 
+    generateAiBuild, 
+    analyzeBuild 
+};
