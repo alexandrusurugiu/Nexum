@@ -1,5 +1,5 @@
 <template>
-  <v-app class="nexum-bg">
+  <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
     <AppHeader></AppHeader>
 
     <v-main>
@@ -8,11 +8,6 @@
           <div class="hero-overlay"></div>
             
           <v-col cols="12" md="8" class="z-index-1 px-4 text-center d-flex flex-column align-center">
-            <v-chip color="#10B981" variant="outlined" class="mb-6 font-weight-bold px-5 py-3 custom-chip text-body-1">
-              <v-icon start icon="mdi-lightning-bolt" color="#10B981"></v-icon> 
-              SĂPTĂMÂNA HARDCORE: PÂNĂ LA -25% LA PLĂCI VIDEO
-            </v-chip>
-              
             <h1 class="text-h3 text-md-h2 font-weight-black cloud-text mb-4">
               Setup-ul tău, <span class="cyan-text">piesă cu piesă</span>
             </h1>
@@ -35,7 +30,7 @@
               <div class="title-underline mt-2"></div>
             </div>
 
-            <v-btn variant="text" color="#10B981" class="font-weight-bold text-body-1">
+            <v-btn variant="text" color="#10B981" class="font-weight-bold text-body-1" to="/componente">
               Vezi toate <v-icon end icon="mdi-chevron-right"></v-icon>
             </v-btn>
           </div>
@@ -102,8 +97,10 @@
   import AppHeader from '../components/AppHeader.vue';
   import { useComponentsStore } from '../stores/componentsStore';
   import { useCartStore } from '../stores/cartStore';
+  import { useThemeStore } from '../stores/themeStore';
 
   const router = useRouter();
+  const themeStore = useThemeStore();
   const componentsStore = useComponentsStore();
   const cartStore = useCartStore();
   const { allComponents, isLoading } = storeToRefs(componentsStore);
@@ -204,7 +201,7 @@
 
   .hero-section {
     position: relative;
-    background-image: url('https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-image: var(--hero-bg);
     background-size: cover; 
     background-position: center;
     background-attachment: fixed; 
@@ -217,7 +214,7 @@
     left: 0; 
     right: 0; 
     bottom: 0;
-    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.6) 0%, var(--bg-main) 100%); 
+    background: var(--hero-overlay); 
     z-index: 0;
   }
   

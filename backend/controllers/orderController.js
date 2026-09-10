@@ -210,4 +210,44 @@ const getUserOrders = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, confirmPayment, getUserOrders };
+const getAllOrders = async (req, res) => {
+    try {
+        const snapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
+        const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        res.status(200).json({ 
+            success: true, 
+            orders: orders
+        });
+    } catch (error) {
+        console.error("Eroare la obținerea comenzilor:", error);
+        res.status(500).json({ success: false, message: 'Eroare la server.' });
+    }
+};
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const orderRef = db.collection('orders').doc(id);
+        const doc = await orderRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ success: false, message: 'Comanda nu a fost găsită.' });
+        }
+
+        await orderRef.update({ status: status });
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'Status actualizat cu succes',
+            order: { id, ...doc.data(), status }
+        });
+    } catch (error) {
+        console.error("Eroare la actualizarea statusului:", error);
+        res.status(500).json({ success: false, message: 'Eroare la server.' });
+    }
+};
+
+module.exports = { createOrder, confirmPayment, getUserOrders, getAllOrders, updateOrderStatus };

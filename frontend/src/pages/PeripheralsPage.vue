@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nexum-bg">
+    <v-app :theme="themeStore.isDark ? 'dark' : 'light'" class="nexum-bg" :class="!themeStore.isDark ? 'light-mode' : ''">
         <AppHeader></AppHeader>
 
         <v-main class="pb-16 px-4 px-md-10 mt-16">
@@ -232,10 +232,12 @@
     import AppHeader from '../components/AppHeader.vue';
     import { useCartStore } from '../stores/cartStore';
     import { useRouter } from 'vue-router';
+    import { useThemeStore } from '../stores/themeStore';
 
     const router = useRouter();
     const cartStore = useCartStore();
     const cartCount = ref(0);
+    const themeStore = useThemeStore();
     const addToCart = () => cartCount.value++;
     const peripheralsStore = usePeripheralsStore();
     const { allPeripherals, isLoading } = storeToRefs(peripheralsStore);
