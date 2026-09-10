@@ -146,4 +146,4 @@ const analyzeBuild = async (req, res) => {
 module.exports = { 
     generateAiBuild, 
     analyzeBuild 
-};
+}; 

@@ -54,7 +54,7 @@ export const useConfiguratorStore = defineStore('configurator', () => {
         isAnalyzing.value = true;
         analysisError.value = null;
         buildAnalysis.value = null;
-
+ 
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze-build`, {
                 buildComponents: currentBuild.value,
