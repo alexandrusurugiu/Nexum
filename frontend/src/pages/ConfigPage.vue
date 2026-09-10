@@ -11,14 +11,27 @@
           </p>
         </div>
         
-        <v-btn 
-          size="x-large" 
-          class="ai-magic-btn font-weight-bold rounded-pill" 
-          @click="aiDialog = true"
-        >
-          <v-icon start size="large">mdi-creation</v-icon>
-          Nexum AI Builder
-        </v-btn>
+        <div class="d-flex gap-3 flex-column flex-sm-row">
+          <v-btn 
+            size="large" 
+            variant="outlined"
+            color="#10B981"
+            class="font-weight-bold rounded-pill" 
+            @click="upgradeDialog = true"
+          >
+            <v-icon start>mdi-wrench-clock</v-icon>
+            Upgrade PC-ul meu
+          </v-btn>
+
+          <v-btn 
+            size="large" 
+            class="ai-magic-btn font-weight-bold rounded-pill ml-sm-3 mt-3 mt-sm-0" 
+            @click="aiDialog = true"
+          >
+            <v-icon start>mdi-creation</v-icon>
+            Nexum AI Builder
+          </v-btn>
+        </div>
       </div>
 
       <v-dialog v-model="aiDialog" max-width="600" persistent>
@@ -64,9 +77,82 @@
         </v-card>
       </v-dialog>
 
+      <v-dialog v-model="upgradeDialog" max-width="600" persistent>
+        <v-card class="bg-panel rounded-xl ai-dialog-border pa-2">
+          <v-card-title class="d-flex justify-space-between align-center pt-4 px-6">
+            <div class="d-flex align-center">
+              <v-icon color="#10B981" size="32" class="mr-3">mdi-wrench-clock</v-icon>
+              <h3 class="text-h5 font-weight-black cloud-text m-0">AI Upgrade Advisor</h3>
+            </div>
+            <v-btn icon="mdi-close" variant="text" color="var(--text-main)" class="opacity-70" @click="upgradeDialog = false" :disabled="isUpgrading"></v-btn>
+          </v-card-title>
+          
+          <v-card-text class="px-6 py-4">
+            <p class="cloud-text opacity-80 mb-6">
+              Spune-mi ce piese ai acum în calculator și ce buget ai. Îți voi recomanda exact componentele care trebuie schimbate pentru un boost maxim de performanță.
+            </p>
+
+            <v-textarea
+              v-model="currentPcSpecs"
+              label="Specificațiile actuale"
+              placeholder="Ex: i5 9400F, GTX 1650, 16GB RAM DDR4, Sursă 500W, Carcasă mid-tower."
+              variant="outlined"
+              color="#10B981"
+              rows="3"
+              class="custom-input mb-4"
+              :disabled="isUpgrading"
+            ></v-textarea>
+
+            <v-text-field
+              v-model="upgradeBudget"
+              label="Buget maxim (RON)"
+              type="number"
+              variant="outlined"
+              color="#10B981"
+              placeholder="Ex: 2500"
+              class="custom-input mb-4"
+              :disabled="isUpgrading"
+            ></v-text-field>
+            
+            <div v-if="isUpgrading" class="d-flex flex-column align-center justify-center py-4">
+              <v-progress-circular indeterminate color="#10B981" size="40" width="3" class="mb-4"></v-progress-circular>
+              <h4 class="cyan-text text-subtitle-1 font-weight-bold typing-animation">Calculăm cele mai bune upgrade-uri...</h4>
+            </div>
+          </v-card-text>
+
+          <v-card-actions class="px-6 pb-6 pt-0" v-if="!isUpgrading">
+            <v-spacer></v-spacer>
+            <v-btn variant="text" class="cloud-text opacity-70 font-weight-bold" @click="upgradeDialog = false">Anulează</v-btn>
+            <v-btn color="#10B981" variant="elevated" class="rounded-lg font-weight-bold px-6 ml-3 text-white" @click="generateUpgradeWithAI" :disabled="!currentPcSpecs.trim() || !upgradeBudget">
+              Găsește Upgrade-ul
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-row>
-        <!-- Coloana Stângă (Piese) -->
         <v-col cols="12" md="8" lg="9">
+          <v-expand-transition>
+            <v-alert
+              v-if="aiUpgradeAdvice"
+              color="#10B981"
+              variant="tonal"
+              class="mb-6 rounded-xl ai-advice-border"
+              closable
+              @click:close="aiUpgradeAdvice = null"
+            >
+              <template v-slot:prepend>
+                <v-icon size="36" class="mr-3 opacity-80">mdi-robot-outline</v-icon>
+              </template>
+              <template v-slot:title>
+                <div class="text-h6 font-weight-black mb-2">Verdictul Asistentului AI</div>
+              </template>
+              
+              <div class="text-body-1 opacity-90 cloud-text" style="white-space: pre-wrap; line-height: 1.6;">
+                {{ aiUpgradeAdvice }}
+              </div>
+            </v-alert>
+          </v-expand-transition>
           <v-card class="pa-4 rounded-xl mb-6 category-wrapper" elevation="10">
             <div class="d-flex overflow-x-auto hide-scrollbar">
               <div 
@@ -146,10 +232,8 @@
           </v-row>
         </v-col>
 
-        <!-- Coloana Dreaptă (Rezumat + AI Predictor) -->
         <v-col cols="12" md="4" lg="3">
           <div class="sticky-summary">
-            <!-- Card 1: Rezumatul Sistemului -->
             <v-card class="summary-card pa-5 rounded-xl" elevation="10">
               <div class="d-flex justify-space-between align-center mb-4">
                 <h3 class="text-h5 font-weight-black cloud-text">Sistemul Tău</h3>
@@ -214,19 +298,16 @@
               </v-btn>
             </v-card>
 
-            <!-- Card 2: AI Predictor Compact -->
             <v-card class="summary-card mt-4 pa-4 rounded-xl" elevation="10">
               <div class="d-flex align-center mb-3">
                 <v-icon color="#10B981" size="24" class="mr-2">mdi-brain</v-icon>
                 <h4 class="text-h6 font-weight-black cloud-text m-0">Predictor <span class="cyan-text">AI</span></h4>
               </div>
 
-              <!-- Starea când lipsesc piesele esențiale -->
               <div v-if="!selectedBuild.cpu || !selectedBuild.gpu" class="text-caption cloud-text opacity-70 font-italic text-center py-2">
                 *Alege un Procesor și o Placă Video pentru a debloca estimarea FPS-ului.
               </div>
 
-              <!-- Starea activă -->
               <div v-else>
                 <v-select
                   v-model="selectedGames"
@@ -268,7 +349,6 @@
                   Estimează Performanța
                 </v-btn>
 
-                <!-- Rezultatele Compacte -->
                 <v-expand-transition>
                   <div v-if="buildAnalysis" class="mt-4">
                     <v-divider class="mb-3 border-opacity-25" color="#10B981"></v-divider>
@@ -296,7 +376,6 @@
                 </v-expand-transition>
               </div>
             </v-card>
-            <!-- Sfârșit Card AI Predictor -->
           </div>
         </v-col>
       </v-row>
@@ -340,6 +419,11 @@
   const selectedResolution = ref('1440p (QHD)');
   const isAnalyzing = ref(false);
   const buildAnalysis = ref(null);
+  const upgradeDialog = ref(false);
+  const currentPcSpecs = ref('');
+  const upgradeBudget = ref('');
+  const isUpgrading = ref(false);
+  const aiUpgradeAdvice = ref(null);
 
   const triggerSnackbar = (message, type = 'success') => {
       snackbarMessage.value = message;
@@ -745,6 +829,60 @@
       isAnalyzing.value = false;
     }
   };
+
+  const generateUpgradeWithAI = async () => {
+    if (!currentPcSpecs.value.trim() || !upgradeBudget.value) return;
+    
+    isUpgrading.value = true;
+    
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/ai/upgrade-pc`, { 
+        currentSpecs: currentPcSpecs.value,
+        budget: upgradeBudget.value
+      });
+      
+      if (response.data.success) {
+        const { recommended_parts, upgrade_explanation } = response.data.data;
+        
+        selectedBuild.value = {}; 
+        
+        for (const [category, id] of Object.entries(recommended_parts)) {
+          if (id && id !== 'null') {
+            const partMatch = allParts.value.find(p => p.id === id);
+            if (partMatch) {
+              const getNum = (str) => str ? parseInt(String(str).replace(/[^0-9]/g, '')) : 0;
+              let parsedWattage = getNum(partMatch.specs?.tdp) || getNum(partMatch.specs?.consum) || 45;
+              if (partMatch.category === 'coolere') parsedWattage = 15;
+
+              const formattedPart = {
+                ...partMatch,
+                image: partMatch.specs?.image || partMatch.image || '',
+                socket: partMatch.specs?.socket || partMatch.socket || '',
+                socket_support: partMatch.specs?.socket_support || partMatch.socket_support || '',
+                ramType: partMatch.specs?.memory_type || partMatch.specs?.memory_support || partMatch.specs?.type || '',
+                wattage: parsedWattage, 
+                psuWattage: getNum(partMatch.specs?.putere) || 650
+              };
+
+              selectedBuild.value[category] = formattedPart;
+            }
+          }
+        }
+        
+        upgradeDialog.value = false;
+        currentPcSpecs.value = '';
+        upgradeBudget.value = '';
+        
+        triggerSnackbar("Upgrade generat! Vezi piesele recomandate.", "success");
+        aiUpgradeAdvice.value = upgrade_explanation;      
+      }
+    } catch (error) {
+      console.error("Eroare generare Upgrade:", error);
+      triggerSnackbar("A apărut o eroare la generarea upgrade-ului.", "error");
+    } finally {
+      isUpgrading.value = false;
+    }
+  };
 </script>
 
 <style scoped>
@@ -969,5 +1107,11 @@
     color: #10B981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
     font-weight: 600;
+  }
+
+  .ai-advice-border {
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1) !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), transparent) !important;
   }
 </style>
