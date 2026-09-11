@@ -456,16 +456,62 @@
       return dbWattage;
     }
 
+    const nameLower = part.name.toLowerCase();
+    
     switch (part.category) {
-      case 'procesoare': return 105;
-      case 'placi_video': return 250;
-      case 'placi_de_baza': return 40;
-      case 'memorie_ram': return 10;
-      case 'stocare': return 8;
-      case 'coolere': return 20;
-      case 'carcase': return 15;
-      case 'surse': return 0;
-      default: return 15;
+      case 'procesoare':
+        if (nameLower.includes('i9') || nameLower.includes('ryzen 9')) {
+          return 170;
+        }
+        if (nameLower.includes('i7') || nameLower.includes('ryzen 7')) {
+          return 125;
+        }
+        if (nameLower.includes('i5') || nameLower.includes('ryzen 5')) {
+          return 65;
+        }
+        return 65;
+      
+      case 'placi_video':
+        if (nameLower.includes('4090') || nameLower.includes('7900 xtx')) {
+          return 450;
+        }
+        if (nameLower.includes('4080') || nameLower.includes('7900 xt')) {
+          return 320;
+        }
+        if (nameLower.includes('4070') || nameLower.includes('7800 xt')) {
+          return 220;
+        }
+        if (nameLower.includes('3060') || nameLower.includes('4060')) {
+          return 150;
+        }
+        return 200;
+
+      case 'placi_de_baza':
+        return 20; 
+      
+      case 'memorie_ram':
+        return 10; 
+      
+      case 'stocare':
+        return 8; 
+      
+      case 'coolere':
+        if (nameLower.includes('rgb') || nameLower.includes('aio') || nameLower.includes('liquid')) {
+          return 25;
+        }
+        return 10; 
+      
+      case 'carcase':
+        if (nameLower.includes('rgb') || nameLower.includes('argb')) {
+          return 20;
+        }
+        return 10; 
+      
+      case 'surse':
+        return 0; 
+        
+      default: 
+        return 15;
     }
   };
 
@@ -667,68 +713,44 @@
 
   const checkCompatibility = (part) => {
     const category = steps[currentStep.value].id;
+    const build = selectedBuild.value;
+    let isCompatible = true;
 
-    if (category === 'mb' && selectedBuild.value.cpu) {
-      if (!checkSocket(selectedBuild.value.cpu, part)) {
-        return { isCompatible: false };
-      }
-    }
-    
-    if (category === 'cpu' && selectedBuild.value.mb) {
-      if (!checkSocket(part, selectedBuild.value.mb)) {
-        return { isCompatible: false };
-      }
-    }
+    const rules = {
+      mb: [
+        { target: 'cpu', check: (p, t) => checkSocket(p, t) },
+        { target: 'cooler', check: (p, t) => checkSocket(p, t) },
+        { target: 'ram', check: (p, t) => isRamCompatible(p.ramType, t.ramType) },
+        { target: 'case', check: (p, t) => isFormatCompatible(p.specs?.type || p.specs?.format, t.specs?.motherboardSupport) }
+      ],
+      cpu: [
+        { target: 'mb', check: (p, t) => checkSocket(p, t) },
+        { target: 'cooler', check: (p, t) => checkSocket(p, t) }
+      ],
+      cooler: [
+        { target: 'cpu', check: (p, t) => checkSocket(p, t) },
+        { target: 'mb', check: (p, t) => checkSocket(p, t) }
+      ],
+      ram: [
+        { target: 'mb', check: (p, t) => isRamCompatible(p.ramType, t.ramType) }
+      ],
+      case: [
+        { target: 'mb', check: (p, t) => isFormatCompatible(t.specs?.type || t.specs?.format, p.specs?.motherboardSupport) }
+      ]
+    };
 
-    if (category === 'cooler') {
-      if (selectedBuild.value.cpu && !checkSocket(selectedBuild.value.cpu, part)) {
-        return { isCompatible: false };
-      }
-
-      if (selectedBuild.value.mb && !checkSocket(selectedBuild.value.mb, part)) {
-        return { isCompatible: false };
-      }
-    }
-
-    if (category === 'cpu' && selectedBuild.value.cooler) {
-      if (!checkSocket(part, selectedBuild.value.cooler)) {
-        return { isCompatible: false };
-      }
-    }
-
-    if (category === 'mb' && selectedBuild.value.cooler) {
-      if (!checkSocket(part, selectedBuild.value.cooler)) {
-        return { isCompatible: false };
-      }
-    }
-
-    if (category === 'ram' && selectedBuild.value.mb) {
-      if (!isRamCompatible(part.ramType, selectedBuild.value.mb.ramType)) {
-        return { isCompatible: false };
+    if (rules[category]) {
+      for (const rule of rules[category]) {
+        if (build[rule.target]) {
+          if (!rule.check(part, build[rule.target])) {
+            isCompatible = false;
+            break;
+          }
+        }
       }
     }
 
-    if (category === 'mb' && selectedBuild.value.ram) {
-      if (!isRamCompatible(part.ramType, selectedBuild.value.ram.ramType)) {
-        return { isCompatible: false };
-      }
-    }
-
-    if (category === 'case' && selectedBuild.value.mb) {
-      const mbFormat = selectedBuild.value.mb.specs?.type || selectedBuild.value.mb.specs?.format; 
-      if (!isFormatCompatible(mbFormat, part.specs?.motherboardSupport)) {
-        return { isCompatible: false };
-      }
-    }
-
-    if (category === 'mb' && selectedBuild.value.case) {
-      const mbFormat = part.specs?.type || part.specs?.format; 
-      if (!isFormatCompatible(mbFormat, selectedBuild.value.case.specs?.motherboardSupport)) {
-        return { isCompatible: false };
-      }
-    }
-
-    return { isCompatible: true };
+    return { isCompatible };
   };
 
   const allCategoryParts = computed(() => {
