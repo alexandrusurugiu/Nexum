@@ -102,6 +102,22 @@
                 <v-row class="mt-4" id="reviews-section">
                     <v-col cols="12">
                         <v-card class="product-panel rounded-xl pa-6 pa-md-10 mb-8" elevation="5">
+                            <div class="ai-summary-box pa-5 rounded-lg mb-8">
+                                <h3 class="text-h6 font-weight-bold mb-4 d-flex align-center" style="color: #6366f1;">
+                                    <v-icon color="#6366f1" class="mr-3">mdi-sparkles</v-icon>
+                                    Rezumat generat AI
+                                </h3>
+                                
+                                <div v-if="isLoading" class="loading-state cloud-text opacity-70 d-flex align-center">
+                                    <v-progress-circular indeterminate color="#6366f1" size="20" class="mr-3"></v-progress-circular>
+                                    AI-ul analizează recenziile...
+                                </div>
+                                
+                                <div v-else-if="aiSummary">
+                                    <p class="summary-text cloud-text opacity-90 text-body-1">{{ aiSummary }}</p>
+                                </div>
+                            </div>
+
                             <div class="d-flex flex-column flex-sm-row justify-space-between align-sm-center mb-8">
                                 <h2 class="text-h4 font-weight-black cloud-text d-flex align-center">
                                     <v-icon color="#10B981" size="large" class="mr-3">mdi-star-circle-outline</v-icon>
@@ -191,6 +207,7 @@
     const themeStore = useThemeStore();
     const product = ref(null);
     const isLoading = ref(true);
+    const aiSummary = ref(null);
     const reviews = ref([]);
     const averageRating = ref(0);
     const isLoadingReviews = ref(false);
@@ -267,8 +284,13 @@
                 product.value = response.data.product;
                 fetchReviews(productId);
             }
+
+            const aiResponse = await axios.get(`${import.meta.env.VITE_API_URL}/server/reviews/summary/${route.params.id}`);
+            aiSummary.value = aiResponse.data.summary;
         } catch (error) {
             console.error("Produsul nu a fost găsit.");
+            console.error("Nu s-a putut încărca rezumatul AI", error);
+            aiSummary.value = "Rezumatul AI nu este disponibil momentan.";
         } finally {
             isLoading.value = false;
         }
@@ -478,5 +500,17 @@
 
     .custom-input :deep(.v-field) { 
         border-radius: 12px; 
+    }
+
+    .ai-summary-box {
+        background-color: rgba(99, 102, 241, 0.05); 
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-left: 4px solid #6366f1;
+        transition: background-color 0.3s ease;
+    }
+
+    .summary-text {
+        white-space: pre-line;
+        line-height: 1.6;
     }
 </style>
