@@ -331,18 +331,20 @@
 
     const availableFilters = computed(() => {
         const currentPeripherals = allPeripherals.value.filter(p => p.category === activeCategory.value);
+        const extract = (extractor) => [...new Set(currentPeripherals.map(extractor).filter(v => v && v !== 'N/A' && v !== 'Fără iluminare'))];
+        
         return {
-            brands: [...new Set(currentPeripherals.map(p => p.brand).filter(Boolean))],
-            connectivity: [...new Set(currentPeripherals.map(p => p.specs?.connectivity).filter(c => c && c !== 'N/A'))],
-            techTypes: [...new Set(currentPeripherals.map(p => p.specs?.techType).filter(Boolean))],
-            lighting: [...new Set(currentPeripherals.map(p => p.specs?.lighting).filter(l => l && l !== 'Fără iluminare' && l !== 'N/A'))],
-            dpis: [...new Set(currentPeripherals.map(p => p.specs?.dpi).filter(Boolean))],
-            weights: [...new Set(currentPeripherals.map(p => p.specs?.weight).filter(Boolean))],
-            formats: [...new Set(currentPeripherals.map(p => p.specs?.format).filter(Boolean))],
-            switches: [...new Set(currentPeripherals.map(p => p.specs?.switches).filter(Boolean))],
-            microphones: [...new Set(currentPeripherals.map(p => p.specs?.microphone).filter(Boolean))],
-            sizes: [...new Set(currentPeripherals.map(p => p.specs?.size).filter(Boolean))],
-            thicknesses: [...new Set(currentPeripherals.map(p => p.specs?.thickness).filter(Boolean))]
+            brands: extract(p => p.brand),
+            connectivity: extract(p => p.specs?.connectivity),
+            techTypes: extract(p => p.specs?.techType),
+            lighting: extract(p => p.specs?.lighting),
+            dpis: extract(p => p.specs?.dpi),
+            weights: extract(p => p.specs?.weight),
+            formats: extract(p => p.specs?.format),
+            switches: extract(p => p.specs?.switches),
+            microphones: extract(p => p.specs?.microphone),
+            sizes: extract(p => p.specs?.size),
+            thicknesses: extract(p => p.specs?.thickness)
         };
     });
 
@@ -350,24 +352,34 @@
         peripheralsStore.fetchPeripherals();
     });
 
-    const filteredPeripherals = computed(() => {
-        let result = allPeripherals.value.filter(p => p.category === activeCategory.value);
-        result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
-        
-        const f = selectedFilters.value;
+    const filterDefinitions = {
+        brands: (p, v) => v.includes(p.brand),
+        connectivity: (p, v) => v.includes(p.specs?.connectivity),
+        techTypes: (p, v) => v.includes(p.specs?.techType),
+        lighting: (p, v) => v.includes(p.specs?.lighting),
+        dpis: (p, v) => v.includes(p.specs?.dpi),
+        weights: (p, v) => v.includes(p.specs?.weight),
+        formats: (p, v) => v.includes(p.specs?.format),
+        switches: (p, v) => v.includes(p.specs?.switches),
+        microphones: (p, v) => v.includes(p.specs?.microphone),
+        sizes: (p, v) => v.includes(p.specs?.size),
+        thicknesses: (p, v) => v.includes(p.specs?.thickness)
+    };
 
-        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
-        if (f.connectivity.length > 0) result = result.filter(p => f.connectivity.includes(p.specs?.connectivity));
-        if (f.techTypes.length > 0) result = result.filter(p => f.techTypes.includes(p.specs?.techType));
-        if (f.lighting.length > 0) result = result.filter(p => f.lighting.includes(p.specs?.lighting));
-        if (f.dpis.length > 0) result = result.filter(p => f.dpis.includes(p.specs?.dpi));
-        if (f.weights.length > 0) result = result.filter(p => f.weights.includes(p.specs?.weight));
-        if (f.formats.length > 0) result = result.filter(p => f.formats.includes(p.specs?.format));
-        if (f.switches.length > 0) result = result.filter(p => f.switches.includes(p.specs?.switches));
-        if (f.microphones.length > 0) result = result.filter(p => f.microphones.includes(p.specs?.microphone));
-        if (f.sizes.length > 0) result = result.filter(p => f.sizes.includes(p.specs?.size));
-        if (f.thicknesses.length > 0) result = result.filter(p => f.thicknesses.includes(p.specs?.thickness));
+    const filteredPeripherals = computed(() => {
+        const activeFilters = Object.entries(selectedFilters.value).filter(([_, vals]) => vals.length > 0);
         
+        let result = allPeripherals.value.filter(p => {
+            if (p.category !== activeCategory.value) {
+                return false;
+            }
+
+            if (p.price < priceRange.value[0] || p.price > priceRange.value[1]) {
+                return false;
+            }
+            return activeFilters.every(([key, values]) => filterDefinitions[key](p, values));
+        });
+
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
         } else if (sortOption.value === 'price_desc') {

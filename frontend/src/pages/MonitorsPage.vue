@@ -280,42 +280,61 @@
     };
 
     const getSubCategory = (name) => {
-        const lowerName = name.toLowerCase();
-        if (lowerName.includes('gaming') || lowerName.includes('odyssey') || lowerName.includes('ultragear') || lowerName.includes('rog') || lowerName.includes('alienware') || lowerName.includes('zowie')) return 'gaming';
-        if (lowerName.includes('ultrawide') || lowerName.includes('uwqhd')) return 'ultrawide';
-        if (lowerName.includes('proart') || lowerName.includes('ultrasharp') || lowerName.includes('smart')) return 'pro';
+        const n = name.toLowerCase();
+
+        if (/gaming|odyssey|ultragear|rog|alienware|zowie/.test(n)) {
+            return 'gaming';
+        } else if (/ultrawide|uwqhd/.test(n)) {
+            return 'ultrawide';
+        } else if (/proart|ultrasharp|smart/.test(n)) {
+            return 'pro';
+        }
+
         return 'office'; 
     };
 
     const availableFilters = computed(() => {
         const currentMonitors = allMonitors.value.filter(p => p.category === 'monitoare' && getSubCategory(p.name) === activeCategory.value);
+        const extract = (extractor) => [...new Set(currentMonitors.map(extractor).filter(Boolean))];
+        
         return {
-            brands: [...new Set(currentMonitors.map(p => p.brand).filter(Boolean))],
-            resolutions: [...new Set(currentMonitors.map(p => p.specs?.resolution).filter(Boolean))],
-            refreshRates: [...new Set(currentMonitors.map(p => p.specs?.refreshRate).filter(Boolean))],
-            panelTypes: [...new Set(currentMonitors.map(p => p.specs?.panel).filter(Boolean))],
-            sizes: [...new Set(currentMonitors.map(p => p.specs?.size).filter(Boolean))]
+            brands: extract(p => p.brand),
+            resolutions: extract(p => p.specs?.resolution),
+            refreshRates: extract(p => p.specs?.refreshRate),
+            panelTypes: extract(p => p.specs?.panel),
+            sizes: extract(p => p.specs?.size)
         };
     });
 
-    const filteredMonitors = computed(() => {
-        let result = allMonitors.value.filter(p => p.category === 'monitoare' && getSubCategory(p.name) === activeCategory.value);
-        result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
-        
-        const f = selectedFilters.value;
+    const filterDefinitions = {
+        brands: (p, v) => v.includes(p.brand),
+        resolutions: (p, v) => v.includes(p.specs?.resolution),
+        refreshRates: (p, v) => v.includes(p.specs?.refreshRate),
+        panelTypes: (p, v) => v.includes(p.specs?.panel),
+        sizes: (p, v) => v.includes(p.specs?.size)
+    };
 
-        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
-        if (f.resolutions.length > 0) result = result.filter(p => f.resolutions.includes(p.specs?.resolution));
-        if (f.refreshRates.length > 0) result = result.filter(p => f.refreshRates.includes(p.specs?.refreshRate));
-        if (f.panelTypes.length > 0) result = result.filter(p => f.panelTypes.includes(p.specs?.panel));
-        if (f.sizes.length > 0) result = result.filter(p => f.sizes.includes(p.specs?.size));
+    const filteredMonitors = computed(() => {
+        const activeFilters = Object.entries(selectedFilters.value).filter(([_, vals]) => vals.length > 0);
         
+        let result = allMonitors.value.filter(p => {
+            if (p.category !== 'monitoare' || getSubCategory(p.name) !== activeCategory.value) {
+                return false;
+            }
+
+            if (p.price < priceRange.value[0] || p.price > priceRange.value[1]) {
+                return false;
+            }
+
+            return activeFilters.every(([key, values]) => filterDefinitions[key](p, values));
+        });
+
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
         } else if (sortOption.value === 'price_desc') {
             result.sort((a, b) => b.price - a.price);
         }
-        
+
         return result;
     });
 

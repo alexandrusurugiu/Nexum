@@ -392,22 +392,23 @@
 
     const getSeries = (name, category) => {
         if (category === 'procesoare') {
-            const series = ['Ryzen 9', 'Ryzen 7', 'Ryzen 5', 'Ryzen 3', 'Core i9', 'Core i7', 'Core i5', 'Core i3'];
-            return series.find(s => name.includes(s)) || null;
+            const match = name.match(/(Ryzen [3579]|Core i[3579])/);
+            return match ? match[0] : null;
         }
+
         if (category === 'placi_video') {
-            if (name.includes('RTX 40')) return 'GeForce RTX 40 Series';
-            if (name.includes('RTX 30')) return 'GeForce RTX 30 Series';
-            if (name.includes('RX 7')) return 'Radeon RX 7000 Series';
-            if (name.includes('RX 6')) return 'Radeon RX 6000 Series';
+            const match = name.match(/(RTX [34]0|RX [67])/);
+            if (!match) return null;
+            return match[0].startsWith('RTX') ? `GeForce ${match[0]}00 Series` : `Radeon ${match[0]}000 Series`;
         }
         return null;
     };
 
     const getModel = (name, category) => {
         if (category === 'procesoare') {
-            return name.replace('Procesor AMD ', '').replace('Procesor Intel ', '');
+            return name.replace(/(Procesor AMD |Procesor Intel )/g, '');
         }
+        
         if (category === 'placi_video') {
             const match = name.match(/(RTX \d{4}(?: Ti)?(?: SUPER)?|RX \d{4}(?: XT)?(?: XTX)?(?: GRE)?)/);
             return match ? match[0] : null;
@@ -431,98 +432,71 @@
 
     const availableFilters = computed(() => {
         const currentProducts = allComponents.value.filter(p => p.category === activeCategory.value);
+        const extract = (extractor) => [...new Set(currentProducts.map(extractor).filter(Boolean))];
         
         return {
-            brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            sockets: [...new Set(currentProducts.map(p => p.specs?.socket || p.specs?.socket_support).filter(Boolean))],
-            memory: [...new Set(currentProducts.map(p => p.specs?.memory || p.specs?.capacity).filter(Boolean))],
-            types: [...new Set(currentProducts.map(p => p.specs?.type).filter(Boolean))],
-            coolingTypes: [...new Set(currentProducts.map(p => p.specs?.type).filter(Boolean))],
-            fanSizes: [...new Set(currentProducts.map(p => p.specs?.fan_size).filter(Boolean))],
-            cores: [...new Set(currentProducts.map(p => p.specs?.cores).filter(Boolean))].sort((a,b) => a - b),
-            series: [...new Set(currentProducts.map(p => getSeries(p.name, p.category)).filter(Boolean))].sort(),
-            models: [...new Set(currentProducts.map(p => getModel(p.name, p.category)).filter(Boolean))].sort(),
-            chipsets: [...new Set(currentProducts.map(p => p.specs?.chipset).filter(Boolean))],
-            memoryTypes: [...new Set(currentProducts.map(p => p.specs?.memory_type || p.specs?.memory_support).filter(Boolean))],
-            interfaces: [...new Set(currentProducts.map(p => p.specs?.interface).filter(Boolean))],
-            puteri: [...new Set(currentProducts.map(p => p.specs?.putere).filter(Boolean))].sort((a,b) => parseInt(a) - parseInt(b)),
-            certificari: [...new Set(currentProducts.map(p => p.specs?.certificare).filter(Boolean))],
-            modularitati: [...new Set(currentProducts.map(p => p.specs?.modular).filter(Boolean))],
-            formate: [...new Set(currentProducts.map(p => p.specs?.format).filter(Boolean))],
+            brands: extract(p => p.brand),
+            sockets: extract(p => p.specs?.socket || p.specs?.socket_support),
+            memory: extract(p => p.specs?.memory || p.specs?.capacity),
+            types: extract(p => p.specs?.type),
+            coolingTypes: extract(p => p.specs?.type),
+            fanSizes: extract(p => p.specs?.fan_size),
+            cores: extract(p => p.specs?.cores).sort((a, b) => a - b),
+            series: extract(p => getSeries(p.name, p.category)).sort(),
+            models: extract(p => getModel(p.name, p.category)).sort(),
+            chipsets: extract(p => p.specs?.chipset),
+            memoryTypes: extract(p => p.specs?.memory_type || p.specs?.memory_support),
+            interfaces: extract(p => p.specs?.interface),
+            puteri: extract(p => p.specs?.putere).sort((a, b) => parseInt(a) - parseInt(b)),
+            certificari: extract(p => p.specs?.certificare),
+            modularitati: extract(p => p.specs?.modular),
+            formate: extract(p => p.specs?.format),
             motherboardSupport: [...new Set(currentProducts.flatMap(p => p.specs?.motherboardSupport ? p.specs.motherboardSupport.split(',').map(s => s.trim()) : []))].sort(),
-            sidePanels: [...new Set(currentProducts.map(p => p.specs?.sidePanel).filter(Boolean))],
-            includedFans: [...new Set(currentProducts.map(p => p.specs?.includedFans).filter(Boolean))].sort()
+            sidePanels: extract(p => p.specs?.sidePanel),
+            includedFans: extract(p => p.specs?.includedFans).sort()
         };
     });
 
-    const filteredComponents = computed(() => {
-        let result = allComponents.value.filter(p => p.category === activeCategory.value);
-        result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
-        
-        const f = selectedFilters.value;
+    const filterDefinitions = {
+        brands: (p, v) => v.includes(p.brand),
+        sockets: (p, v) => v.includes(p.specs?.socket),
+        memory: (p, v) => v.includes(p.specs?.memory) || v.includes(p.specs?.capacity),
+        types: (p, v) => v.includes(p.specs?.type),
+        cores: (p, v) => v.includes(p.specs?.cores),
+        chipsets: (p, v) => v.includes(p.specs?.chipset),
+        series: (p, v) => v.includes(getSeries(p.name, p.category)),
+        models: (p, v) => v.includes(getModel(p.name, p.category)),
+        memoryTypes: (p, v) => v.includes(p.specs?.memory_type) || v.includes(p.specs?.memory_support),
+        interfaces: (p, v) => v.includes(p.specs?.interface),
+        coolingTypes: (p, v) => v.includes(p.specs?.type),
+        fanSizes: (p, v) => v.includes(p.specs?.fan_size),
+        puteri: (p, v) => v.includes(p.specs?.putere),
+        certificari: (p, v) => v.includes(p.specs?.certificare),
+        modularitati: (p, v) => v.includes(p.specs?.modular),
+        formate: (p, v) => v.includes(p.specs?.format),
+        sidePanels: (p, v) => v.includes(p.specs?.sidePanel),
+        includedFans: (p, v) => v.includes(p.specs?.includedFans),
+        motherboardSupport: (p, v) => {
+            if (!p.specs?.motherboardSupport) return false;
+            const supported = p.specs.motherboardSupport.split(',').map(s => s.trim());
+            return v.some(selected => supported.includes(selected));
+        }
+    };
 
-        if (f.series.length > 0) {
-            result = result.filter(p => f.series.includes(getSeries(p.name, p.category)));
-        }
-        if (f.models.length > 0) {
-            result = result.filter(p => f.models.includes(getModel(p.name, p.category)));
-        }
-        if (f.brands.length > 0) {
-            result = result.filter(p => f.brands.includes(p.brand));
-        }
-        if (f.sockets.length > 0) {
-            result = result.filter(p => f.sockets.includes(p.specs?.socket));
-        }
-        if (f.memory.length > 0) {
-            result = result.filter(p => f.memory.includes(p.specs?.memory) || f.memory.includes(p.specs?.capacity));
-        }
-        if (f.types.length > 0) {
-            result = result.filter(p => f.types.includes(p.specs?.type));
-        }
-        if (f.cores.length > 0) {
-            result = result.filter(p => f.cores.includes(p.specs?.cores));
-        }
-        if (f.chipsets.length > 0) {
-            result = result.filter(p => f.chipsets.includes(p.specs?.chipset));
-        }
-        if (f.memoryTypes.length > 0) {
-            result = result.filter(p => f.memoryTypes.includes(p.specs?.memory_type) || f.memoryTypes.includes(p.specs?.memory_support));
-        }
-        if (f.interfaces.length > 0) {
-            result = result.filter(p => f.interfaces.includes(p.specs?.interface));
-        }
-        if (f.coolingTypes.length > 0) {
-            result = result.filter(p => f.coolingTypes.includes(p.specs?.type));
-        }
-        if (f.fanSizes.length > 0) {
-            result = result.filter(p => f.fanSizes.includes(p.specs?.fan_size));
-        }
-        if (f.puteri.length > 0) {
-            result = result.filter(p => f.puteri.includes(p.specs?.putere));
-        }
-        if (f.certificari.length > 0) {
-            result = result.filter(p => f.certificari.includes(p.specs?.certificare));
-        }
-        if (f.modularitati.length > 0) {
-            result = result.filter(p => f.modularitati.includes(p.specs?.modular));
-        }
-        if (f.formate.length > 0) {
-            result = result.filter(p => f.formate.includes(p.specs?.format));
-        }
-        if (f.motherboardSupport.length > 0) {
-            result = result.filter(p => {
-                if (!p.specs?.motherboardSupport) return false;
-                const supportedFormats = p.specs.motherboardSupport.split(',').map(s => s.trim());
-                
-                return f.motherboardSupport.some(selectedFormat => supportedFormats.includes(selectedFormat));
-            });
-        }
-        if (f.sidePanels.length > 0) {
-            result = result.filter(p => f.sidePanels.includes(p.specs?.sidePanel));
-        }
-        if (f.includedFans.length > 0) {
-            result = result.filter(p => f.includedFans.includes(p.specs?.includedFans));
-        }
+    const filteredComponents = computed(() => {
+        const activeFilters = Object.entries(selectedFilters.value).filter(([_, vals]) => vals.length > 0);
+        
+        let result = allComponents.value.filter(p => {
+            if (p.category !== activeCategory.value) {
+                return false;
+            }
+            
+            if (p.price < priceRange.value[0] || p.price > priceRange.value[1]) {
+                return false;
+            }
+
+            return activeFilters.every(([key, values]) => filterDefinitions[key](p, values));
+        });
 
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);

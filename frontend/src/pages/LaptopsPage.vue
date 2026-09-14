@@ -301,97 +301,130 @@
     };
 
     const getCpuSeries = (cpu) => {
-        if (!cpu) return null;
-        if (cpu.includes('Core i9')) return 'Intel Core i9';
-        if (cpu.includes('Core i7')) return 'Intel Core i7';
-        if (cpu.includes('Core i5')) return 'Intel Core i5';
-        if (cpu.includes('Core i3')) return 'Intel Core i3';
-        if (cpu.includes('Core Ultra 9')) return 'Intel Core Ultra 9';
-        if (cpu.includes('Core Ultra 7')) return 'Intel Core Ultra 7';
-        if (cpu.includes('Ryzen 9')) return 'AMD Ryzen 9';
-        if (cpu.includes('Ryzen 7')) return 'AMD Ryzen 7';
-        if (cpu.includes('Ryzen 5')) return 'AMD Ryzen 5';
-        if (cpu.includes('Apple M3')) return 'Apple M3';
-        if (cpu.includes('Apple M2')) return 'Apple M2';
-        if (cpu.includes('Apple M1')) return 'Apple M1';
-        return cpu.split(' ').slice(0, 2).join(' '); 
-    };
-
-    const getCpuModel = (cpu) => {
         if (!cpu) {
             return null;
         }
 
-        return cpu.replace('Intel ', '').replace('AMD ', '');
+        const match = cpu.match(/(Core (?:Ultra )?[i3579]|Ryzen [3579]|Apple M[123])/);
+        
+        if (match) {
+            return cpu.includes('Apple') ? match[0] : (cpu.includes('Core') ? `Intel ${match[0]}` : `AMD ${match[0]}`);
+        }
+        
+        return cpu.split(' ').slice(0, 2).join(' '); 
     };
+
+    const getCpuModel = (cpu) => cpu ? cpu.replace(/(Intel |AMD )/g, '') : null;
 
     const getGpuSeries = (gpu) => {
-        if (!gpu) return null;
-        if (gpu.includes('RTX 40')) return 'GeForce RTX 40 Series';
-        if (gpu.includes('RTX 30')) return 'GeForce RTX 30 Series';
-        if (gpu.includes('RX 7')) return 'Radeon RX 7000 Series';
-        if (gpu.includes('RX 6')) return 'Radeon RX 6000 Series';
-        if (gpu.includes('Arc')) return 'Intel Arc Series';
-        if (gpu.includes('Iris Xe')) return 'Intel Iris Xe';
-        if (gpu.includes('Apple')) return 'Apple Silicon GPU';
-        if (gpu.includes('Radeon Graphics')) return 'AMD Radeon Graphics';
-        if (gpu.includes('UHD Graphics')) return 'Intel UHD Graphics';
-        return gpu; 
-    };
-
-    const getGpuModel = (gpu) => {
         if (!gpu) {
             return null;
         }
 
-        return gpu.replace('NVIDIA GeForce ', '').replace('AMD ', '').replace('Intel ', '');
+        if (/RTX 40/.test(gpu)) {
+            return 'GeForce RTX 40 Series';
+        }
+
+        if (/RTX 30/.test(gpu)) {
+            return 'GeForce RTX 30 Series';
+        }
+
+        if (/RX 7/.test(gpu)) {
+            return 'Radeon RX 7000 Series';
+        }
+
+        if (/RX 6/.test(gpu)) {
+            return 'Radeon RX 6000 Series';
+        }
+
+        if (/Arc/.test(gpu)) {
+            return 'Intel Arc Series';
+        }
+
+        if (/Iris Xe/.test(gpu)) {
+            return 'Intel Iris Xe';
+        }
+
+        if (/Apple/.test(gpu)) {
+            return 'Apple Silicon GPU';
+        }
+
+        if (/Radeon Graphics/.test(gpu)) {
+            return 'AMD Radeon Graphics';
+        }
+
+        if (/UHD Graphics/.test(gpu)) {
+            return 'Intel UHD Graphics';
+        }
+        return gpu; 
     };
 
+    const getGpuModel = (gpu) => gpu ? gpu.replace(/(NVIDIA GeForce |AMD |Intel )/g, '') : null;
+
     const getSubCategory = (name) => {
-        const lowerName = name.toLowerCase();
-        if (lowerName.includes('gaming')) return 'gaming';
-        if (lowerName.includes('macbook pro') || lowerName.includes('xps') || lowerName.includes('zenbook') || lowerName.includes('spectre')) return 'creator';
-        if (lowerName.includes('macbook air') || lowerName.includes('slim') || lowerName.includes('thin')) return 'ultrabook';
+        const n = name.toLowerCase();
+
+        if (n.includes('gaming')) {
+            return 'gaming';
+        }
+        
+        if (/macbook pro|xps|zenbook|spectre/.test(n)) {
+            return 'creator';
+        }
+        
+        if (/macbook air|slim|thin/.test(n)) {
+            return 'ultrabook';
+        }
+        
         return 'office'; 
     };
 
     const availableFilters = computed(() => {
-        const currentProducts = allLaptops.value.filter(p => p.category === 'laptopuri' && getSubCategory(p.name) === activeCategory.value);
+        const currentLaptops = allLaptops.value.filter(p => p.category === 'laptopuri' && getSubCategory(p.name) === activeCategory.value);
+        const extract = (extractor) => [...new Set(currentLaptops.map(extractor).filter(Boolean))];
         
         return {
-            brands: [...new Set(currentProducts.map(p => p.brand).filter(Boolean))],
-            cpuSeries: [...new Set(currentProducts.map(p => getCpuSeries(p.specs?.cpu)).filter(Boolean))].sort(),
-            cpuModels: [...new Set(currentProducts.map(p => getCpuModel(p.specs?.cpu)).filter(Boolean))].sort(),
-            gpuSeries: [...new Set(currentProducts.map(p => getGpuSeries(p.specs?.gpu)).filter(Boolean))].sort(),
-            gpuModels: [...new Set(currentProducts.map(p => getGpuModel(p.specs?.gpu)).filter(Boolean))].sort(),
-            rams: [...new Set(currentProducts.map(p => p.specs?.ram?.split(' ')[0]).filter(Boolean))], 
-            storages: [...new Set(currentProducts.map(p => p.specs?.storage).filter(Boolean))]
+            brands: extract(p => p.brand),
+            cpuSeries: extract(p => getCpuSeries(p.specs?.cpu)).sort(),
+            cpuModels: extract(p => getCpuModel(p.specs?.cpu)).sort(),
+            gpuSeries: extract(p => getGpuSeries(p.specs?.gpu)).sort(),
+            gpuModels: extract(p => getGpuModel(p.specs?.gpu)).sort(),
+            rams: extract(p => p.specs?.ram?.split(' ')[0]),
+            storages: extract(p => p.specs?.storage)
         };
     });
 
+    const filterDefinitions = {
+        brands: (p, v) => v.includes(p.brand),
+        cpuSeries: (p, v) => v.includes(getCpuSeries(p.specs?.cpu)),
+        cpuModels: (p, v) => v.includes(getCpuModel(p.specs?.cpu)),
+        gpuSeries: (p, v) => v.includes(getGpuSeries(p.specs?.gpu)),
+        gpuModels: (p, v) => v.includes(getGpuModel(p.specs?.gpu)),
+        rams: (p, v) => v.some(ram => p.specs?.ram?.includes(ram)),
+        storages: (p, v) => v.includes(p.specs?.storage)
+    };
+
     const filteredLaptops = computed(() => {
-        let result = allLaptops.value.filter(p => p.category === 'laptopuri' && getSubCategory(p.name) === activeCategory.value);
-        result = result.filter(p => p.price >= priceRange.value[0] && p.price <= priceRange.value[1]);
+        const activeFilters = Object.entries(selectedFilters.value).filter(([_, vals]) => vals.length > 0);
         
-        const f = selectedFilters.value;
+        let result = allLaptops.value.filter(p => {
+            if (p.category !== 'laptopuri' || getSubCategory(p.name) !== activeCategory.value) {
+                return false;
+            }
+            
+            if (p.price < priceRange.value[0] || p.price > priceRange.value[1]) {
+                return false;
+            }
 
-        if (f.brands.length > 0) result = result.filter(p => f.brands.includes(p.brand));
-        
-        if (f.cpuSeries.length > 0) result = result.filter(p => f.cpuSeries.includes(getCpuSeries(p.specs?.cpu)));
-        if (f.cpuModels.length > 0) result = result.filter(p => f.cpuModels.includes(getCpuModel(p.specs?.cpu)));
-        
-        if (f.gpuSeries.length > 0) result = result.filter(p => f.gpuSeries.includes(getGpuSeries(p.specs?.gpu)));
-        if (f.gpuModels.length > 0) result = result.filter(p => f.gpuModels.includes(getGpuModel(p.specs?.gpu)));
+            return activeFilters.every(([key, values]) => filterDefinitions[key](p, values));
+        });
 
-        if (f.rams.length > 0) result = result.filter(p => f.rams.some(ramFilter => p.specs?.ram?.includes(ramFilter)));
-        if (f.storages.length > 0) result = result.filter(p => f.storages.includes(p.specs?.storage));
-        
         if (sortOption.value === 'price_asc') {
             result.sort((a, b) => a.price - b.price);
         } else if (sortOption.value === 'price_desc') {
             result.sort((a, b) => b.price - a.price);
         }
-        
+
         return result;
     });
 
