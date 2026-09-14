@@ -11,7 +11,7 @@ const generateAiBuild = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Te rog să introduci un text.' });
         }
 
-        const snapshot = await db.collection('products').get();
+        const snapshot = await db.collection('products').select('name', 'category', 'price', 'specs').get();
         
         if (snapshot.empty) {
             return res.status(404).json({ success: false, message: 'Nu am găsit produse în baza de date.' });
@@ -35,7 +35,8 @@ const generateAiBuild = async (req, res) => {
         });
 
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-3.6-flash"
+            model: "gemini-3.6-flash",
+            generationConfig: { responseMimeType: "application/json"}
         });
 
         const systemPrompt = `
@@ -89,17 +90,18 @@ const analyzeBuild = async (req, res) => {
     try {
         const { buildComponents, targetGames, targetResolution } = req.body;
 
-        if (!buildComponents || !buildComponents.cpu || !buildComponents.gpu) {
-            return res.status(400).json({ error: "Sistemul trebuie să conțină cel puțin un procesor (CPU) și o placă video (GPU)." });
+        if (!buildComponents || !buildComponents.cpu) {
+            return res.status(400).json({ error: "Sistemul trebuie să conțină cel puțin un procesor (CPU)." });
         }
 
-        const gamesToAnalyze = targetGames && targetGames.length > 0 
-            ? targetGames.join(", ") 
-            : "Cyberpunk 2077, Counter-Strike 2, Call of Duty: Warzone";
+        const gamesToAnalyze = targetGames && targetGames.length > 0 ? targetGames.join(", ") : "Cyberpunk 2077, Counter-Strike 2, Call of Duty: Warzone";
             
         const resolution = targetResolution || "1440p (QHD)";
 
-        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-3.6-flash",
+            generationConfig: { responseMimeType: "application/json"} 
+        });
 
         const prompt = `
             Ești un expert în hardware PC. Analizează următoarea configurație PC:
@@ -151,7 +153,7 @@ const upgradePcBuild = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Te rog să introduci specificațiile actuale și bugetul.' });
         }
 
-        const snapshot = await db.collection('products').get();
+        const snapshot = await db.collection('products').select('name', 'category', 'price', 'specs').get();
         if (snapshot.empty) {
             return res.status(404).json({ success: false, message: 'Nu am găsit produse în baza de date.' });
         }
@@ -173,7 +175,10 @@ const upgradePcBuild = async (req, res) => {
             });
         });
 
-        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-3.6-flash",
+            generationConfig: { responseMimeType: "application/json"}
+        });
 
         const systemPrompt = `
             Ești un expert în hardware PC. Utilizatorul vrea să facă un upgrade la PC-ul său actual.

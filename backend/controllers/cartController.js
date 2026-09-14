@@ -1,4 +1,5 @@
 const { db } = require('../database/db');
+const { FieldValue } = require('firebase-admin/firestore');
 
 const getCart = async (req, res) => {
     try {
@@ -22,13 +23,11 @@ const addToCart = async (req, res) => {
     try {
         const { userId } = req.params;
         const product = req.body; 
-
         const itemRef = db.collection('carts').doc(userId).collection('items').doc(product.id);
         const doc = await itemRef.get();
 
         if (doc.exists) {
-            const currentQuantity = doc.data().quantity || 1;
-            await itemRef.update({ quantity: currentQuantity + 1 });
+            await itemRef.update({ quantity: FieldValue.increment(1) });
         } else {
             await itemRef.set({
                 name: product.name,
@@ -58,10 +57,8 @@ const removeFromCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Produsul nu este în coș.' });
         }
 
-        const currentQuantity = doc.data().quantity;
-
-        if (currentQuantity > 1 && removeAll !== 'true') {
-            await itemRef.update({ quantity: currentQuantity - 1 });
+        if (doc.data().quantity > 1 && removeAll !== 'true') {
+            await itemRef.update({ quantity: FieldValue.increment(-1) });
         } else {
             await itemRef.delete();
         }

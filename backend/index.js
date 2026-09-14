@@ -20,6 +20,8 @@ const adminRouter = require('./routes/adminPanelRouter');
 const aiRouter = require('./routes/aiRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 
+const { stripeWebhook } = require('./controllers/orderController');
+
 const app = express();
 const PORT = process.env.PORT;
 
@@ -29,6 +31,9 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
+
+app.post('/server/orders/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
 app.use(express.json());
 
 app.use('/server/components', componentsRoutes);

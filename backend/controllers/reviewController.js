@@ -58,9 +58,22 @@ const getReviews = async (req, res) => {
 generateReviewSummary = async (req, res) => {
     try {
         const { productId } = req.params;
-
         const productDoc = await db.collection('products').doc(productId).get();
-        const productName = productDoc.exists ? productDoc.data().name : "Acest produs";
+        
+        if (!productDoc.exists) {
+            return res.status(404).json({ summary: "Produs inexistent." });
+        }
+
+        const productData = productDoc.data();
+        if (productData.aiSummary && productData.summaryUpdatedAt) {
+            const lastUpdated = new Date(productData.summaryUpdatedAt).getTime();
+            const now = new Date().getTime();
+            
+            if (now - lastUpdated < 24 * 60 * 60 * 1000) {
+                return res.status(200).json({ summary: productData.aiSummary });
+            }
+        }
+        
         const snapshot = await db.collection('reviews').where('productId', '==', productId).get();
         
         let reviewsText = "";
@@ -79,7 +92,7 @@ generateReviewSummary = async (req, res) => {
         }
 
         const ollamaPrompt = `
-            Analizează următoarele recenzii pentru produsul ${productName}.
+            Analizează următoarele recenzii pentru produsul ${productData.name}.
             Sarcina ta este să extragi DOAR detaliile tehnice. Elimină orice informație despre curier, livrare, ambalaj, înjurături sau spam.
             Returnează STRICT un obiect JSON cu două array-uri: "aspecte_pozitive" și "aspecte_negative". 
             Fără alte explicații sau text pe lângă JSON.
@@ -123,17 +136,19 @@ generateReviewSummary = async (req, res) => {
             temperature: 0.2,
         });
 
-        res.status(200).json({ 
-            summary: chatCompletion.choices[0]?.message?.content || "Eroare la generarea rezumatului." 
+        const finalSummary = chatCompletion.choices[0]?.message?.content;
+
+        await productDoc.ref.update({
+            aiSummary: finalSummary,
+            summaryUpdatedAt: new Date().toISOString()
         });
+
+        res.status(200).json({ summary: finalSummary });
         
     } catch (error) {
         if (error.code === 'ECONNREFUSED' || error.message.includes('fetch')) {
-             return res.status(200).json({ 
-                summary: "AI-ul Nexum este în mentenanță locală. Rezumatul nu poate fi generat momentan." 
-            });
+             return res.status(200).json({ summary: "AI-ul Nexum este în mentenanță locală. Rezumatul nu poate fi generat momentan." });
         }
-        console.error("Eroare Pipeline Hibrid AI:", error.message);
         res.status(500).json({ error: 'Eroare la generarea rezumatului AI.' });
     }
 };

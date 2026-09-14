@@ -4,12 +4,14 @@ const validateCoupon = async (req, res) => {
     try {
         const { code } = req.body;
         
-        if (!code) {
-            return res.status(400).json({ success: false, message: 'Cod lipsă.' });
+        const cleanCode = code ? code.replace(/[^a-zA-Z0-9]/g, '').toUpperCase() : null;
+        
+        if (!cleanCode) {
+            return res.status(400).json({ success: false, message: 'Cod invalid.' });
         }
 
         const couponsRef = db.collection('coupons');
-        const snapshot = await couponsRef.where('code', '==', code.toUpperCase()).get();
+        const snapshot = await couponsRef.where('code', '==', cleanCode).get();
 
         if (snapshot.empty) {
             return res.status(404).json({ success: false, message: 'Acest cod nu există.' });

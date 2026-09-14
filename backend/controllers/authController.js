@@ -1,5 +1,8 @@
 const { db } = require('../database/db');
 const nodemailer = require('nodemailer');
+const { FieldValue } = require('firebase-admin/firestore');
+
+const ALLOWED_PROFILE_FIELDS = ['name', 'phone', 'address', 'avatar'];
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-relay.brevo.com',
@@ -27,6 +30,13 @@ const send2FACode = async (req, res) => {
         const { uid, email } = req.body;
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expireAt = Date.now() + 10 * 60 * 1000;
+        const rateLimitRef = db.collection('rate_limits').doc(uid);
+        const rateLimitDoc = await rateLimitRef.get();
+
+        if (rateLimitDoc.exists && rateLimitDoc.data().count >= 5 && rateLimitDoc.data.resetAt >= Date.now()) {
+            return res.status(429).json({ success: false, message: 'Ai atins limita de trimitere a codurilor. Încearcă mai târziu.' });
+        }
+        await rateLimitRef.set({ count: FieldValue.increment(1), resetAt: Date.now() + 15 * 60000 }), { merge: true };
 
         await db.collection('users').doc(uid).update({
             twoFactorCode: code,
@@ -103,10 +113,18 @@ const updateProfile = async (req, res) => {
         const { userId } = req.params;
         const updates = req.body;
 
-        const userRef = db.collection('users').doc(userId);
-        await userRef.update(updates);
+        const safeUpdates = {};
+        Object.keys(updates).forEach(key => {
+            if (ALLOWED_PROFILE_FIELDS.includes(key)) {
+                safeUpdates[key] = updates[key];
+            }
+        });
 
-        const updatedDoc = await userRef.get();
+        if (Object.keys(safeUpdates).length === 0) {
+            return res.status(400).json({ success: false, message: 'Nicio actualizare validă furnizată.' });
+        }
+
+        await db.collection(users).doc(userId).update(safeUpdates);
         res.status(200).json({ success: true, message: 'Profil actualizat!', user: { id: userId, ...updatedDoc.data() } });
     } catch (error) {
         console.error("Eroare la actualizare:", error);

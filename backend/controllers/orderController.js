@@ -120,14 +120,53 @@ const createOrder = async (req, res) => {
         const { userId, contactInfo, deliveryInfo, paymentInfo, items, summary, successUrl, cancelUrl } = req.body;
         const orderStatus = paymentInfo.method === 'card' ? 'Așteptare Plată' : 'În procesare';
         
+        let calculatedTotal = 0;
+        const validatedItems = [];
+        const collections = ['products', 'monitors', 'peripherals', 'laptops'];
+
+        for (const item of items) {
+            let realPrice = null;
+            let productName = null;
+            let productImage = null;
+
+            for (const collection of collections) {
+                const productDoc = await db.collection(collection).doc(item.id).get();
+                if (productDoc.exists) {
+                    const data = productDoc.data();
+
+                    realPrice = productDoc.data().price;
+                    productName = productDoc.data().name;
+                    productImage = productDoc.data().image || (data.specs && data.specs.image) || item.image;
+                    break;
+                }
+            }
+
+            if (realPrice === null) {
+                return res.status(400).json({ success: false, message: `Produsul cu ID-ul ${item.id} nu a fost găsit.` });
+            }
+
+            calculatedTotal += realPrice * item.quantity;
+
+            validatedItems.push({ 
+                id: item.id,
+                name: productName,
+                quantity: item.quantity,
+                price: realPrice,
+                image: productImage
+            });
+        }
+
+        const shippingCost = calculatedTotal > 500 ? 0 : 20;
+        calculatedTotal += shippingCost;
+
         const newOrder = {
             userId: userId || null,
             contactInfo,
             deliveryInfo,
             paymentInfo,
-            items,
-            summary,
-            status: orderStatus,
+            items: validatedItems,
+            summary: { total: calculatedTotal, shipping: shippingCost }, 
+            status: paymentInfo.method === 'card' ? 'Așteptare Plată' : 'În procesare',
             createdAt: new Date().toISOString(),
             orderNumber: 'NXM-' + Math.floor(100000 + Math.random() * 900000)
         };
@@ -143,7 +182,7 @@ const createOrder = async (req, res) => {
         }
 
         if (paymentInfo.method === 'card') {
-            const lineItems = items.map(item => ({
+            const lineItems = validatedItems.map(item => ({
                 price_data: {
                     currency: 'ron',
                     product_data: { name: item.name },
@@ -152,12 +191,12 @@ const createOrder = async (req, res) => {
                 quantity: item.quantity,
             }));
 
-            if (summary.shipping > 0) {
+            if (shippingCost > 0) {
                 lineItems.push({
                     price_data: {
                         currency: 'ron',
                         product_data: { name: 'Taxă Livrare' },
-                        unit_amount: Math.round(summary.shipping * 100),
+                        unit_amount: Math.round(shippingCost * 100)
                     },
                     quantity: 1,
                 });
@@ -167,14 +206,16 @@ const createOrder = async (req, res) => {
                 payment_method_types: ['card'],
                 line_items: lineItems,
                 mode: 'payment',
-                success_url: `${successUrl}&orderId=${docRef.id}&orderNum=${newOrder.orderNumber}`,
+                success_url: `${successUrl}&orderId=${docRef.id}`,
                 cancel_url: cancelUrl,
+                metadata: { orderId: docRef.id }
             });
 
             return res.status(201).json({ success: true, isStripe: true, url: session.url });
         }
 
         await sendOrderEmailWithInvoice(newOrder);
+
         res.status(201).json({ success: true, isStripe: false, orderId: docRef.id, orderNumber: newOrder.orderNumber });
     } catch (error) {
         console.error("Eroare la crearea comenzii:", error);
@@ -182,21 +223,29 @@ const createOrder = async (req, res) => {
     }
 };
 
-const confirmPayment = async (req, res) => {
-    try {
-        const { orderId } = req.body;
-        await db.collection('orders').doc(orderId).update({ status: 'În procesare (Plătit)' });
-        const orderDoc = await db.collection('orders').doc(orderId).get();
+const stripeWebhook = async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
 
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+
+    } catch (error) {
+        return res.status(400).send(`Webhook error: ${error.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const orderId = session.metadata.orderId;
+        const orderDoc = await db.collection('orders').doc(orderId).get();
+        await db.collection('orders').doc(orderId).update({ status: 'În procesare (Plătit)' });
+        
         if (orderDoc.exists) {
             await sendOrderEmailWithInvoice(orderDoc.data());
         }
-
-        res.status(200).json({ success: true });
-    } catch (error) {
-        console.error("Eroare confirmare plata:", error);
-        res.status(500).json({ success: false });
     }
+
+    res.status(200).json({ received: true });
 };
 
 const getUserOrders = async (req, res) => {
@@ -250,4 +299,9 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, confirmPayment, getUserOrders, getAllOrders, updateOrderStatus };
+module.exports = { 
+    createOrder, 
+    stripeWebhook, 
+    getUserOrders, 
+    getAllOrders, 
+    updateOrderStatus };

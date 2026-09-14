@@ -22,10 +22,10 @@ const getPeripherals = async (req, res) => {
             query = query.where('brand', 'in', brandList);
         }
 
-        if (minPrice) {
+        if (minPrice && !isNaN(Number(minPrice))) {
             query = query.where('price', '>=', Number(minPrice));
         }
-        if (maxPrice) {
+        if (maxPrice && !isNaN(Number(maxPrice))) {
             query = query.where('price', '<=', Number(maxPrice));
         }
 

@@ -152,7 +152,7 @@
                                     <div class="flex-grow-1 text-center">
                                         <v-icon color="#10B981" size="32" class="mb-2">mdi-credit-card</v-icon>
                                         <div class="font-weight-bold cloud-text text-body-1">Plată online cu cardul</div>
-                                        <div class="text-caption cloud-text opacity-70 mt-1">Plată securizată (În curând).</div>
+                                        <div class="text-caption cloud-text opacity-70 mt-1">Plată securizată.</div>
                                     </div>
                                     
                                     <v-icon 
@@ -282,7 +282,7 @@
             orderPlacedSuccess.value = true;
             cartStore.clearCart(); 
             
-            axios.post(`${import.meta.env.VITE_API_URL}/server/orders/confirm-payment`, { orderId });
+            axios.post(`${import.meta.env.VITE_API_URL}/server/orders/webhook`, { orderId });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } 
         else if (route.query.canceled === 'true') {

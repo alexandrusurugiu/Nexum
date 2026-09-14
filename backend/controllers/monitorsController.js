@@ -11,11 +11,19 @@ const getMonitors = async (req, res) => {
             query = query.where('brand', 'in', brandList);
         }
 
-        if (minPrice) query = query.where('price', '>=', Number(minPrice));
-        if (maxPrice) query = query.where('price', '<=', Number(maxPrice));
+        if (minPrice && !isNaN(Number(minPrice))) {
+            query = query.where('price', '>=', Number(minPrice));
+        }
 
-        if (sort === 'price_asc') query = query.orderBy('price', 'asc');
-        else if (sort === 'price_desc') query = query.orderBy('price', 'desc');
+        if (maxPrice && !isNaN(Number(maxPrice))) {
+            query = query.where('price', '<=', Number(maxPrice));
+        }
+
+        if (sort === 'price_asc') {
+            query = query.orderBy('price', 'asc');
+        } else if (sort === 'price_desc') {
+            query = query.orderBy('price', 'desc');
+        }
 
         const snapshot = await query.get();
 

@@ -2,6 +2,21 @@ const { db } = require('../database/db');
 
 const generateShareCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
+const getUniqueShareCode = async () => {
+    let isUnique = false;
+    let code = '';
+    while (!isUnique) {
+        code = generateShareCode();
+        const existing = await db.collection('wishlists').where('shareCode', '==', code).get();
+
+        if (existing.empty) {
+            isUnique = true;
+        }
+    }
+
+    return code;
+}
+
 const saveWishlist = async (req, res) => {
     try {
         const { userId, name, items, total } = req.body;
@@ -10,25 +25,20 @@ const saveWishlist = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Date invalide pentru salvare.' });
         }
 
-        const shareCode = generateShareCode();
+        const shareCode = await getUniqueShareCode();
         
         const wishlist = {
             userId,
             name: name || 'Sistemul Meu Salvat',
             items,
-            total,
+            total: Number(total) || 0,
             shareCode,
             createdAt: new Date().toISOString()
         };
 
         const docRef = await db.collection('wishlists').add(wishlist);
 
-        res.status(200).json({ 
-            success: true, 
-            message: 'Wishlist salvat cu succes!', 
-            shareCode, 
-            id: docRef.id 
-        });
+        res.status(200).json({ success: true, message: 'Wishlist salvat cu succes!', shareCode, id: docRef.id });
     } catch (error) {
         console.error("Eroare salvare wishlist:", error);
         res.status(500).json({ success: false, message: 'Eroare internă la salvare.' });
