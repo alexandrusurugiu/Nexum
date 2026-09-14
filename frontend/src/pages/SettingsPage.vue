@@ -314,11 +314,14 @@
     };
 
     const confirmDeleteAccount = () => {
-        const confirmed = confirm("Ești sigur că vrei să ștergi definitiv contul? Această acțiune este ireversibilă și vei pierde tot istoricul comenzilor.");
-        if (confirmed) {
-            triggerSnackbar("Contul tău a fost șters cu succes. ", "success");
+        const confirmation = prompt("Atenție! Ștergerea contului este definitivă și vei pierde tot istoricul comenzilor. Tastează 'STERGE' cu majuscule pentru a confirma:");
+        
+        if (confirmation === 'STERGE') {
+            triggerSnackbar("Contul tău a fost șters cu succes.", "success");
             authStore.logout();
             router.push('/');
+        } else if (confirmation !== null) {
+            triggerSnackbar("Confirmare incorectă. Contul nu a fost șters.", "error");
         }
     };
 

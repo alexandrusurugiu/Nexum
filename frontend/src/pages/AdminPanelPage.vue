@@ -90,7 +90,8 @@
                                         hide-details
                                         color="#10B981"
                                         class="custom-select mt-1 mb-1"
-                                        @update:modelValue="updateOrderStatus(order.id, order.status)" 
+                                        @update:modelValue="(val) => updateOrderStatus(order.id, val, order._oldStatus || order.status)"
+                                        @focus="order._oldStatus = order.status" 
                                     ></v-select>
                                 </td>
                             </tr>
@@ -171,16 +172,22 @@
         }
     });
 
-    const updateOrderStatus = async (orderId, newStatus) => {
+    const updateOrderStatus = async (orderId, newStatus, oldStatus) => {
         try {
             await axios.put(`${import.meta.env.VITE_API_URL}/server/orders/${orderId}/status`, { 
                 status: newStatus 
             });
+
             triggerSnackbar(`Statusul comenzii a fost schimbat în "${newStatus}"!`, "success");
+            loadProducts(); 
         } catch (e) {
             console.error(e);
             triggerSnackbar("A apărut o eroare la salvarea statusului.", "error");
-            loadProducts(); 
+            
+            const orderIndex = orders.value.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1) {
+                orders.value[orderIndex].status = oldStatus;
+            }
         }
     };
 

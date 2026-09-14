@@ -112,14 +112,14 @@
     };
 
     onMounted(async () => {
-        const code = route.params.code; 
+        const code = encodeURIComponent(route.params.code); 
         
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/wishlist/code/${code}`);
         
-        if (response.data.success) {
-            sharedBuild.value = response.data.data;
-        }
+            if (response.data.success) {
+                sharedBuild.value = response.data.data;
+            }
         } catch (err) {
             error.value = "Acest cod de share nu este valid sau sistemul a fost șters.";
         } finally {
@@ -128,6 +128,11 @@
     });
 
     const addAllToCart = () => {
+        if (!sharedBuild.value || !Array.isArray(sharedBuild.value.items) || sharedBuild.value.items.length === 0) {
+            triggerSnackbar("Nu există produse de adăugat în coș.", "error");
+            return;
+        }
+
         sharedBuild.value.items.forEach(item => {
             cartStore.addToCart(item);
         });

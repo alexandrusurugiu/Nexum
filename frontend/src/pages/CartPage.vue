@@ -296,10 +296,12 @@
             return; 
         }
 
+        const safeName = name.trim().substring(0, 50);
+
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/server/wishlist/save`, {
                 userId: authStore.user.id,
-                name: name,
+                name: safeName,
                 items: cartStore.items,
                 total: finalTotal.value
             });

@@ -39,7 +39,7 @@
                         <v-range-slider
                             v-model="priceRange"
                             :min="0"
-                            :max="10000"
+                            :max="dynamicMaxPrice"
                             :step="50"
                             color="#10B981"
                             track-color="rgba(245, 246, 250, 0.1)"
@@ -240,6 +240,7 @@
 
     watch(activeCategory, () => {
         resetFilters();
+        priceRange.value = [0, dynamicMaxPrice.value];
     });
 
     const resetFilters = () => {
@@ -326,6 +327,21 @@
         cartStore.addToCart(product);
         triggerSnackbar(`Ai adăugat ${product.name} în coș!`, 'success');
     };
+
+    const dynamicMaxPrice = computed(() => {
+        if (allMonitors.value.length === 0) {
+            return 10000;
+        }
+
+        const currentCatProducts = allMonitors.value.filter(p => p.category === activeCategory.value);
+        
+        if (currentCatProducts.length === 0) {
+            return 10000;
+        }
+
+        const max = Math.max(...currentCatProducts.map(p => p.price || 0));
+        return Math.ceil(max / 100) * 100 + 500; 
+    });
 </script>
 
 <style scoped>

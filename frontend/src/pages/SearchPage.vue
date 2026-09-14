@@ -164,9 +164,15 @@
     };
 
     const performSearch = async (queryStr) => {
-        if (!queryStr) return;
+        if (!queryStr || queryStr.trim() === '') {
+            searchQuery.value = '';
+            searchResults.value = [];
+            return;
+        }
+
         searchQuery.value = queryStr;
         isLoading.value = true;
+        
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/server/search?q=${encodeURIComponent(queryStr)}`);
             if (response.data.success) {

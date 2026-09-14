@@ -533,7 +533,13 @@
     };
 
     const saveProfile = async () => {
+        if (!editForm.value.name || editForm.value.name.trim() === '') {
+            triggerSnackbar("Numele complet este obligatoriu.", "error");
+            return;
+        }
+        
         const success = await authStore.updateProfile(editForm.value);
+        
         if (success) {
             triggerSnackbar("Profilul a fost actualizat cu succes!", "success");
         }
@@ -580,8 +586,16 @@
     };
 
     const formatDate = (isoString) => {
-        const date = new Date(isoString);
-        return date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (!isoString) {
+            return 'Data necunoscută';
+        }
+
+        try {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' });
+        } catch (error) {
+            return 'Data necunoscută';
+        }
     };
 
     const fetchWishlists = async () => {

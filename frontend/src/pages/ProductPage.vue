@@ -316,6 +316,11 @@
     const submitReview = async () => {
         reviewError.value = '';
         
+        if (!product.value || !product.value.id) {
+            reviewError.value = "A apărut o problemă cu produsul. Reîncarcă pagina.";
+            return;
+        }
+
         if (!newReview.value.comment.trim()) {
             reviewError.value = "Te rugăm să scrii un scurt comentariu!";
             return;
